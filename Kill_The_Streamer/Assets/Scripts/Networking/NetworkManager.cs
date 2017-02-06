@@ -12,9 +12,9 @@ using UnityEngine;
 public class NetworkManager : MonoBehaviour {
 
     public static NetworkManager s_manager;
-    public static string s_oauth = "oauth:e76gxery78a0exrx3sh16ynest1h3g";
-    public static string s_username = "KeeperOfEvil";
-    public static string s_channel = "imaqtpie";
+    public static string s_oauth;
+    public static string s_username;
+    public static string s_channel;
 
     public Socket m_socket;
     public bool m_connected;
@@ -79,7 +79,7 @@ public class NetworkManager : MonoBehaviour {
 
     public void MessageChannel(string message)
     {
-
+        SendData("PRIVMSG #" + s_channel + " :" + message);
     }
 
     public static void Listener()
@@ -108,6 +108,12 @@ public class NetworkManager : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        string[] config;
+        config = System.IO.File.ReadAllLines("config.txt");
+        s_oauth = "oauth:" + config[0].Trim(' ').Remove(0, 7);//"oauth: " - 7 characters
+        s_username = config[1].Trim(' ').Remove(0, 9).ToLower();//"botname: " - 9 characters
+        s_channel = config[2].Trim(' ').Remove(0, 9).ToLower();//"channel: " - 9 characters
+        
         if (!s_manager)
         {
             s_manager = this;
