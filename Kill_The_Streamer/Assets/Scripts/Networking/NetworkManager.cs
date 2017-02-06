@@ -14,10 +14,11 @@ public class NetworkManager : MonoBehaviour {
     public static NetworkManager s_manager;
     public static string s_oauth = "oauth:e76gxery78a0exrx3sh16ynest1h3g";
     public static string s_username = "KeeperOfEvil";
-    public static string s_channel = "lunalovecraft";
+    public static string s_channel = "imaqtpie";
 
     public Socket m_socket;
     public bool m_connected;
+    public Thread m_thread;
 
     private bool ConnectToServer()
     {
@@ -47,8 +48,8 @@ public class NetworkManager : MonoBehaviour {
 
             //Connect to the channel
             SendData("JOIN #" + s_channel);
-            Thread thread = new Thread(new ThreadStart(Listener));
-            thread.Start();
+            m_thread = new Thread(new ThreadStart(Listener));
+            m_thread.Start();
 
 
         }
@@ -84,16 +85,17 @@ public class NetworkManager : MonoBehaviour {
     public static void Listener()
     {
         byte[] bytes = new byte[4096];
+        string output;
 
         while (s_manager.m_connected)
         {
             int bytesRec = s_manager.m_socket.Receive(bytes);
-
-            if (bytesRec <= 0)
-            {
-                s_manager.Disconnect();
+            output = Encoding.ASCII.GetString(bytes, 0, bytesRec);
+            Debug.Log(output);
+            // Handle PING case
+            if (output.StartsWith("PING")){
+                s_manager.SendData("PONG :tmi.twitch.tv");
             }
-            Debug.Log(Encoding.ASCII.GetString(bytes, 0, bytesRec));
         }
     }
 
@@ -119,4 +121,10 @@ public class NetworkManager : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    void OnApplicationQuit()
+    {
+        m_thread.Abort();
+        Disconnect();
+    }
 }
