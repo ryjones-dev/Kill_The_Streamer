@@ -12,9 +12,9 @@ using UnityEngine;
 public class NetworkManager : MonoBehaviour {
 
     public static NetworkManager s_manager;
-    public static string s_oauth;
-    public static string s_username;
-    public static string s_channel;
+    public static string s_oauth; //Oauth of the bot listening to the channel
+    public static string s_username; //Username of the bot listening to the channel
+    public static string s_channel; //Channel being listened to.
 
     public Socket m_socket;
     public bool m_connected;
@@ -85,16 +85,43 @@ public class NetworkManager : MonoBehaviour {
     public static void Listener()
     {
         byte[] bytes = new byte[4096];
+        int bytesRec;
         string output;
+        int endOfName;
+        string name;
+        string message;
+        int nameLength;
+        int inputLength;
+        int channelNameLength = s_channel.Length;
 
         while (s_manager.m_connected)
         {
-            int bytesRec = s_manager.m_socket.Receive(bytes);
+            bytesRec = s_manager.m_socket.Receive(bytes);
             output = Encoding.ASCII.GetString(bytes, 0, bytesRec);
-            Debug.Log(output);
+            //Debug.Log(output);
             // Handle PING case
             if (output.StartsWith("PING")){
                 s_manager.SendData("PONG :tmi.twitch.tv");
+            }
+            else
+            {
+                endOfName = output.IndexOf('!');
+                if (endOfName != -1)
+                {
+                    name = output.Substring(1, endOfName - 1);
+                    nameLength = name.Length;
+                    inputLength = 29 + 3 * nameLength + channelNameLength;
+                    if (inputLength < output.Length)
+                    {
+                        message = output.Substring(inputLength);
+
+
+                        Debug.Log(name + ": " + message);
+                    }
+
+                }
+                
+
             }
         }
     }
