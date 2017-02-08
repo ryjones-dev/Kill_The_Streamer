@@ -13,7 +13,7 @@ public class AiSeekFlee : MonoBehaviour {
 
     public int multBy = 5;//the number to multiply by what the Ai should run from
 
-    private PlayerLookingAtAI playerTargetting;//the script that tells if the player is looking at the AI
+    private bool inPlayerSight;//tells if in the player's sight
 
 
     public int timeResetSeek;//tells how long after the player stops looking at the enemy until it should go back to seeking (should be small. Just as a buffer time)
@@ -22,14 +22,20 @@ public class AiSeekFlee : MonoBehaviour {
     void Start () {
         //finding object with the tag "Player"
         player = GameObject.FindGameObjectWithTag("Player");
-        playerTargetting = player.GetComponent<PlayerLookingAtAI>();
+        //playerTargetting = player.GetComponent<PlayerLookingAtAI>();
+        inPlayerSight = false;
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
 
+    }
+    public bool InPlayerSight
+    {
+        get { return inPlayerSight; }
+        set { inPlayerSight = value; }
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if(playerTargetting.TargetAi==true)
+        if(inPlayerSight==true)
         {
             Flee();
         }

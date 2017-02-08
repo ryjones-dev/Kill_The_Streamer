@@ -6,19 +6,12 @@ using UnityEngine.AI;
 public class PlayerLookingAtAI : MonoBehaviour {
 
     // Use this for initialization
-    private bool targetAi;//tells if the player is currently looking at the AI that is supposed to avoid the player if he/she is looking at it
 
-    public float rangeMult = 5.0f;//multiplying the field of view for the player. 
+    public float rangeView = 10.0f;//the range of view that the player can see to
 
 	void Start () {
-        targetAi = false;
 	}
 
-    public bool TargetAi
-    {
-        get { return targetAi; }
-    }
-	
 	// Update is called once per frame
 	void Update () {
         CheckPlayerLooking();
@@ -40,15 +33,30 @@ public class PlayerLookingAtAI : MonoBehaviour {
 
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("BooAi");
 
+       // bool playerForwardRay = Physics.Raycast(transform.position + Vector3.up)
         for(int i = 0; i < enemies.Length; ++i)
         {
-            Vector3 playerToEnemy = enemies[0].transform.position - transform.position;
+            Vector3 playerToEnemy = enemies[i].transform.position - transform.position;
             bool positiveLeft = (Vector3.Dot(leftAngle, playerToEnemy) >= 0);
+            //Debug.DrawLine(transform.position, Vector3.Dot(leftAngle, playerToEnemy));
             bool positiveRight = (Vector3.Dot(rightAngle, playerToEnemy) >= 0);
             if(positiveLeft && positiveRight)
             {
-                //runaway
-
+                //get distance
+                float distance = Vector3.Distance(transform.position, enemies[i].transform.position);
+                if(distance <= rangeView)
+                {
+                    //runaway
+                    enemies[i].GetComponent<AiSeekFlee>().InPlayerSight = true;
+                }
+                else
+                {
+                    enemies[i].GetComponent<AiSeekFlee>().InPlayerSight = false;
+                }
+            }
+            else
+            {
+                enemies[i].GetComponent<AiSeekFlee>().InPlayerSight = false;
             }
 
         }
