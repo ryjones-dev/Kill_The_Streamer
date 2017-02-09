@@ -28,8 +28,8 @@ public class PlayerLookingAtAI : MonoBehaviour {
         //getting the forward vector of the player
         Vector3 leftAngle = Quaternion.AngleAxis(-45, transform.up) * transform.forward;
         Vector3 rightAngle = Quaternion.AngleAxis(45, transform.up) * transform.forward;
-        Debug.DrawLine(transform.position + rightAngle, transform.position);
-        Debug.DrawLine(transform.position + leftAngle, transform.position);
+        Debug.DrawLine(transform.position + rightAngle*10, transform.position,Color.cyan);
+        Debug.DrawLine(transform.position + leftAngle*10, transform.position,Color.cyan);
 
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("BooAi");
 
