@@ -2,18 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyData : MonoBehaviour
-{
-    public int m_damageDealt;
-    public int m_health;
-}
-
 public class EnemyManager : MonoBehaviour
 {
-    private Dictionary<string, GameObject> m_enemyPrefabs; // A map of the different enemy types. Ex "Kappa" could be mapped to a Kappa enemy prefab.
+    private Dictionary<string, GameObject> m_enemyPrefabMap; // A map of the different enemy types. Ex "Kappa" could be mapped to a Kappa enemy prefab.
 
     private const int MAX_ENEMIES = 1024; // Maximum number of enemies in the enemy array.
 
+    private GameObject enemyParent;// A parent gameobject to put the enemies in for editor convenience
     private GameObject[] m_enemies; // Enemy array is sorted so that all active enemies are in front and inactive enemies are in the back.
     private short m_firstInactiveIndex = 0; // Stores the index separating the active and inactive objects. (If 0, there are no active enemies)
 
@@ -23,25 +18,26 @@ public class EnemyManager : MonoBehaviour
     private void Awake()
     {
         // Sets up the singleton
-        if(s_instance != null)
+        if(s_instance == null)
         {
             s_instance = this;
+
+            // Initializes the prefab map
+            m_enemyPrefabMap = new Dictionary<string, GameObject>();
 
             // Load in the enemy prefabs into an array
             GameObject[] enemyTypes = Resources.LoadAll<GameObject>("Enemies");
             for (int i = 0; i < enemyTypes.Length; i++)
             {
                 // Map each gameobject's name to the gameobject. The name should be the name of the command to spawn it.
-                m_enemyPrefabs.Add(enemyTypes[i].name, enemyTypes[i]);
+                m_enemyPrefabMap.Add(enemyTypes[i].name, enemyTypes[i]);
             }
 
             // Preallocate the enemy array
             m_enemies = new GameObject[MAX_ENEMIES];
 
-            for (int i = 0; i < m_enemies.Length; i++)
-            {
-                m_enemies[i] = new GameObject();
-            }
+            // Creates the enemy parent gameobject
+            enemyParent = new GameObject("Enemies");
         }
         else
         {
@@ -50,42 +46,61 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public void SpawnEnemy(string p_enemyType, string p_twitchUsername, string p_command)
+    private void Update()
     {
-        /*
-           Order of enemy spawning:
-           1. Copy enemy data to first inactive enemy
-           2. Active Unity components
-           3. Update inactive index 
-       */
-
-        // Gets the new object and sets it's name as the twitch user's name that spawned it
-        GameObject newEnemy = m_enemies[m_firstInactiveIndex];
-        newEnemy.name = p_twitchUsername;
-
-        // Gets the enemy's data component
-        EnemyData newEnemyData = newEnemy.GetComponent<EnemyData>();
-
-        // Switches through each command and assigns the appropriate data based on the map of enemy prefabs.
-        switch (p_command)
+        if(Input.GetButtonDown("Fire1"))
         {
-            case "ExampleKappa":
-                GameObject kappaPrefab = m_enemyPrefabs["ExampleKappa"];
-                EnemyData kappaData = kappaPrefab.GetComponent<EnemyData>();
-                newEnemyData = kappaData;
-                break;
-            default:
-                break;
+            SpawnEnemy("Twitch Username", "ExampleKappa");
+            Debug.Log(enemyParent.transform.childCount);
+        }
+        else if(Input.GetButtonDown("Fire2"))
+        {
+            Debug.Log(DestroyEnemy(0) + ", " + enemyParent.transform.childCount);
         }
     }
 
-    private GameObject CopyEnemy(GameObject p_newEnemy, string p_command)
+    public GameObject SpawnEnemy(string p_twitchUsername, string p_command)
     {
-        return null;
+        // Gets the appropriate prefab based on the command (prefab name should be the same as the command)
+        if (!m_enemyPrefabMap.ContainsKey(p_command)) return null;
+        GameObject enemyPrefab = m_enemyPrefabMap[p_command];
+
+        // Gets the enemy slot to activate
+        GameObject newEnemy = m_enemies[m_firstInactiveIndex];
+
+        // Copies the prefab data to the enemy slot
+        newEnemy = Instantiate<GameObject>(enemyPrefab);
+
+        // Sets it's name as the twitch user's name that spawned it
+        newEnemy.name = p_twitchUsername;
+
+        // Sets it's parent for editor convenience
+        newEnemy.transform.SetParent(enemyParent.transform);
+
+        // Sets the enemy's index so it can be found in the array later
+        newEnemy.GetComponent<EnemyData>().m_Index = m_firstInactiveIndex;
+
+        // Increments the inactive index
+        m_firstInactiveIndex++;
+
+        return newEnemy;
     }
 
-    public void DestroyEnemy(GameObject p_enemy)
+    public bool DestroyEnemy(short enemyIndex)
     {
+        /* Process of destroying an enemy:
+         * 1. Delete enemy data 
+         * 2. Copy inactive index - 1 to enemy position
+         * 3. Decrement inactive index
+         */
 
+        if (enemyIndex < 0 || enemyIndex >= m_firstInactiveIndex) return false;
+
+
+        GameObject temp = m_enemies[m_firstInactiveIndex - 1];
+        m_enemies[enemyIndex] = m_enemies[m_firstInactiveIndex - 1];
+        m_enemies[m_firstInactiveIndex - 1] = temp;
+        m_firstInactiveIndex--;
+        return true;
     }
 }
