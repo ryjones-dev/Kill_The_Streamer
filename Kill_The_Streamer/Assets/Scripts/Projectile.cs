@@ -22,8 +22,15 @@ public class Projectile : MonoBehaviour {
     {
         if (other.gameObject.CompareTag("Obstacle"))
         {
-            Debug.Log("Collided");
+            //Debug.Log("Collided with wall");
             Destroy(gameObject);
+        }
+
+        if (other.gameObject.CompareTag("Player"))
+        {
+            //Debug.Log("Collided with player");
+            Destroy(gameObject);
+            //Damage code here
         }
     }
 }

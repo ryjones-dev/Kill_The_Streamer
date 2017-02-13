@@ -9,15 +9,20 @@ public class AiShooter : MonoBehaviour {
     //all AI needs using UnityEngine.AI;
     private GameObject player;//the target to seek (player)
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
-    public int multBy = 1;//the number to multiply by what the Ai should run from
+    public float multBy = 1.1f;//the number to multiply by what the Ai should run from
     private bool canAttack = true; //whether or not the AI can attack 
     private float attackCD = 1f;
+    private bool isStopped = false;
+    private float stopCD = 1.5f;
+    private bool isFleeing = false;
+    private float fleeCD = 1.5f;
 
     void Start()
     {
         //finding object with the tag "Player"
         player = GameObject.FindGameObjectWithTag("Player");
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
+        nav.stoppingDistance = 3; //distance the shooter will stop from its destination
 
     }
 
@@ -30,14 +35,62 @@ public class AiShooter : MonoBehaviour {
             //Dodge back and forth a bit (not eradically) upon reach a certain distance from the player
         //Shooter should stay within a certain distance from the player
         float distFromPlayer = Vector3.Distance(player.transform.position, transform.position); //distance from the shooter to the player
-        if(distFromPlayer > 3) //further than 3 units seek
+        if(distFromPlayer <= 3 && !isStopped && !isFleeing) //if at 3 units pause
+        {
+            Debug.Log("In range");
+            nav.Stop();
+            isStopped = true;
+        }
+        //updates the has stopped cooldown to ensure the shooter stays still every once in a while
+        //but only if they are within range
+        else if (isStopped)
+        {
+            Debug.Log("Hitting trip");
+            stopCD -= Time.deltaTime;
+            if (stopCD <= 0)
+            {
+                Debug.Log("Should Flee");
+                isStopped = false;
+                stopCD = 1.5f;
+                Flee();
+                isFleeing = true;
+                fleeCD = 1.5f;
+            }
+        }
+        else if (isFleeing)
+        {
+            fleeCD -= Time.deltaTime;
+            if (fleeCD <= 0)
+            {
+                Debug.Log("Should Stand Still");
+                isFleeing = false;
+                fleeCD = 1.5f;
+                nav.Stop();
+                isStopped = true;
+            }
+        }
+        else if (isStopped && distFromPlayer >= 3)
+        {
+            Debug.Log("Hitting trip");
+            stopCD -= Time.deltaTime;
+            if (stopCD <= 0)
+            {
+                Debug.Log("Should Flee");
+                isStopped = false;
+                stopCD = 1.5f;
+                Seek();
+            }
+        }
+        else
         {
             Seek();
+            //Flee();
         }
-        else if(distFromPlayer < 2) //closer than 2 units flee
-        {
-            Flee();
-        }
+        
+        //if(distFromPlayer < 2) //closer than 2 units flee
+        //{
+        //    Flee();
+        //}
 
         //Shoot for the player
         if (canAttack)
