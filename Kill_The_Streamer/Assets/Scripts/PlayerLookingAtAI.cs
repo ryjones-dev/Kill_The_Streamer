@@ -24,7 +24,6 @@ public class PlayerLookingAtAI : MonoBehaviour {
     /// </summary>
     public void CheckPlayerLooking()
     {
-        RaycastHit hit;
         //getting the forward vector of the player
         Vector3 leftAngle = Quaternion.AngleAxis(-45, transform.up) * transform.forward;
         Vector3 rightAngle = Quaternion.AngleAxis(45, transform.up) * transform.forward;
