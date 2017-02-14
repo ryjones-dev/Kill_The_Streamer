@@ -6,6 +6,8 @@ public class ShieldAi : MonoBehaviour {
 
     // Use this for initialization
     private GameObject player;
+
+    public int shieldHP = 6;//the amount of hits a shield can take
 	void Start () {
         player = GameObject.FindGameObjectWithTag("Player");
 	}
