@@ -22,24 +22,13 @@ public class Projectile : MonoBehaviour {
     {
         if (other.gameObject.CompareTag("Obstacle"))
         {
-<<<<<<< HEAD
             //Debug.Log("Collided with obstacle");
             Destroy(gameObject);
         }
         if (other.gameObject.CompareTag("Player"))
         {
             //Debug.Log("Collided with player");
-=======
-            //Debug.Log("Collided with wall");
->>>>>>> f09986c652f2c37acb19e10571e816e69725d9d6
             Destroy(gameObject);
-        }
-
-        if (other.gameObject.CompareTag("Player"))
-        {
-            //Debug.Log("Collided with player");
-            Destroy(gameObject);
-            //Damage code here
         }
     }
 }
