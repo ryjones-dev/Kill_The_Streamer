@@ -8,7 +8,7 @@ public class EnemyManager : MonoBehaviour
 
     private const int MAX_ENEMIES = 1024; // Maximum number of enemies in the enemy array.
 
-    private GameObject enemyParent;// A parent gameobject to put the enemies in for editor convenience
+    private GameObject m_enemyParent;// A parent gameobject to put the enemies in for editor convenience
     private GameObject[] m_enemies; // Enemy array is sorted so that all active enemies are in front and inactive enemies are in the back.
     private int m_firstInactiveIndex = 0; // Stores the index separating the active and inactive objects. (If 0, there are no active enemies)
 
@@ -37,7 +37,7 @@ public class EnemyManager : MonoBehaviour
             m_enemies = new GameObject[MAX_ENEMIES];
 
             // Creates the enemy parent gameobject
-            enemyParent = new GameObject("Enemies");
+            m_enemyParent = new GameObject("Enemies");
         }
         else
         {
@@ -46,50 +46,50 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public GameObject SpawnEnemy(string p_twitchUsername, string p_command)
+    public static GameObject SpawnEnemy(string p_twitchUsername, string p_command)
     {
         // Gets the appropriate prefab based on the command (prefab name should be the same as the command)
-        if (!m_enemyPrefabMap.ContainsKey(p_command) || m_firstInactiveIndex == 1024) return null;
-        GameObject enemyPrefab = m_enemyPrefabMap[p_command];
+        if (!s_instance.m_enemyPrefabMap.ContainsKey(p_command) || s_instance.m_firstInactiveIndex == 1024) return null;
+        GameObject enemyPrefab = s_instance.m_enemyPrefabMap[p_command];
 
         // Instantiates the enemy prefab
         GameObject newEnemy = Instantiate<GameObject>(enemyPrefab);
 
         // Sets it's name as the twitch user's name that spawned it
-        newEnemy.name = p_twitchUsername + " " + m_firstInactiveIndex;
+        newEnemy.name = p_twitchUsername + " " + s_instance.m_firstInactiveIndex;
 
         // Sets it's parent for editor convenience
-        newEnemy.transform.SetParent(enemyParent.transform);
+        newEnemy.transform.SetParent(s_instance.m_enemyParent.transform);
 
         // Sets the enemy's index so it can be found in the array later
-        newEnemy.GetComponent<EnemyData>().m_Index = m_firstInactiveIndex;
+        newEnemy.GetComponent<EnemyData>().m_Index = s_instance.m_firstInactiveIndex;
 
         // Stores the enemy in the enemy array
-        m_enemies[m_firstInactiveIndex] = newEnemy;
+        s_instance.m_enemies[s_instance.m_firstInactiveIndex] = newEnemy;
 
         // Increments the inactive index
-        m_firstInactiveIndex++;
+        s_instance.m_firstInactiveIndex++;
 
         return newEnemy;
     }
 
-    public bool DestroyEnemy(int enemyIndex)
+    public static bool DestroyEnemy(int enemyIndex)
     {
-        if ((enemyIndex < 0 || enemyIndex >= m_firstInactiveIndex) && m_firstInactiveIndex <= 0) return false;
+        if ((enemyIndex < 0 || enemyIndex >= s_instance.m_firstInactiveIndex) && s_instance.m_firstInactiveIndex <= 0) return false;
 
         // Moves the enemy to delete to a temporary variable
-        GameObject temp = m_enemies[enemyIndex];
-        m_enemies[enemyIndex] = null;
+        GameObject temp = s_instance.m_enemies[enemyIndex];
+        s_instance.m_enemies[enemyIndex] = null;
 
         // Deletes the old enemy
         Destroy(temp);
 
         // Moves the last active enemy to deleted enemy slot
-        m_enemies[enemyIndex] = m_enemies[m_firstInactiveIndex - 1];
-        m_enemies[m_firstInactiveIndex - 1] = null;
+        s_instance.m_enemies[enemyIndex] = s_instance.m_enemies[s_instance.m_firstInactiveIndex - 1];
+        s_instance.m_enemies[s_instance.m_firstInactiveIndex - 1] = null;
 
         // Decrements the first inactive index by 1
-        m_firstInactiveIndex--;
+        s_instance.m_firstInactiveIndex--;
 
         return true;
     }
