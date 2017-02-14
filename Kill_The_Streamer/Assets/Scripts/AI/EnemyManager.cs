@@ -10,7 +10,7 @@ public class EnemyManager : MonoBehaviour
 
     private GameObject enemyParent;// A parent gameobject to put the enemies in for editor convenience
     private GameObject[] m_enemies; // Enemy array is sorted so that all active enemies are in front and inactive enemies are in the back.
-    private short m_firstInactiveIndex = 0; // Stores the index separating the active and inactive objects. (If 0, there are no active enemies)
+    private int m_firstInactiveIndex = 0; // Stores the index separating the active and inactive objects. (If 0, there are no active enemies)
 
     // Singleton instance
     private static EnemyManager s_instance;
@@ -46,33 +46,17 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if(Input.GetButtonDown("Fire1"))
-        {
-            SpawnEnemy("Twitch Username", "ExampleKappa");
-            Debug.Log(enemyParent.transform.childCount);
-        }
-        else if(Input.GetButtonDown("Fire2"))
-        {
-            Debug.Log(DestroyEnemy(0) + ", " + enemyParent.transform.childCount);
-        }
-    }
-
     public GameObject SpawnEnemy(string p_twitchUsername, string p_command)
     {
         // Gets the appropriate prefab based on the command (prefab name should be the same as the command)
-        if (!m_enemyPrefabMap.ContainsKey(p_command)) return null;
+        if (!m_enemyPrefabMap.ContainsKey(p_command) || m_firstInactiveIndex == 1024) return null;
         GameObject enemyPrefab = m_enemyPrefabMap[p_command];
 
-        // Gets the enemy slot to activate
-        GameObject newEnemy = m_enemies[m_firstInactiveIndex];
-
-        // Copies the prefab data to the enemy slot
-        newEnemy = Instantiate<GameObject>(enemyPrefab);
+        // Instantiates the enemy prefab
+        GameObject newEnemy = Instantiate<GameObject>(enemyPrefab);
 
         // Sets it's name as the twitch user's name that spawned it
-        newEnemy.name = p_twitchUsername;
+        newEnemy.name = p_twitchUsername + " " + m_firstInactiveIndex;
 
         // Sets it's parent for editor convenience
         newEnemy.transform.SetParent(enemyParent.transform);
@@ -80,27 +64,33 @@ public class EnemyManager : MonoBehaviour
         // Sets the enemy's index so it can be found in the array later
         newEnemy.GetComponent<EnemyData>().m_Index = m_firstInactiveIndex;
 
+        // Stores the enemy in the enemy array
+        m_enemies[m_firstInactiveIndex] = newEnemy;
+
         // Increments the inactive index
         m_firstInactiveIndex++;
 
         return newEnemy;
     }
 
-    public bool DestroyEnemy(short enemyIndex)
+    public bool DestroyEnemy(int enemyIndex)
     {
-        /* Process of destroying an enemy:
-         * 1. Delete enemy data 
-         * 2. Copy inactive index - 1 to enemy position
-         * 3. Decrement inactive index
-         */
+        if ((enemyIndex < 0 || enemyIndex >= m_firstInactiveIndex) && m_firstInactiveIndex <= 0) return false;
 
-        if (enemyIndex < 0 || enemyIndex >= m_firstInactiveIndex) return false;
+        // Moves the enemy to delete to a temporary variable
+        GameObject temp = m_enemies[enemyIndex];
+        m_enemies[enemyIndex] = null;
 
+        // Deletes the old enemy
+        Destroy(temp);
 
-        GameObject temp = m_enemies[m_firstInactiveIndex - 1];
+        // Moves the last active enemy to deleted enemy slot
         m_enemies[enemyIndex] = m_enemies[m_firstInactiveIndex - 1];
-        m_enemies[m_firstInactiveIndex - 1] = temp;
+        m_enemies[m_firstInactiveIndex - 1] = null;
+
+        // Decrements the first inactive index by 1
         m_firstInactiveIndex--;
+
         return true;
     }
 }
