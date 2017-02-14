@@ -2,11 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public class BooEnemies : MonoBehaviour
+{
+    private GameObject[] m_booGameObjects;
+    private AiSeekFlee[] m_booSeekFleeComponents;
+    private int m_firstInactiveIndex = 0;
+
+    private void Awake()
+    {
+        m_booGameObjects = new GameObject[EnemyManager.MAX_ENEMIES];
+        m_booSeekFleeComponents = new AiSeekFlee[EnemyManager.MAX_ENEMIES];
+
+        for (int i = 0; i < 1024; i++)
+        {
+
+        }
+    }
+}
+
 public class EnemyManager : MonoBehaviour
 {
     private Dictionary<string, GameObject> m_enemyPrefabMap; // A map of the different enemy types. Ex "Kappa" could be mapped to a Kappa enemy prefab.
 
-    private const int MAX_ENEMIES = 1024; // Maximum number of enemies in the enemy array.
+    public const int MAX_ENEMIES = 1024; // Maximum number of enemies in the enemy array.
 
     private GameObject m_enemyParent;// A parent gameobject to put the enemies in for editor convenience
     private GameObject[] m_enemies; // Enemy array is sorted so that all active enemies are in front and inactive enemies are in the back.
@@ -38,6 +56,8 @@ public class EnemyManager : MonoBehaviour
 
             // Creates the enemy parent gameobject
             m_enemyParent = new GameObject("Enemies");
+
+            
         }
         else
         {
@@ -46,20 +66,36 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
-    public static GameObject SpawnEnemy(string p_twitchUsername, string p_command)
+    private void Update()
+    {
+        if(Input.GetButtonDown("Fire1"))
+        {
+            for (int i = 0; i < 1024; i++)
+            {
+                CreateEnemy("", "ExampleKappa", Vector3.zero, Quaternion.identity, true);
+            }
+        }
+
+        if(Input.GetButtonDown("Fire2"))
+        {
+            for (int i = 0; i < 1024; i++)
+            {
+                DestroyEnemy(0);
+            }
+        }
+    }
+
+    public static GameObject CreateEnemy(string p_twitchUsername, string p_command, Vector3 position, Quaternion rotation, bool isActive)
     {
         // Gets the appropriate prefab based on the command (prefab name should be the same as the command)
         if (!s_instance.m_enemyPrefabMap.ContainsKey(p_command) || s_instance.m_firstInactiveIndex == 1024) return null;
         GameObject enemyPrefab = s_instance.m_enemyPrefabMap[p_command];
 
         // Instantiates the enemy prefab
-        GameObject newEnemy = Instantiate<GameObject>(enemyPrefab);
+        GameObject newEnemy = Instantiate<GameObject>(enemyPrefab, position, rotation, s_instance.m_enemyParent.transform);
 
         // Sets it's name as the twitch user's name that spawned it
         newEnemy.name = p_twitchUsername + " " + s_instance.m_firstInactiveIndex;
-
-        // Sets it's parent for editor convenience
-        newEnemy.transform.SetParent(s_instance.m_enemyParent.transform);
 
         // Sets the enemy's index so it can be found in the array later
         newEnemy.GetComponent<EnemyData>().m_Index = s_instance.m_firstInactiveIndex;
@@ -69,6 +105,9 @@ public class EnemyManager : MonoBehaviour
 
         // Increments the inactive index
         s_instance.m_firstInactiveIndex++;
+
+        // Sets the newly spawned enemy to be active or inactive
+        newEnemy.SetActive(isActive);
 
         return newEnemy;
     }
