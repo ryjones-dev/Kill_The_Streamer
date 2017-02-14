@@ -17,25 +17,35 @@ public class AiGhost : MonoBehaviour {
     private GameObject player; //the player
 
     private Vector3 chargeLoc;//the location the ghost will charge to once timer is over
-	private bool seekOut;//seek out and chase player at slow speed
     private bool seekSpot;//tells if ghost has found where to charge
     private bool toCharge;//tells if ghost is ready to charge
+
+    private float playerDistance;//the distance between the ghost and the acutal player object
+
+    public float triggerDistance = 6.0f;//the distance at which the player will be within the ghost's radius
 
 	void Start () {
         player = GameObject.FindGameObjectWithTag("Player");
         toCharge = false;
         seekSpot = false;
-		seekOut = true;
 
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        //if the player is out of range, always seek out slowly the player
-		if (seekOut == true) {
-			Seeking (player.transform.position, startSpeed);
-		}
-		
+        //get the distance between ghost and player
+        playerDistance = Vector3.Distance(player.transform.position, transform.position);
+        //if player is not in distance, seek it out slowly
+        if(playerDistance >triggerDistance)
+        {
+            Seeking(player.transform.position, startSpeed);
+            PlayerLeaves();
+        }
+        //if player is within the triggerdistance, activate charge!
+        else if(playerDistance<= triggerDistance)
+        {
+            ChargePlayer();
+        }	
 		
 	}
 
@@ -90,7 +100,6 @@ public class AiGhost : MonoBehaviour {
     /// </summary>
 	public void ChargePlayer ()
 	{
-        seekOut = false;
             Pause ();
 			if (toCharge == true) {
                 if(seekSpot==false)
@@ -111,7 +120,6 @@ public class AiGhost : MonoBehaviour {
     /// </summary>
    public void PlayerLeaves()
     {
-            seekOut = true;
             toCharge = false;
             seekSpot = false;
             currTimer = 0;
