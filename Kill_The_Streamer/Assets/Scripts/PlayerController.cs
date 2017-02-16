@@ -6,18 +6,19 @@ public class PlayerController : MonoBehaviour
 {
 
     //variables
-    public float speed = 0.8f;
+    
+    public float defaultSpeed = 8.0f;
+    private float speed;
     public bool dash = false;
-    public float dashSpeed = 25.0f;
+    public float dashSpeed = 40.0f;
     public Vector3 velocity = new Vector3(0, 0, 0);
-    public Vector3 maxVelocity = new Vector3 (5,5,5);
     float dashTime = 0.0f;
 
 
     // Use this for initialization
     void Start()
     {
-        
+        speed = defaultSpeed;
     }
 
     // Update is called once per frame
@@ -34,7 +35,7 @@ public class PlayerController : MonoBehaviour
             if (Time.time - dashTime >= 0.5f)
             {
                 dash = false;
-                speed = speed / dashSpeed;
+                speed = defaultSpeed;
             }
         }
         //movement
@@ -60,9 +61,10 @@ public class PlayerController : MonoBehaviour
             tempVelocity += new Vector3(0, 0, -1);
         }
 
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) && dash == false)
+        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && dash == false)
         {
-            speed = speed * dashSpeed;
+            Debug.Log("yo");
+            speed = dashSpeed;
             dash = true;
             dashTime = Time.time;
         }
@@ -75,37 +77,38 @@ public class PlayerController : MonoBehaviour
         velocity += tempVelocity * speed;
 
         //cap the speed
-        if(velocity.x >= maxVelocity.x && dash == false)
+        if(velocity.x >= defaultSpeed && dash == false)
         {
-            velocity.x = maxVelocity.x;
+            velocity.x = defaultSpeed;
         }
 
-        if (velocity.x <= -maxVelocity.x && dash == false)
+        if (velocity.x <= -defaultSpeed && dash == false)
         {
-            velocity.x = -maxVelocity.x;
+            velocity.x = -defaultSpeed;
         }
 
-        if (velocity.y >= maxVelocity.y && dash == false)
+        if (velocity.y >= defaultSpeed && dash == false)
         {
-            velocity.y = maxVelocity.y;
+            velocity.y = defaultSpeed;
         }
 
-        if (velocity.y <= -maxVelocity.y && dash == false)
+        if (velocity.y <= -defaultSpeed && dash == false)
         {
-            velocity.y = -maxVelocity.y;
+            velocity.y = -defaultSpeed;
         }
 
-        if (velocity.z >= maxVelocity.z && dash == false)
+        if (velocity.z >= defaultSpeed && dash == false)
         {
-            velocity.z = maxVelocity.z;
+            velocity.z = defaultSpeed;
         }
 
-        if (velocity.z <= -maxVelocity.z && dash == false)
+        if (velocity.z <= -defaultSpeed && dash == false)
         {
-            velocity.z = -maxVelocity.z;
+            velocity.z = -defaultSpeed;
         }
 
         transform.position += velocity * Time.deltaTime;
+        transform.forward = (cursorPos - transform.position).normalized;
         velocity = velocity * 0.8f;
         //shooting
         if (Input.GetMouseButtonDown(0))
