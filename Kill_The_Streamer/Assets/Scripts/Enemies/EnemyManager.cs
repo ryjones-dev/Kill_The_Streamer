@@ -41,25 +41,6 @@ public class EnemyManager : MonoBehaviour
         BooEnemyManager.Init(m_enemyParent.transform);
     }
 
-    private void Update()
-    {
-        if(Input.GetButtonDown("Fire1"))
-        {
-            for (int i = 0; i < 1024; i++)
-            {
-                CreateEnemy(EnemyType.BooEnemy, "ExampleKappa", Vector3.zero);
-            }
-        }
-
-        if(Input.GetButtonDown("Fire2"))
-        {
-            for (int i = 0; i < 1024; i++)
-            {
-                DestroyEnemy(EnemyType.BooEnemy, 0);
-            }
-        }
-    }
-
     public static GameObject CreateEnemy(EnemyType p_enemyType, string p_twitchUsername, Vector3 p_position)
     {
         switch(p_enemyType)
