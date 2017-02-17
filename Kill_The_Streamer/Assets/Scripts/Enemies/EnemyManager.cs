@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public enum EnemyType
@@ -15,12 +16,19 @@ public class EnemyManager : MonoBehaviour
     // Singleton instance
     private static EnemyManager s_instance;
 
+    public static Queue<EnemyNetworkInfo> s_enemyQueue;
+    public static Mutex s_enemyQueueMut;
+
+
     private void Awake()
     {
         // Sets up the singleton
         if(s_instance == null)
         {
             s_instance = this;
+
+            s_enemyQueue = new Queue<EnemyNetworkInfo>();
+            s_enemyQueueMut = new Mutex();
 
             // Creates the enemy parent gameobject
             m_enemyParent = new GameObject("Enemies");
@@ -43,9 +51,12 @@ public class EnemyManager : MonoBehaviour
 
     public static GameObject CreateEnemy(EnemyType p_enemyType, string p_twitchUsername, Vector3 p_position)
     {
+
+
         switch(p_enemyType)
         {
             case EnemyType.BooEnemy:
+
                 return BooEnemyManager.ActivateNextEnemy(p_twitchUsername, p_position);
 
             default:
@@ -65,6 +76,23 @@ public class EnemyManager : MonoBehaviour
             default:
                 Debug.Log("Invalid enemy type to destroy: " + p_enemyType);
                 return false;
+        }
+    }
+
+    private void Update()
+    {
+        if(s_enemyQueue.Count > 0)
+        {
+            Debug.Log("Yo");
+            s_enemyQueueMut.WaitOne();
+
+            while (s_enemyQueue.Count > 0)
+            {
+                EnemyNetworkInfo info = s_enemyQueue.Dequeue();
+                CreateEnemy(info.type, info.name, info.position);
+            }
+
+            s_enemyQueueMut.ReleaseMutex();
         }
     }
 }

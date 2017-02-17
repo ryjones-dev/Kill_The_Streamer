@@ -45,22 +45,22 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.W) && dash == false)
         {
 
-           tempVelocity += new Vector3(1, 0, 0);
+           tempVelocity += new Vector3(0, 0, 1);
         }
 
         if (Input.GetKey(KeyCode.A) && dash == false)
         {
-            tempVelocity += new Vector3(0, 0, 1);
+            tempVelocity += new Vector3(-1, 0, 0);
         }
 
         if (Input.GetKey(KeyCode.S) && dash == false)
         {
-            tempVelocity += new Vector3(-1, 0, 0);
+            tempVelocity += new Vector3(0, 0, -1);
         }
 
         if (Input.GetKey(KeyCode.D) && dash == false)
         {
-            tempVelocity += new Vector3(0, 0, -1);
+            tempVelocity += new Vector3(1, 0, 0);
         }
 
         if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && dash == false)

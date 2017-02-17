@@ -7,7 +7,12 @@ using System.Threading;
 using System.Text;
 using UnityEngine;
 
-
+public struct EnemyNetworkInfo
+{
+    public string name;
+    public EnemyType type;
+    public Vector3 position;
+}
 
 public class NetworkManager : MonoBehaviour {
 
@@ -114,6 +119,23 @@ public class NetworkManager : MonoBehaviour {
                     if (inputLength < output.Length)
                     {
                         message = output.Substring(inputLength);
+                        Debug.Log(message);
+                        if(message.StartsWith("Kappa"))
+                        {
+                            Debug.Log("trying to create enemy");
+                            EnemyNetworkInfo info = new EnemyNetworkInfo();
+                            info.name = name;
+                            info.type = EnemyType.BooEnemy;
+                            info.position = new Vector3(0, 0, -3);
+                            EnemyManager.s_enemyQueueMut.WaitOne();
+                            EnemyManager.s_enemyQueue.Enqueue(info);
+                            EnemyManager.s_enemyQueueMut.ReleaseMutex();
+
+                        }
+                        else
+                        {
+                            Debug.Log("no");
+                        }
 
 
                         Debug.Log(name + ": " + message);
