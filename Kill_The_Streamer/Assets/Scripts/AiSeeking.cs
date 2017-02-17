@@ -12,6 +12,8 @@ public class AiSeeking : MonoBehaviour {
     private ShieldAi shield;//the air to detect if the shield is up to follow
     private GameObject shieldGameObject;//the gameobject of the shield in order to detect which one is closest
 
+    public float maxDist;//the max distance away from the "leader"
+
 	void Start () {
         //finding object with the tag "Player"
         player = GameObject.FindGameObjectWithTag("Player");
@@ -24,8 +26,9 @@ public class AiSeeking : MonoBehaviour {
         // Used for seeking out and going to the player.
         // Based on NavMesh.
         // Changing speed and acceleration can be found in inspector.
-        nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
-        ClosestShield();
+        //nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
+        Seek();
+        //ClosestShield();
 
     }
 
@@ -45,6 +48,7 @@ public class AiSeeking : MonoBehaviour {
     /// </summary>
     public void ClosestShield()
     {
+        /*
         //check to make sure there is atleast one shield in the scene
         if(GameObject.FindGameObjectsWithTag("Shield")!=null)
         {
@@ -65,7 +69,16 @@ public class AiSeeking : MonoBehaviour {
             nav.SetDestination(shieldGameObject.transform.position);
 
         }
+        */
         
 
     }
+
+    public void LeaderFollowing()
+    {
+        //float dist = Vector3.Distance(this.transform.position, shieldGameObject.transform.position);
+
+        
+    }
+
 }
