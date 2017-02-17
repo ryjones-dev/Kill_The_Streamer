@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
     public bool dash = false;
     public float dashSpeed = 40.0f;
     public Vector3 velocity = new Vector3(0, 0, 0);
+    public GameObject bulletPrefab;
+    public float bulletSpeed = 10.0f;
     float dashTime = 0.0f;
 
 
@@ -63,7 +65,6 @@ public class PlayerController : MonoBehaviour
 
         if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && dash == false)
         {
-            Debug.Log("yo");
             speed = dashSpeed;
             dash = true;
             dashTime = Time.time;
@@ -114,6 +115,8 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             //when it will fire
+            GameObject bullet = (GameObject)Instantiate(bulletPrefab, new Vector3(this.transform.position.x, 0, this.transform.position.z), Quaternion.identity);
+            bullet.GetComponent<Rigidbody>().velocity = transform.forward * bulletSpeed;
         }
     }
 }
