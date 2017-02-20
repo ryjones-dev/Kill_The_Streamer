@@ -11,8 +11,10 @@ public class AiSeeking : MonoBehaviour {
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
     private ShieldAi shield;//the air to detect if the shield is up to follow
     private GameObject shieldGameObject;//the gameobject of the shield in order to detect which one is closest
-
+    private NavMeshAgent leaderNav;//the navmesh for the leader (shield)
     public float maxDist;//the max distance away from the "leader"
+
+    public float behindLeader;
 
 	void Start () {
         //finding object with the tag "Player"
@@ -28,7 +30,7 @@ public class AiSeeking : MonoBehaviour {
         // Changing speed and acceleration can be found in inspector.
         //nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
         Seek();
-        //ClosestShield();
+        ClosestShield();
 
     }
 
@@ -48,7 +50,7 @@ public class AiSeeking : MonoBehaviour {
     /// </summary>
     public void ClosestShield()
     {
-        /*
+        
         //check to make sure there is atleast one shield in the scene
         if(GameObject.FindGameObjectsWithTag("Shield")!=null)
         {
@@ -62,21 +64,24 @@ public class AiSeeking : MonoBehaviour {
                 if(dist < closeDist)
                 {
                     closeDist = dist;
-                    shieldGameObject = closeObject;
+                    shieldGameObject = closeObject.transform.parent.gameObject;
+                    leaderNav = shieldGameObject.GetComponent<NavMeshAgent>();
                 }
 
             }
-            nav.SetDestination(shieldGameObject.transform.position);
+            nav.SetDestination(LeaderFollowing());
 
         }
-        */
+        
         
 
     }
 
-    public void LeaderFollowing()
+   private Vector3 LeaderFollowing()
     {
         //float dist = Vector3.Distance(this.transform.position, shieldGameObject.transform.position);
+        Vector3 leaderPos = shieldGameObject.transform.position + (-leaderNav.velocity).normalized * behindLeader;
+        return leaderPos;
 
         
     }
