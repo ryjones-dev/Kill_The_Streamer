@@ -12,15 +12,23 @@ public class AiSeeking : MonoBehaviour {
     private ShieldAi shield;//the air to detect if the shield is up to follow
     private GameObject shieldGameObject;//the gameobject of the shield in order to detect which one is closest
     private NavMeshAgent leaderNav;//the navmesh for the leader (shield)
-    public float maxDist;//the max distance away from the "leader"
+    private float maxDist;//the distance behind the leader the UI will go to
+    private bool splitOff;//tells if the UI should split off away from the shielder and seek out the player instead
 
-    public float behindLeader;
+    private float closeShield;//gives the closest shield dist
+
+    public float distanceAwayPlayer;//gives the distance away from player before the seeks will seek out the player and ignore shielder
+
 
 	void Start () {
         //finding object with the tag "Player"
         player = GameObject.FindGameObjectWithTag("Player");
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
-		
+        closeShield = 100.00f;
+        //give seeker a random range to be away from the leader
+        maxDist = Random.Range(1.5f, 5.0f);
+        splitOff = true;//seek out player
+
 	}
 	
 	// Update is called once per frame
@@ -29,7 +37,10 @@ public class AiSeeking : MonoBehaviour {
         // Based on NavMesh.
         // Changing speed and acceleration can be found in inspector.
         //nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
-        Seek();
+        if (splitOff == true)
+        {
+            Seek();
+        }
         ClosestShield();
 
     }
@@ -52,24 +63,51 @@ public class AiSeeking : MonoBehaviour {
     {
         
         //check to make sure there is atleast one shield in the scene
-        if(GameObject.FindGameObjectsWithTag("Shield")!=null)
+        if(GameObject.FindGameObjectsWithTag("Shielder")!=null)
         {
-            GameObject[] shieldsInLevel = GameObject.FindGameObjectsWithTag("Shield");
-            float closeDist = 1000.0f;//setting it to some arbitrarily high num to then change
-
-            foreach(GameObject closeObject in shieldsInLevel)
+            GameObject[] shieldsInLevel = GameObject.FindGameObjectsWithTag("Shielder");
+            float distance = 200.0f;
+            float playerDist = Vector3.Distance(this.transform.position, player.transform.position);
+            if (playerDist >= distanceAwayPlayer)
             {
-                float dist = Vector3.Distance(this.transform.position, closeObject.transform.position);
-
-                if(dist < closeDist)
+                for (int i =0; i < shieldsInLevel.Length;i++)
                 {
-                    closeDist = dist;
-                    shieldGameObject = closeObject.transform.parent.gameObject;
-                    leaderNav = shieldGameObject.GetComponent<NavMeshAgent>();
-                }
+                    distance = Vector3.Distance(this.transform.position,shieldsInLevel[i].transform.position);
+                    //Debug.Log("distance at:" + i + " dist "+distance);
 
+                    if (distance <= 15.0f && shieldsInLevel[i].activeSelf==true)
+                    {
+
+                        if (distance < closeShield)
+                        {
+                            Debug.Log(distance);
+                            shieldGameObject = shieldsInLevel[i];
+                            leaderNav = shieldsInLevel[i].gameObject.GetComponent<NavMeshAgent>();
+                            splitOff = false;
+                            closeShield = distance;
+                        }
+                    }
+                    else
+                    {
+                        splitOff = true;
+                    }
+
+                }
+                if(distance > 15.0f)
+                {
+                    closeShield = 200.0f;
+                    splitOff = true;
+                }
             }
-            nav.SetDestination(LeaderFollowing());
+            else
+            {
+                splitOff = true;
+            }
+            if (splitOff == false)
+            {
+                nav.SetDestination(LeaderFollowing());
+            }
+            Debug.Log(splitOff);
 
         }
         
@@ -80,7 +118,7 @@ public class AiSeeking : MonoBehaviour {
    private Vector3 LeaderFollowing()
     {
         //float dist = Vector3.Distance(this.transform.position, shieldGameObject.transform.position);
-        Vector3 leaderPos = shieldGameObject.transform.position + (-leaderNav.velocity).normalized * behindLeader;
+        Vector3 leaderPos = shieldGameObject.transform.position + (-leaderNav.velocity).normalized * maxDist;
         return leaderPos;
 
         
