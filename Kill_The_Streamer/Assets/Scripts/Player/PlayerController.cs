@@ -12,15 +12,24 @@ public class PlayerController : MonoBehaviour
     public bool dash = false;
     public float dashSpeed = 40.0f;
     public Vector3 velocity = new Vector3(0, 0, 0);
-    public GameObject bulletPrefab;
-    public float bulletSpeed = 10.0f;
     float dashTime = 0.0f;
+
+    public GameObject m_pistolPrefab;
+
+    public Weapon m_primaryWeapon;
+    public Weapon m_secondaryWeapon;
 
 
     // Use this for initialization
     void Start()
     {
         speed = defaultSpeed;
+
+        GameObject primaryWeapon = (GameObject)Instantiate(m_pistolPrefab);
+        m_primaryWeapon = primaryWeapon.GetComponent<WeaponPistol>();
+        m_primaryWeapon.m_held = true;
+
+        m_secondaryWeapon = null;
     }
 
     // Update is called once per frame
@@ -112,11 +121,9 @@ public class PlayerController : MonoBehaviour
         transform.forward = (cursorPos - transform.position).normalized;
         velocity = velocity * 0.8f;
         //shooting
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
-            //when it will fire
-            GameObject bullet = (GameObject)Instantiate(bulletPrefab, new Vector3(this.transform.position.x, 0, this.transform.position.z), Quaternion.identity);
-            bullet.GetComponent<Rigidbody>().velocity = transform.forward * bulletSpeed;
+            m_primaryWeapon.Fire(this.transform.position, this.transform.forward);
         }
     }
 }

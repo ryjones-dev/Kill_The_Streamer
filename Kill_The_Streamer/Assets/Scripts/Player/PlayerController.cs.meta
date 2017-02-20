@@ -1,10 +1,14 @@
 fileFormatVersion: 2
 guid: 67c6f9aa9a6287e439f835a9280ce0a5
-timeCreated: 1486147753
-licenseType: Free
+timeCreated: 1487629432
+licenseType: Pro
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - m_pistolPrefab: {fileID: 1158600138777472, guid: 5bec654217a6be4498534f5b9ca3f88c,
+      type: 2}
+  - m_primaryWeapon: {instanceID: 0}
+  - m_secondaryWeapon: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
