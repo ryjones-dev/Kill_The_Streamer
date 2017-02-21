@@ -18,6 +18,9 @@ public class AiSeekFlee : MonoBehaviour {
 
     public int timeResetSeek;//tells how long after the player stops looking at the enemy until it should go back to seeking (should be small. Just as a buffer time)
 
+    public float rangeView = 10.0f;//the range of view that the player can see to
+    
+
 
     void Start () {
         //finding object with the tag "Player"
@@ -35,6 +38,7 @@ public class AiSeekFlee : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        CheckPlayerLooking();
         if(inPlayerSight==true)
         {
             Flee();
@@ -59,8 +63,48 @@ public class AiSeekFlee : MonoBehaviour {
 
     public void Flee()
     {
-        Vector3 runTo = multBy * (transform.position - player.transform.position);
+        transform.rotation = Quaternion.LookRotation(transform.position - player.transform.position);
+        Vector3 runTo = multBy * (transform.position + player.transform.position);
+
+        NavMesh hitMesh;
+
+        //NavMesh.SamplePosition(runTo, out hitMesh, 1, );
+        Debug.Log(runTo);
         nav.SetDestination(runTo);
     }
 
-}
+    public void CheckPlayerLooking()
+    {
+        //getting the forward vector of the player
+        Vector3 leftAngle = Quaternion.AngleAxis(-45, player.transform.up) * player.transform.forward;
+        Vector3 rightAngle = Quaternion.AngleAxis(45, player.transform.up) *player.transform.forward;
+        Debug.DrawLine(player.transform.position + rightAngle * 10, player.transform.position, Color.cyan);
+        Debug.DrawLine(player.transform.position + leftAngle * 10, player.transform.position, Color.cyan);
+
+
+
+        Vector3 playerToEnemy = transform.position - player.transform.position ;
+        bool positiveLeft = (Vector3.Dot(leftAngle, playerToEnemy) >= 0);
+        //Debug.DrawLine(transform.position, Vector3.Dot(leftAngle, playerToEnemy));
+        bool positiveRight = (Vector3.Dot(rightAngle, playerToEnemy) >= 0);
+        if (positiveLeft && positiveRight)
+        {
+            //get distance
+            float distance = Vector3.Distance(transform.position, player.transform.position);
+            if (distance <= rangeView)
+            {
+                //runaway
+                inPlayerSight = true;
+            }
+            else
+            {
+                inPlayerSight = false;
+            }
+        }
+        else
+        {
+            inPlayerSight = false;
+        }
+    }
+        
+    }

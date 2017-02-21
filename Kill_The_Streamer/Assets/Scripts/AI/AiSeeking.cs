@@ -37,11 +37,11 @@ public class AiSeeking : MonoBehaviour {
         // Based on NavMesh.
         // Changing speed and acceleration can be found in inspector.
         //nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
+        ClosestShield();
         if (splitOff == true)
         {
             Seek();
         }
-        ClosestShield();
 
     }
 
@@ -68,8 +68,10 @@ public class AiSeeking : MonoBehaviour {
             GameObject[] shieldsInLevel = GameObject.FindGameObjectsWithTag("Shielder");
             float distance = 200.0f;
             float playerDist = Vector3.Distance(this.transform.position, player.transform.position);
+            //Debug.Log(playerDist);
             if (playerDist >= distanceAwayPlayer)
             {
+               // Debug.Log("Away from player");
                 for (int i =0; i < shieldsInLevel.Length;i++)
                 {
                     distance = Vector3.Distance(this.transform.position,shieldsInLevel[i].transform.position);
@@ -80,7 +82,7 @@ public class AiSeeking : MonoBehaviour {
 
                         if (distance < closeShield)
                         {
-                            Debug.Log(distance);
+                            //Debug.Log(distance);
                             shieldGameObject = shieldsInLevel[i];
                             leaderNav = shieldsInLevel[i].gameObject.GetComponent<NavMeshAgent>();
                             splitOff = false;
@@ -107,11 +109,11 @@ public class AiSeeking : MonoBehaviour {
             {
                 nav.SetDestination(LeaderFollowing());
             }
-            Debug.Log(splitOff);
+            //Debug.Log(splitOff);
 
         }
-        
-        
+
+       // Collider[] shieldColliders = Physics.OverlapSphere(transform.position, 15, 1 << LayerMask.NameToLayer("Shield"));
 
     }
 
