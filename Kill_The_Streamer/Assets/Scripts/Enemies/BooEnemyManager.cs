@@ -66,7 +66,7 @@ public class BooEnemyManager : MonoBehaviour
         // Sets the gameobject's name to the twich username
         boo.name = p_twitchUsername;
 
-        // Sets the position of the boo
+        // Sets the position of the enemy
         boo.transform.position = p_position;
 
         // Enables the gameobject
@@ -111,5 +111,16 @@ public class BooEnemyManager : MonoBehaviour
         s_instance.m_firstInactiveIndex--;
 
         return true;
+    }
+
+    public static GameObject GetActiveEnemy(int p_index)
+    {
+        if(p_index < 0 || p_index >= s_instance.m_firstInactiveIndex)
+        {
+            Debug.Log("Invalid index " + p_index + " in BooEnemy array");
+            return null;
+        }
+
+        return s_instance.m_booGameObjects[p_index];
     }
 }

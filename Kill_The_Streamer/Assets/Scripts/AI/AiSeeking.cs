@@ -69,7 +69,7 @@ public class AiSeeking : MonoBehaviour {
                 }
 
             }
-            nav.SetDestination(LeaderFollowing());
+            //nav.SetDestination(LeaderFollowing());
 
         }
         

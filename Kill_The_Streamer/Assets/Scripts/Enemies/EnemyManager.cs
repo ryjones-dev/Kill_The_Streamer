@@ -6,6 +6,8 @@ using UnityEngine;
 public enum EnemyType
 {
     BooEnemy,
+    SeekEnemy,
+    GhostEnemy
 }
 
 public class EnemyManager : MonoBehaviour
@@ -47,17 +49,22 @@ public class EnemyManager : MonoBehaviour
     private void InitEnemyTypes()
     {
         BooEnemyManager.Init(m_enemyParent.transform);
+        SeekEnemyManager.Init(m_enemyParent.transform);
+        GhostEnemyManager.Init(m_enemyParent.transform);
     }
 
     public static GameObject CreateEnemy(EnemyType p_enemyType, string p_twitchUsername, Vector3 p_position)
     {
-
-
         switch(p_enemyType)
         {
             case EnemyType.BooEnemy:
-
                 return BooEnemyManager.ActivateNextEnemy(p_twitchUsername, p_position);
+
+            case EnemyType.SeekEnemy:
+                return SeekEnemyManager.ActivateNextEnemy(p_twitchUsername, p_position);
+
+            case EnemyType.GhostEnemy:
+                return GhostEnemyManager.ActivateNextEnemy(p_twitchUsername, p_position);
 
             default:
                 Debug.Log("Invalid enemy type to spawn: " + p_enemyType);
@@ -73,9 +80,33 @@ public class EnemyManager : MonoBehaviour
                 BooEnemyManager.DeactivateEnemy(p_enemyIndex);
                 return true;
 
+            case EnemyType.SeekEnemy:
+                return SeekEnemyManager.DeactivateEnemy(p_enemyIndex);
+
+            case EnemyType.GhostEnemy:
+                return GhostEnemyManager.DeactivateEnemy(p_enemyIndex);
+
             default:
                 Debug.Log("Invalid enemy type to destroy: " + p_enemyType);
                 return false;
+        }
+    }
+
+    public static GameObject GetEnemy(EnemyType p_enemyType, int p_index)
+    {
+        switch(p_enemyType)
+        {
+            case EnemyType.BooEnemy:
+                return BooEnemyManager.GetActiveEnemy(p_index);
+
+            case EnemyType.SeekEnemy:
+                return SeekEnemyManager.GetActiveEnemy(p_index);
+
+            case EnemyType.GhostEnemy:
+                return GhostEnemyManager.GetActiveEnemy(p_index);
+
+            default:
+                return null;
         }
     }
 
@@ -83,7 +114,6 @@ public class EnemyManager : MonoBehaviour
     {
         if(s_enemyQueue.Count > 0)
         {
-            Debug.Log("Yo");
             s_enemyQueueMut.WaitOne();
 
             while (s_enemyQueue.Count > 0)
