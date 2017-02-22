@@ -63,13 +63,7 @@ public class AiSeekFlee : MonoBehaviour {
 
     public void Flee()
     {
-        transform.rotation = Quaternion.LookRotation(transform.position - player.transform.position);
-        Vector3 runTo = multBy * (transform.position + player.transform.position);
-
-        NavMesh hitMesh;
-
-        //NavMesh.SamplePosition(runTo, out hitMesh, 1, );
-        Debug.Log(runTo);
+        Vector3 runTo = multBy * (transform.position - player.transform.position);
         nav.SetDestination(runTo);
     }
 
