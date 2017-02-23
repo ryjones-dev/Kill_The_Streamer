@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class WeaponPistol : Weapon
 {
-    public const float PISTOL_FIRE_RATE = 0.1f;
+    public const float PISTOL_FIRE_RATE = 0.4f;
     public const int PISTOL_MAX_AMMO = -1;
     public const string PISTOL_NAME = "Pistol";
 
@@ -15,7 +15,7 @@ public class WeaponPistol : Weapon
     /// <summary>
     /// Speed the bullet travels.
     /// </summary>
-    public const float BULLET_SPEED = 10.0f;
+    public const float BULLET_SPEED = 30.0f;
 
     /// <summary>
     /// Rate of fire
