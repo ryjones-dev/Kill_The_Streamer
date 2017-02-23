@@ -110,8 +110,22 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
+    public static GameObject[] GetAllActiveEnemies(EnemyType p_enemyType, out int p_firstInactiveIndex)
+    {
+        switch(p_enemyType)
+        {
+            case EnemyType.BooEnemy:
+                return BooEnemyManager.GetAllEnemies(out p_firstInactiveIndex);
+            default:
+                p_firstInactiveIndex = -1;
+                return null;
+        }
+    }
+
     private void Update()
     {
+        GameObject enemy = EnemyManager.GetEnemy(EnemyType.BooEnemy, 0);
+
         if(s_enemyQueue.Count > 0)
         {
             s_enemyQueueMut.WaitOne();

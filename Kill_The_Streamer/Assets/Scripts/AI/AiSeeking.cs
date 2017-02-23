@@ -30,7 +30,7 @@ public class AiSeeking : MonoBehaviour {
         // Changing speed and acceleration can be found in inspector.
         //nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
         Seek();
-        ClosestShield();
+        //ClosestShield();
 
     }
 

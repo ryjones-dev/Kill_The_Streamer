@@ -14,13 +14,14 @@ public struct EnemyNetworkInfo
     public Vector3 position;
 }
 
-public class NetworkManager : MonoBehaviour {
+public class NetworkManager : MonoBehaviour
+{
 
     public static NetworkManager s_manager;
     public static string s_oauth; //Oauth of the bot listening to the channel
     public static string s_username; //Username of the bot listening to the channel
     public static string s_channel; //Channel being listened to.
-	public bool DISABLE; //For debugging purposes, allows you to disable the network manager.
+    public bool DISABLE; //For debugging purposes, allows you to disable the network manager.
 
     public Socket m_socket;
     public bool m_connected;
@@ -28,36 +29,31 @@ public class NetworkManager : MonoBehaviour {
 
     private bool ConnectToServer()
     {
-            Debug.Log("Connnecting...");
-            // Connects to twitch
-            IPHostEntry ipHostInfo = Dns.GetHostEntry("irc.twitch.tv");
-            Debug.Log(ipHostInfo.AddressList[0].ToString());
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint remoteEP = new IPEndPoint(ipAddress, 6667);
+        Debug.Log("Connnecting...");
+        // Connects to twitch
+        IPHostEntry ipHostInfo = Dns.GetHostEntry("irc.twitch.tv");
+        Debug.Log(ipHostInfo.AddressList[0].ToString());
+        IPAddress ipAddress = ipHostInfo.AddressList[0];
+        IPEndPoint remoteEP = new IPEndPoint(ipAddress, 6667);
 
-            m_socket = new Socket(AddressFamily.InterNetwork,
-                SocketType.Stream, ProtocolType.Tcp);
-
-			
-            m_socket.Connect(remoteEP);
-
-            Debug.Log("Connected");
-            m_connected = true;
-
-            //Handshake to authenticate.
-            SendData("PASS " + s_oauth);
-            SendData("NICK " + s_username);
-            SendData("USER " + s_username + " 8 * :TwitchLink Client");
-
-            //Connect to the channel
-            SendData("JOIN #" + s_channel);
-            m_thread = new Thread(new ThreadStart(Listener));
-            m_thread.Start();
+        m_socket = new Socket(AddressFamily.InterNetwork,
+            SocketType.Stream, ProtocolType.Tcp);
 
 
-        
+        m_socket.Connect(remoteEP);
 
+        Debug.Log("Connected");
+        m_connected = true;
 
+        //Handshake to authenticate.
+        SendData("PASS " + s_oauth);
+        SendData("NICK " + s_username);
+        SendData("USER " + s_username + " 8 * :TwitchLink Client");
+
+        //Connect to the channel
+        SendData("JOIN #" + s_channel);
+        m_thread = new Thread(new ThreadStart(Listener));
+        m_thread.Start();
 
         return false;
     }
@@ -98,7 +94,8 @@ public class NetworkManager : MonoBehaviour {
             output = Encoding.ASCII.GetString(bytes, 0, bytesRec);
             //Debug.Log(output);
             // Handle PING case
-            if (output.StartsWith("PING")){
+            if (output.StartsWith("PING"))
+            {
                 s_manager.SendData("PONG :tmi.twitch.tv");
             }
             else
@@ -112,10 +109,8 @@ public class NetworkManager : MonoBehaviour {
                     if (inputLength < output.Length)
                     {
                         message = output.Substring(inputLength);
-                        Debug.Log(message);
-                        if(message.StartsWith("Kappa"))
+                        if (message.StartsWith("Kappa"))
                         {
-                            Debug.Log("trying to create enemy");
                             EnemyNetworkInfo info = new EnemyNetworkInfo();
                             info.name = name;
                             info.type = EnemyType.BooEnemy;
@@ -125,68 +120,70 @@ public class NetworkManager : MonoBehaviour {
                             EnemyManager.s_enemyQueueMut.ReleaseMutex();
 
                         }
-                        else
-                        {
-                            Debug.Log("no");
-                        }
-
 
                         Debug.Log(name + ": " + message);
                     }
 
                 }
-                
-
             }
         }
     }
 
     public void Disconnect()
     {
-        
+
         m_socket.Shutdown(SocketShutdown.Both);
         m_socket.Close();
-		Debug.Log ("Disconnected.");
+        Debug.Log("Disconnected.");
     }
 
     // Use this for initialization
-    void Start () {
-		if (!DISABLE) {
-			try {
+    void Start()
+    {
+        if (!DISABLE)
+        {
+            try
+            {
 
-				string[] config;
-				config = System.IO.File.ReadAllLines ("config.txt");
-				s_oauth = "oauth:" + config [0].Trim (' ').Remove (0, 7);//"oauth: " - 7 characters
-				s_username = config [1].Trim (' ').Remove (0, 9).ToLower ();//"botname: " - 9 characters
-				s_channel = config [2].Trim (' ').Remove (0, 9).ToLower ();//"channel: " - 9 characters
-	        
-				if (!s_manager) {
-					s_manager = this;
-				}
+                string[] config;
+                config = System.IO.File.ReadAllLines("config.txt");
+                s_oauth = "oauth:" + config[0].Trim(' ').Remove(0, 7);//"oauth: " - 7 characters
+                s_username = config[1].Trim(' ').Remove(0, 9).ToLower();//"botname: " - 9 characters
+                s_channel = config[2].Trim(' ').Remove(0, 9).ToLower();//"channel: " - 9 characters
 
-				ConnectToServer ();
-	        
-			} catch (Exception e) {
-				Debug.Log ("Error: " + e);
-			}
-		}
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+                if (!s_manager)
+                {
+                    s_manager = this;
+                }
+
+                ConnectToServer();
+
+            }
+            catch (Exception e)
+            {
+                Debug.Log("Error: " + e);
+            }
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 
     void OnApplicationQuit()
     {
-		if (m_thread.IsAlive) {
-			m_thread.Abort ();
-			Debug.Log ("Thread Aborted");
-		}
-		if (m_connected) {
-			Disconnect ();
-		}
-		EnemyManager.s_enemyQueueMut.Close ();
+        if (m_thread.IsAlive)
+        {
+            m_thread.Abort();
+            Debug.Log("Thread Aborted");
+        }
+        if (m_connected)
+        {
+            Disconnect();
+        }
+        EnemyManager.s_enemyQueueMut.Close();
 
     }
 }

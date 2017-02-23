@@ -123,4 +123,10 @@ public class BooEnemyManager : MonoBehaviour
 
         return s_instance.m_booGameObjects[p_index];
     }
+
+    public static GameObject[] GetAllEnemies(out int p_firstInactiveIndex)
+    {
+        p_firstInactiveIndex = s_instance.m_firstInactiveIndex;
+        return s_instance.m_booGameObjects;
+    }
 }
