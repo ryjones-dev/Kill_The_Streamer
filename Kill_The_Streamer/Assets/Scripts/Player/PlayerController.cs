@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
             tempVelocity += new Vector3(1, 0, 0);
         }
 
-        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && dash == false)
+        if ((Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift)) && dash == false)
         {
             speed = dashSpeed;
             dash = true;
