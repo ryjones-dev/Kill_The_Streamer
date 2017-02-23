@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     float dashTime = 0.0f;
 
     public GameObject m_pistolPrefab;
+	public GameObject m_weaponRenderer;
 
     public Weapon m_primaryWeapon;
     public Weapon m_secondaryWeapon;
@@ -24,6 +25,8 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         speed = defaultSpeed;
+
+		m_weaponRenderer = this.GetComponentInChildren<WeaponRotation> ().gameObject;
 
         GameObject primaryWeapon = (GameObject)Instantiate(m_pistolPrefab);
         m_primaryWeapon = primaryWeapon.GetComponent<WeaponPistol>();
@@ -123,7 +126,7 @@ public class PlayerController : MonoBehaviour
         //shooting
         if (Input.GetMouseButton(0))
         {
-            m_primaryWeapon.Fire(this.transform.position, this.transform.forward);
+			m_primaryWeapon.Fire(m_weaponRenderer.transform.position, this.transform.forward);
         }
     }
 }
