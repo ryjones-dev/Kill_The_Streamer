@@ -108,9 +108,7 @@ public class NetworkManager : MonoBehaviour
                             info.username = name;
                             info.command = message.Substring(1);
 
-                            CommandInterpreter.s_commandQueueMut.WaitOne();
-                            CommandInterpreter.s_commandQueue.Enqueue(info);
-                            CommandInterpreter.s_commandQueueMut.ReleaseMutex();
+                            CommandInterpreter.AddCommand(info);
                         }
 
                         Debug.Log(name + ": " + message);
