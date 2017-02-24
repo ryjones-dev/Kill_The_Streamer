@@ -18,10 +18,6 @@ public class EnemyManager : MonoBehaviour
     // Singleton instance
     private static EnemyManager s_instance;
 
-    public static Queue<EnemyNetworkInfo> s_enemyQueue;
-    public static Mutex s_enemyQueueMut;
-
-
     private void Awake()
     {
         // Sets up the singleton
@@ -29,15 +25,11 @@ public class EnemyManager : MonoBehaviour
         {
             s_instance = this;
 
-            s_enemyQueue = new Queue<EnemyNetworkInfo>();
-            s_enemyQueueMut = new Mutex();
-
             // Creates the enemy parent gameobject
             m_enemyParent = new GameObject("Enemies");
 
             // Initializes all enemy types
             InitEnemyTypes();
-
         }
         else
         {
@@ -53,18 +45,21 @@ public class EnemyManager : MonoBehaviour
         GhostEnemyManager.Init(m_enemyParent.transform);
     }
 
-    public static GameObject CreateEnemy(EnemyType p_enemyType, string p_twitchUsername, Vector3 p_position)
+    /// <summary>
+    /// Creates (actually activates) an enemy of a given type with a given index in the array. The index can be retreived the enemy's EnemyData script.
+    /// </summary>
+    public static GameObject CreateEnemy(EnemyType p_enemyType, string p_twitchUsername, int p_spawnLocation)
     {
         switch(p_enemyType)
         {
             case EnemyType.BooEnemy:
-                return BooEnemyManager.ActivateNextEnemy(p_twitchUsername, p_position);
+                return BooEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnLocation);
 
             case EnemyType.SeekEnemy:
-                return SeekEnemyManager.ActivateNextEnemy(p_twitchUsername, p_position);
+                return SeekEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnLocation);
 
             case EnemyType.GhostEnemy:
-                return GhostEnemyManager.ActivateNextEnemy(p_twitchUsername, p_position);
+                return GhostEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnLocation);
 
             default:
                 Debug.Log("Invalid enemy type to spawn: " + p_enemyType);
@@ -72,6 +67,9 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Destroys (actually deactivates) an enemy of a given type with a given index in the array. The index can be retreived the enemy's EnemyData script.
+    /// </summary>
     public static bool DestroyEnemy(EnemyType p_enemyType, int p_enemyIndex)
     {
         switch(p_enemyType)
@@ -92,6 +90,9 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns an enemy of a given type with a given index in the array. The index can be retreived the enemy's EnemyData script.
+    /// </summary>
     public static GameObject GetEnemy(EnemyType p_enemyType, int p_index)
     {
         switch(p_enemyType)
@@ -110,33 +111,27 @@ public class EnemyManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns an array of all enemies of a given type. Also provides the first inactive index through an out parameter.
+    /// To loop through all active enemies of that type in the scene, use the first inactive index variable as the upper limit of the loop.
+    /// All enemies before that index are guaranteed to be active, and all enemies at and after that index are guaranteed to be inactive.
+    /// </summary>
     public static GameObject[] GetAllActiveEnemies(EnemyType p_enemyType, out int p_firstInactiveIndex)
     {
         switch(p_enemyType)
         {
             case EnemyType.BooEnemy:
                 return BooEnemyManager.GetAllEnemies(out p_firstInactiveIndex);
+
+            case EnemyType.SeekEnemy:
+                return SeekEnemyManager.GetAllEnemies(out p_firstInactiveIndex);
+
+            case EnemyType.GhostEnemy:
+                return GhostEnemyManager.GetAllEnemies(out p_firstInactiveIndex);
+
             default:
                 p_firstInactiveIndex = -1;
                 return null;
-        }
-    }
-
-    private void Update()
-    {
-        GameObject enemy = EnemyManager.GetEnemy(EnemyType.BooEnemy, 0);
-
-        if(s_enemyQueue.Count > 0)
-        {
-            s_enemyQueueMut.WaitOne();
-
-            while (s_enemyQueue.Count > 0)
-            {
-                EnemyNetworkInfo info = s_enemyQueue.Dequeue();
-                CreateEnemy(info.type, info.name, info.position);
-            }
-
-            s_enemyQueueMut.ReleaseMutex();
         }
     }
 }

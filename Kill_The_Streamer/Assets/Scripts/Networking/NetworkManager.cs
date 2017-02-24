@@ -7,13 +7,6 @@ using System.Threading;
 using System.Text;
 using UnityEngine;
 
-public struct EnemyNetworkInfo
-{
-    public string name;
-    public EnemyType type;
-    public Vector3 position;
-}
-
 public class NetworkManager : MonoBehaviour
 {
 
@@ -109,21 +102,19 @@ public class NetworkManager : MonoBehaviour
                     if (inputLength < output.Length)
                     {
                         message = output.Substring(inputLength);
-                        if (message.StartsWith("Kappa"))
+                        if (message.StartsWith("!") && message.Trim().Length > 1)
                         {
-                            EnemyNetworkInfo info = new EnemyNetworkInfo();
-                            info.name = name;
-                            info.type = EnemyType.BooEnemy;
-                            info.position = new Vector3(0, 0, -3);
-                            EnemyManager.s_enemyQueueMut.WaitOne();
-                            EnemyManager.s_enemyQueue.Enqueue(info);
-                            EnemyManager.s_enemyQueueMut.ReleaseMutex();
+                            CommandNetworkInfo info = new CommandNetworkInfo();
+                            info.username = name;
+                            info.command = message.Substring(1);
 
+                            CommandInterpreter.s_commandQueueMut.WaitOne();
+                            CommandInterpreter.s_commandQueue.Enqueue(info);
+                            CommandInterpreter.s_commandQueueMut.ReleaseMutex();
                         }
 
                         Debug.Log(name + ": " + message);
                     }
-
                 }
             }
         }
@@ -183,7 +174,5 @@ public class NetworkManager : MonoBehaviour
         {
             Disconnect();
         }
-        EnemyManager.s_enemyQueueMut.Close();
-
     }
 }
