@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,8 +15,15 @@ public class PlayerController : MonoBehaviour
     public Vector3 velocity = new Vector3(0, 0, 0);
     float dashTime = 0.0f;
 
+
+    public const int MAX_HEALTH = 40000;//40,000
+
+    public int m_health;
+
     public GameObject m_pistolPrefab;
 	public GameObject m_weaponRenderer;
+    public GameObject m_HealthBarObject;
+    public Image m_HealthBar;
 
     public Weapon m_primaryWeapon;
     public Weapon m_secondaryWeapon;
@@ -25,14 +33,40 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         speed = defaultSpeed;
+        m_health = MAX_HEALTH;
+        m_HealthBar = m_HealthBarObject.GetComponent<Image>();
 
-		m_weaponRenderer = this.GetComponentInChildren<WeaponRotation> ().gameObject;
+        m_weaponRenderer = this.GetComponentInChildren<WeaponRotation>().gameObject;
 
         GameObject primaryWeapon = (GameObject)Instantiate(m_pistolPrefab);
         m_primaryWeapon = primaryWeapon.GetComponent<WeaponPistol>();
         m_primaryWeapon.m_held = true;
 
         m_secondaryWeapon = null;
+    }
+
+    /// <summary>
+    /// Deals damage to the player and updates the health bar.
+    /// </summary>
+    /// <param name="damage"></param>
+    public void TakeDamage(int damage)
+    {
+        m_health -= damage;
+        if (m_health < 0)
+        {
+            m_health = 0;
+            Die();
+        }
+
+        m_HealthBar.fillAmount = (float)m_health / MAX_HEALTH;
+    }
+
+    /// <summary>
+    /// Function called when player dies.
+    /// </summary>
+    public void Die()
+    {
+
     }
 
     // Update is called once per frame
