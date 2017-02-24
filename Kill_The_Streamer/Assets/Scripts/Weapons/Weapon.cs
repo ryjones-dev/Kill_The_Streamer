@@ -42,6 +42,11 @@ public abstract class Weapon : MonoBehaviour {
         get;
     }
 
+    public abstract Sprite WEAPON_SPRITE
+    {
+        get;
+    }
+
     /// <summary>
     /// Maximum time a weapon can survive 
     /// </summary>

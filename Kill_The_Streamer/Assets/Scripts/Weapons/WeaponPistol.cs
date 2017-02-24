@@ -6,6 +6,7 @@ public class WeaponPistol : Weapon
     public const float PISTOL_FIRE_RATE = 0.4f;
     public const int PISTOL_MAX_AMMO = -1;
     public const string PISTOL_NAME = "Pistol";
+    public Sprite PISTOL_SPRITE;
 
     /// <summary>
     /// Prefab of the bullet to be fired.
@@ -31,6 +32,8 @@ public class WeaponPistol : Weapon
     /// Name of the weapon type (e.g. Pistol, Sniper, Etc)
     /// </summary>
     public override string NAME { get { return PISTOL_NAME; } }
+
+    public override Sprite WEAPON_SPRITE { get { return PISTOL_SPRITE; } }
 
     /// <summary>
     /// Fires the weapon in the direction given.
