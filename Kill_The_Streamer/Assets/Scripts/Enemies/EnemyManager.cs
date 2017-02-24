@@ -18,6 +18,8 @@ public class EnemyManager : MonoBehaviour
     // Singleton instance
     private static EnemyManager s_instance;
 
+    private int m_enemyTotal = 0;
+
     private void Awake()
     {
         // Sets up the singleton
@@ -50,16 +52,25 @@ public class EnemyManager : MonoBehaviour
     /// </summary>
     public static GameObject CreateEnemy(EnemyType p_enemyType, string p_twitchUsername, int p_spawnLocation)
     {
+        // Prevents creating a new enemy if there are already the maximum number of active enemies in the scene
+        if (s_instance.m_enemyTotal >= Constants.MAX_ENEMIES) return null;
+
         switch(p_enemyType)
         {
             case EnemyType.BooEnemy:
-                return BooEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnLocation);
+                GameObject boo = BooEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnLocation);
+                if(boo != null) { s_instance.m_enemyTotal++; }
+                return boo;
 
             case EnemyType.SeekEnemy:
-                return SeekEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnLocation);
+                GameObject seek = SeekEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnLocation);
+                if (seek != null) { s_instance.m_enemyTotal++; }
+                return seek;
 
             case EnemyType.GhostEnemy:
-                return GhostEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnLocation);
+                GameObject ghost = GhostEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnLocation);
+                if (ghost != null) { s_instance.m_enemyTotal++; }
+                return ghost;
 
             default:
                 Debug.Log("Invalid enemy type to spawn: " + p_enemyType);
@@ -75,14 +86,19 @@ public class EnemyManager : MonoBehaviour
         switch(p_enemyType)
         {
             case EnemyType.BooEnemy:
-                BooEnemyManager.DeactivateEnemy(p_enemyIndex);
-                return true;
+                bool booSuccess = BooEnemyManager.DeactivateEnemy(p_enemyIndex);
+                if (booSuccess) { s_instance.m_enemyTotal--; }
+                return booSuccess;
 
             case EnemyType.SeekEnemy:
-                return SeekEnemyManager.DeactivateEnemy(p_enemyIndex);
+                bool seekSuccess = SeekEnemyManager.DeactivateEnemy(p_enemyIndex);
+                if (seekSuccess) { s_instance.m_enemyTotal--; }
+                return seekSuccess;
 
             case EnemyType.GhostEnemy:
-                return GhostEnemyManager.DeactivateEnemy(p_enemyIndex);
+                bool ghostSuccess = GhostEnemyManager.DeactivateEnemy(p_enemyIndex);
+                if (ghostSuccess) { s_instance.m_enemyTotal--; }
+                return ghostSuccess;
 
             default:
                 Debug.Log("Invalid enemy type to destroy: " + p_enemyType);
