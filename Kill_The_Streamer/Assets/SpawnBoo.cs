@@ -13,7 +13,7 @@ public class SpawnBoo : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.P))
+        if(Input.GetKey(KeyCode.P))
         {
             EnemyManager.CreateEnemy(EnemyType.BooEnemy, "Twitch Username", transform.position);
         }

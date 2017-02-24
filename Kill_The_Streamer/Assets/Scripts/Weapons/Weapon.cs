@@ -85,4 +85,20 @@ public abstract class Weapon : MonoBehaviour {
             }
         }
     }
+
+    public virtual void LateUpdate()
+    {
+        if (!m_held)
+        {
+            if (WeaponInRange(PlayerController.s_Player.transform.position))
+            {
+                PlayerController.s_Player.m_weaponPickupText.enabled = true;
+            }
+        }
+    }
+
+    public bool WeaponInRange(Vector3 input)
+    {
+        return (input - transform.position).sqrMagnitude < 3.0f;
+    }
 }
