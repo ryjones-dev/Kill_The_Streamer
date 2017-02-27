@@ -11,7 +11,17 @@ public struct EnemyNetworkInfo
 {
     public string name;
     public EnemyType type;
+    public Direction direction;
     public Vector3 position;
+}
+
+public enum Direction
+{
+    Up,
+    Right,
+    Down,
+    Left,
+    Random
 }
 
 public class NetworkManager : MonoBehaviour {
@@ -112,26 +122,70 @@ public class NetworkManager : MonoBehaviour {
                     if (inputLength < output.Length)
                     {
                         message = output.Substring(inputLength);
-                        Debug.Log(message);
-                        if(message.StartsWith("Kappa"))
+                        Debug.Log(name + ": " + message);
+                        if (message.StartsWith("!"))
                         {
-                            Debug.Log("trying to create enemy");
+                            string[] parts = message.Split(' ');
+                            EnemyType enemyType;
+                            Direction direction;
+
+                            switch (parts[0].ToLower().Trim())
+                            {
+                                case "!kappa":
+                                case "!frankerz":
+                                case "!mrdestructoid":
+                                case "!pjsalt":
+                                case "!theilluminati":
+                                case "!pogchamp":
+                                case "!smorc":
+                                    enemyType = EnemyType.BooEnemy;
+                                    break;
+
+                                 //One part commands
+                                case "!start9":
+                                    Debug.Log("IMPLEMENT START9");
+                                    continue;
+                                default:
+                                    continue;
+                            }
+                            switch (parts[1].ToLower().Trim())
+                            {
+                                case "up":
+                                    direction = Direction.Up;
+                                    break;
+                                case "right":
+                                    direction = Direction.Right;
+                                    break;
+                                case "down":
+                                    direction = Direction.Down;
+                                    break;
+                                case "left":
+                                    direction = Direction.Left;
+                                    break;
+                                default:
+                                    direction = Direction.Random;
+                                    break;
+
+                            }
+                            Debug.Log("Yo.");
                             EnemyNetworkInfo info = new EnemyNetworkInfo();
+
                             info.name = name;
-                            info.type = EnemyType.BooEnemy;
+                            info.type = enemyType;
+                            info.direction = direction;
+
                             info.position = new Vector3(0, 0, -3);
+
                             EnemyManager.s_enemyQueueMut.WaitOne();
                             EnemyManager.s_enemyQueue.Enqueue(info);
                             EnemyManager.s_enemyQueueMut.ReleaseMutex();
 
-                        }
-                        else
-                        {
-                            Debug.Log("no");
-                        }
 
 
-                        Debug.Log(name + ": " + message);
+
+                        }
+
+                        
                     }
 
                 }
@@ -174,7 +228,6 @@ public class NetworkManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
 	}
 
     void OnApplicationQuit()
