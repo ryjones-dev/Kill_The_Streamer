@@ -22,6 +22,8 @@ public class AiDestructoid : MonoBehaviour {
 
     private Color defaultColor;
 
+    private Renderer rend;
+
     // Use this for initialization
     void Start () {
         colorChange = GetComponent<SpriteRenderer>();
@@ -30,12 +32,24 @@ public class AiDestructoid : MonoBehaviour {
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
 
         toExplode = false;
+        destructTimer = 2;
+
+        rend = GetComponent<Renderer>();
     }
 	
 	// Update is called once per frame
 	void Update () {
-
-		
+        distance = Vector3.Distance(player.transform.position, transform.position);
+        if (distance < triggerDistance)
+        {
+            toExplode = true;
+            Explode();
+        }
+        else
+        {
+            if(!toExplode)
+            Seek();
+        }
 	}
 
 
@@ -59,22 +73,30 @@ public class AiDestructoid : MonoBehaviour {
     {
         if(toExplode==true)
         {
+            nav.Stop();
             currentTimer += Time.deltaTime;
-            if(currentTimer%0.2==0)
-            {
-                //To add:
-                //Change color of sprite
-            }
+            //Change color of sprite
+            //Should fade in white
+            //If would rather have immediate white, then fade out put "1 - whiteValue"
+            float whiteValue = 1 - (currentTimer % 0.4f) * 2.5f;
+            //Can't use until spriteRenderer is added
+            //colorChange.color = new Color(whiteValue, whiteValue, whiteValue, 1);
+            rend.material.color = new Color(whiteValue, whiteValue, whiteValue, 1);
 
-            if(currentTimer >= destructTimer)
+            if (currentTimer >= destructTimer)
             {
                 //Add in:
+                //Play animation
+
+                //Add in:
                 //Deals damage to player
-                if(distance <=damageDistance)
+                if (distance <=damageDistance)
                 {
-                    //do damage and deactivate self
+                    //do damage
+
                 }
                 //deactivates self
+                DestroyImmediate(gameObject);
             }
         }
     }
