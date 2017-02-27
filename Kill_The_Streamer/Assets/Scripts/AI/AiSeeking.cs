@@ -10,8 +10,10 @@ public class AiSeeking : MonoBehaviour {
     private GameObject player;//the target to seek (player)
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
     private ShieldAi shield;//the air to detect if the shield is up to follow
-    private GameObject shieldGameObject;//the gameobject of the shield in order to detect which one is closest
-    private NavMeshAgent leaderNav;//the navmesh for the leader (shield)
+
+    public float distanceActive =12.0f;//will give the distance that it will be able to go to another shield
+
+ 
     private float maxDist;//the distance behind the leader the UI will go to
     private bool splitOff;//tells if the UI should split off away from the shielder and seek out the player instead
 
@@ -37,10 +39,14 @@ public class AiSeeking : MonoBehaviour {
         // Based on NavMesh.
         // Changing speed and acceleration can be found in inspector.
         //nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
-        ClosestShield();
-        if (splitOff == true)
+        
+        if (Vector3.Distance(this.transform.position, player.transform.position) <= distanceAwayPlayer)
         {
             Seek();
+        }
+        else
+        {
+            ClosestShield();
         }
 
     }
@@ -57,70 +63,79 @@ public class AiSeeking : MonoBehaviour {
     }
 
     /// <summary>
-    /// This is for checking and finding the closest shield and if so then see it and follow until close enough to player
+    /// This is for checking and finding the closest shield and if so then see it and follow until close enough to player.
+    /// Will get the closest enabled shield. If not, continue seeking.
     /// </summary>
     public void ClosestShield()
     {
-        
-        //check to make sure there is atleast one shield in the scene
-        if(GameObject.FindGameObjectsWithTag("Shielder")!=null)
+        //get all shielders in level
+        GameObject[] shieldsInLevel = GameObject.FindGameObjectsWithTag("Shielder");
+        //make sure they are enabled
+        if (shieldsInLevel.Length == 0)
         {
-            GameObject[] shieldsInLevel = GameObject.FindGameObjectsWithTag("Shielder");
-            float distance = 200.0f;
-            float playerDist = Vector3.Distance(this.transform.position, player.transform.position);
-            //Debug.Log(playerDist);
-            if (playerDist >= distanceAwayPlayer)
-            {
-               // Debug.Log("Away from player");
-                for (int i =0; i < shieldsInLevel.Length;i++)
-                {
-                    distance = Vector3.Distance(this.transform.position,shieldsInLevel[i].transform.position);
-                    //Debug.Log("distance at:" + i + " dist "+distance);
-
-                    if (distance <= 15.0f && shieldsInLevel[i].activeSelf==true)
-                    {
-
-                        if (distance < closeShield)
-                        {
-                            //Debug.Log(distance);
-                            shieldGameObject = shieldsInLevel[i];
-                            leaderNav = shieldsInLevel[i].gameObject.GetComponent<NavMeshAgent>();
-                            splitOff = false;
-                            closeShield = distance;
-                        }
-                    }
-                    else
-                    {
-                        splitOff = true;
-                    }
-
-                }
-                if(distance > 15.0f)
-                {
-                    closeShield = 200.0f;
-                    splitOff = true;
-                }
-            }
-            else
-            {
-                splitOff = true;
-            }
-            if (splitOff == false)
-            {
-                nav.SetDestination(LeaderFollowing());
-            }
-            //Debug.Log(splitOff);
-
+            //splitOff = true;
+            Seek();
+            return;
         }
 
-       // Collider[] shieldColliders = Physics.OverlapSphere(transform.position, 15, 1 << LayerMask.NameToLayer("Shield"));
+        //get some random large distance for now
+        float distance = 200.0f;
 
+        //have it store some gameobjects and the "leader"
+        GameObject shieldGameObject=null;//the gameobject of the shield in order to detect which one is closest
+
+        NavMeshAgent leaderNav=null;//the navmesh for the leader (shield)
+        //check the shields
+        for (int i =0; i < shieldsInLevel.Length; i++)
+        {
+            //are the shields active?
+            if(shieldsInLevel[i].GetComponent<AiShieldSeek>().shieldActive)
+            {
+                //get distance from position to shielder
+                distance = Vector3.Distance(this.transform.position, shieldsInLevel[i].transform.position);
+                //is it close enough?
+                if (distance <= distanceActive)
+                {
+                    //store the shield that it is the closest to
+                    if (distance < closeShield)
+                    {
+                        //Debug.Log(distance);
+                        shieldGameObject = shieldsInLevel[i];
+                        leaderNav = shieldsInLevel[i].gameObject.GetComponent<NavMeshAgent>();
+                        //splitOff = false;
+                        closeShield = distance;
+                        Debug.Log(closeShield);
+                    }
+                }
+
+            }
+        }
+        //has there not been a closest shield found?
+        if(shieldGameObject ==false && leaderNav ==false)
+        {
+            closeShield = 100.0f;
+            //splitOff = true;
+            Seek();
+            //return;
+        }
+        //seek out closest shield and leader follow it
+        else
+        {
+            Debug.Log(shieldGameObject.transform.position);
+            nav.SetDestination(LeaderFollowing(shieldGameObject,leaderNav));
+        }
     }
 
-   private Vector3 LeaderFollowing()
+    /// <summary>
+    /// For seeking and going behind the closest Shielder object.
+    /// </summary>
+    /// <param name="shielderObject">The closest shielder in the level</param>
+    /// <param name="leaderAgent">The navmeshagent of the closest Shielder</param>
+    /// <returns></returns>
+   private Vector3 LeaderFollowing(GameObject shielderObject, NavMeshAgent leaderAgent)
     {
         //float dist = Vector3.Distance(this.transform.position, shieldGameObject.transform.position);
-        Vector3 leaderPos = shieldGameObject.transform.position + (-leaderNav.velocity).normalized * maxDist;
+        Vector3 leaderPos = shielderObject.transform.position + (-leaderAgent.velocity).normalized * maxDist;
         return leaderPos;
 
         

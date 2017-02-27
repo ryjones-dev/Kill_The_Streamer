@@ -10,11 +10,14 @@ public class AiShieldSeek : MonoBehaviour {
     private GameObject player;//the target to seek (player)
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
 
+    public bool shieldActive;
+
     void Start()
     {
         //finding object with the tag "Player"
         player = GameObject.FindGameObjectWithTag("Player");
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
+        shieldActive = true;
 
     }
 
