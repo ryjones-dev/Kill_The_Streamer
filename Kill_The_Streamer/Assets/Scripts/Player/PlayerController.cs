@@ -146,7 +146,7 @@ public class PlayerController : MonoBehaviour
         {
             return;
         }
-        int count = 0;
+        bool weaponExists = false;
         GameObject closestWeapon = null;
         Weapon newWeapon = null;
         float length = 3.0f;
@@ -161,11 +161,11 @@ public class PlayerController : MonoBehaviour
                 {
                     closestWeapon = weapons[i];
                     length = newLength;
-                    count++;
+                    weaponExists = true;
                 }
             }
         }
-        if(count == 0)
+        if(!weaponExists)
         {
             return;
         }
