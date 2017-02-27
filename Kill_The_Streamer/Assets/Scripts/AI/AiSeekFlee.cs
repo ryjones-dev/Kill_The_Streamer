@@ -19,7 +19,18 @@ public class AiSeekFlee : MonoBehaviour {
     public int timeResetSeek;//tells how long after the player stops looking at the enemy until it should go back to seeking (should be small. Just as a buffer time)
 
     public float rangeView = 10.0f;//the range of view that the player can see to
-    
+
+    //anarchy and regular values
+    public bool anarchyMode = false;
+    //default info
+    public float defaultSpeed;
+    public float defaultRotationSpeed;
+    public float defaultAcceleration;
+    //anarchy info
+    private float anarchySpeed;
+    private float anarchyRotationSpeed;
+    private float anarchyAcceleration;
+
 
 
     void Start () {
@@ -28,6 +39,14 @@ public class AiSeekFlee : MonoBehaviour {
         //playerTargetting = player.GetComponent<PlayerLookingAtAI>();
         inPlayerSight = false;
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
+
+        defaultSpeed = nav.speed;
+        defaultRotationSpeed = nav.angularSpeed;
+        defaultAcceleration = nav.acceleration;
+
+        anarchySpeed = defaultSpeed * 2;
+        anarchyRotationSpeed = defaultRotationSpeed * 2;
+        anarchyAcceleration = defaultAcceleration * 2;
 
     }
     public bool InPlayerSight
@@ -39,7 +58,8 @@ public class AiSeekFlee : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         CheckPlayerLooking();
-        if(inPlayerSight==true)
+        AnarchyEnabled();
+        if (inPlayerSight==true)
         {
             Flee();
         }
@@ -49,6 +69,26 @@ public class AiSeekFlee : MonoBehaviour {
         }
 		
 	}
+
+    /// <summary>
+    /// This is the for the speeds and values during anarchy mode.
+    /// </summary>
+    public void AnarchyEnabled()
+    {
+        if (anarchyMode == false)
+        {
+            nav.speed = defaultSpeed;
+            nav.angularSpeed = defaultRotationSpeed;
+            nav.acceleration = defaultAcceleration;
+        }
+        else if (anarchyMode)
+        {
+            nav.speed = anarchySpeed;
+            nav.angularSpeed = anarchyRotationSpeed;
+            nav.acceleration = anarchyAcceleration;
+
+        }
+    }
 
     /// <summary>
     /// Used for seeking out and going to the player.

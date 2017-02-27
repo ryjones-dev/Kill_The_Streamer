@@ -21,8 +21,19 @@ public class AiSeeking : MonoBehaviour {
 
     public float distanceAwayPlayer;//gives the distance away from player before the seeks will seek out the player and ignore shielder
 
+    //anarchy and regular values
+    public bool anarchyMode = false;
+    //default info
+    public float defaultSpeed;
+    public float defaultRotationSpeed;
+    public float defaultAcceleration;
+    //anarchy info
+    private float anarchySpeed;
+    private float anarchyRotationSpeed;
+    private float anarchyAcceleration;
 
-	void Start () {
+
+    void Start () {
         //finding object with the tag "Player"
         player = GameObject.FindGameObjectWithTag("Player");
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
@@ -31,7 +42,15 @@ public class AiSeeking : MonoBehaviour {
         maxDist = Random.Range(1.5f, 5.0f);
         splitOff = true;//seek out player
 
-	}
+        defaultSpeed = nav.speed;
+        defaultRotationSpeed = nav.angularSpeed;
+        defaultAcceleration = nav.acceleration;
+
+        anarchySpeed = defaultSpeed * 2;
+        anarchyRotationSpeed = defaultRotationSpeed * 2;
+        anarchyAcceleration = defaultAcceleration * 2;
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -39,7 +58,7 @@ public class AiSeeking : MonoBehaviour {
         // Based on NavMesh.
         // Changing speed and acceleration can be found in inspector.
         //nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
-        
+        AnarchyEnabled();
         if (Vector3.Distance(this.transform.position, player.transform.position) <= distanceAwayPlayer)
         {
             Seek();
@@ -49,6 +68,27 @@ public class AiSeeking : MonoBehaviour {
             ClosestShield();
         }
 
+    }
+
+
+    /// <summary>
+    /// This is the for the speeds and values during anarchy mode.
+    /// </summary>
+    public void AnarchyEnabled()
+    {
+        if (anarchyMode == false)
+        {
+            nav.speed = defaultSpeed;
+            nav.angularSpeed = defaultRotationSpeed;
+            nav.acceleration = defaultAcceleration;
+        }
+        else if (anarchyMode)
+        {
+            nav.speed = anarchySpeed;
+            nav.angularSpeed = anarchyRotationSpeed;
+            nav.acceleration = anarchyAcceleration;
+
+        }
     }
 
     /// <summary>
