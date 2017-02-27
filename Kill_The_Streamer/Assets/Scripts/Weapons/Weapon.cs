@@ -25,6 +25,8 @@ public abstract class Weapon : MonoBehaviour {
     /// </summary>
     public bool m_held = false;
 
+    public SpriteRenderer m_spriteRenderer;
+
     /// <summary>
     /// Amount of time m_timer resets to.  A smaller number means
     /// a faster firerate.
@@ -69,9 +71,13 @@ public abstract class Weapon : MonoBehaviour {
 
     public virtual void Start()
     {
-        m_ammo = MAX_AMMO;
+        if (m_ammo != 0)
+        {
+            m_ammo = MAX_AMMO;
+        }
         m_timer = 0.0f;
         m_arenaTimer = ARENA_LIFETIME;
+        m_spriteRenderer = this.GetComponent<SpriteRenderer>();
     }
 
     public virtual void Update()
@@ -79,7 +85,18 @@ public abstract class Weapon : MonoBehaviour {
         if (!m_held)
         {
             m_arenaTimer -= Time.deltaTime;
-            if(m_arenaTimer <= 0.0f)
+            if(m_arenaTimer > 0.0f && m_arenaTimer <= 3.0f)
+            {
+                if(((int)(m_arenaTimer * 8)) % 2 == 0)
+                {
+                    this.m_spriteRenderer.enabled = false;
+                }
+                else
+                {
+                    this.m_spriteRenderer.enabled = true;
+                }
+            }
+            else if(m_arenaTimer <= 0.0f)
             {
                 Destroy(gameObject);
             }

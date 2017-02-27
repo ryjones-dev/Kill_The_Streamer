@@ -4,7 +4,7 @@ using UnityEngine;
 public class WeaponPistol : Weapon
 {
     public const float PISTOL_FIRE_RATE = 0.4f;
-    public const int PISTOL_MAX_AMMO = 999;
+    public const int PISTOL_MAX_AMMO = -1;
     public const string PISTOL_NAME = "Pistol";
     public Sprite PISTOL_SPRITE;
 
@@ -43,7 +43,7 @@ public class WeaponPistol : Weapon
     {
         if(m_timer <= 0.0f) // && m_ammo > 0 except pistols have infinite ammo
         {
-            m_ammo--;// Pistols have infinite ammo
+            //m_ammo--;// Pistols have infinite ammo
 
             GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
             bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;

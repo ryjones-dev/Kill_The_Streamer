@@ -67,8 +67,7 @@ public class WeaponDoubleShot : Weapon
 
     public override void Start()
     {
-        m_timer = 0.0f;
-        m_arenaTimer = ARENA_LIFETIME;
+        base.Start();
         m_ammo = 40;
     }
 }
