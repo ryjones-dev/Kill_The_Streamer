@@ -66,7 +66,7 @@ public class SeekEnemyManager : MonoBehaviour
     }
 
     // Called by the enemy manager when activating an enemy. Returns true if successful or false otherwise.
-    public static GameObject ActivateNextEnemy(string p_twitchUsername, int p_spawnLocation)
+    public static GameObject ActivateNextEnemy(string p_twitchUsername, Direction p_spawnDirection)
     {
         // Prevents adding an enemy if there is no more room in the array
         if (s_instance.m_firstInactiveIndex == Constants.MAX_ENEMIES) return null;
@@ -81,11 +81,12 @@ public class SeekEnemyManager : MonoBehaviour
         seek.name = p_twitchUsername;
         seek.GetComponentInChildren<Text>().text = p_twitchUsername;
 
-        // Validates the spawn location
-        int spawnpoint = p_spawnLocation >= 0 && p_spawnLocation < s_instance.m_spawnLocations.Length ? p_spawnLocation : Random.Range(0, s_instance.m_spawnLocations.Length);
+        // Converts the spawn direction to a spawnpoint index
+        int spawnIndex = (int)p_spawnDirection;
+        if (spawnIndex >= s_instance.m_spawnLocations.Length) { spawnIndex = Random.Range(0, s_instance.m_spawnLocations.Length); }
 
         // Sets the position of the enemy
-        seek.transform.position = s_instance.m_spawnLocations[spawnpoint].transform.position;
+        seek.transform.position = s_instance.m_spawnLocations[spawnIndex].transform.position;
 
         // Enables the gameobject
         seek.SetActive(true);

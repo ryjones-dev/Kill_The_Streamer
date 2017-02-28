@@ -15,10 +15,13 @@ public class EnemyManager : MonoBehaviour
     // A parent gameobject to put the enemies in for editor convenience
     private GameObject m_enemyParent;
 
+    private Queue<EnemyNetworkInfo> m_enemyQueue; // A queue of enemies viewers spawn
+    private Mutex m_enemyQueueMut; // A mutex to lock the queue for access by the network thread
+
+    private int m_enemyTotal = 0; // A count of the total number of active enemies in the scene
+
     // Singleton instance
     private static EnemyManager s_instance;
-
-    private int m_enemyTotal = 0;
 
     private void Awake()
     {
@@ -26,6 +29,9 @@ public class EnemyManager : MonoBehaviour
         if(s_instance == null)
         {
             s_instance = this;
+
+            m_enemyQueue = new Queue<EnemyNetworkInfo>();
+            m_enemyQueueMut = new Mutex();
 
             // Creates the enemy parent gameobject
             m_enemyParent = new GameObject("Enemies");
@@ -50,7 +56,7 @@ public class EnemyManager : MonoBehaviour
     /// <summary>
     /// Creates (actually activates) an enemy of a given type with a given index in the array. The index can be retreived the enemy's EnemyData script.
     /// </summary>
-    public static GameObject CreateEnemy(EnemyType p_enemyType, string p_twitchUsername, int p_spawnLocation)
+    public static GameObject CreateEnemy(EnemyType p_enemyType, string p_twitchUsername, Direction p_spawnDirection)
     {
         // Prevents creating a new enemy if there are already the maximum number of active enemies in the scene
         if (s_instance.m_enemyTotal >= Constants.MAX_ENEMIES) return null;
@@ -58,17 +64,17 @@ public class EnemyManager : MonoBehaviour
         switch(p_enemyType)
         {
             case EnemyType.BooEnemy:
-                GameObject boo = BooEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnLocation);
+                GameObject boo = BooEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
                 if(boo != null) { s_instance.m_enemyTotal++; }
                 return boo;
 
             case EnemyType.SeekEnemy:
-                GameObject seek = SeekEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnLocation);
+                GameObject seek = SeekEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
                 if (seek != null) { s_instance.m_enemyTotal++; }
                 return seek;
 
             case EnemyType.GhostEnemy:
-                GameObject ghost = GhostEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnLocation);
+                GameObject ghost = GhostEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
                 if (ghost != null) { s_instance.m_enemyTotal++; }
                 return ghost;
 
@@ -149,5 +155,26 @@ public class EnemyManager : MonoBehaviour
                 p_firstInactiveIndex = -1;
                 return null;
         }
+    }
+
+    public static void AddEnemyToQueue(EnemyNetworkInfo enemyInfo)
+    {
+        s_instance.m_enemyQueueMut.WaitOne();
+        s_instance.m_enemyQueue.Enqueue(enemyInfo);
+        s_instance.m_enemyQueueMut.ReleaseMutex();
+    }
+
+    private void Update()
+    {
+        while(s_instance.m_enemyQueue.Count > 0)
+        {
+            EnemyNetworkInfo enemyInfo = s_instance.m_enemyQueue.Dequeue();
+            CreateEnemy(enemyInfo.type, enemyInfo.name, enemyInfo.direction);
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        m_enemyQueueMut.Close();
     }
 }

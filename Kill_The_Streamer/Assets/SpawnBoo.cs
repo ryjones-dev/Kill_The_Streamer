@@ -15,7 +15,7 @@ public class SpawnBoo : MonoBehaviour
     {
         if(Input.GetKey(KeyCode.P))
         {
-            EnemyManager.CreateEnemy(EnemyType.BooEnemy, "Twitch Username", transform.position);
+            EnemyManager.CreateEnemy(EnemyType.BooEnemy, "Twitch Username", Direction.Up);
         }
     }
 }
