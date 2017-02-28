@@ -121,15 +121,11 @@ public class NetworkManager : MonoBehaviour {
         {
             bytesRec = s_manager.m_socket.Receive(bytes);
             output = Encoding.ASCII.GetString(bytes, 0, bytesRec);
+            s_manager.m_timeToPing = 5.0f;
+            s_manager.m_waitingForPong = false;
             // Handle PING case
             if (output.StartsWith("PING")){
                 s_manager.SendData("PONG :tmi.twitch.tv");
-            }
-            else if (output.StartsWith(":tmi.twitch.tv PONG"))
-            {
-                s_manager.m_timeToPing = 5.0f;
-                s_manager.m_waitingForPong = false;
-                Debug.Log("Still connected...");
             }
             else
             {
@@ -139,10 +135,11 @@ public class NetworkManager : MonoBehaviour {
                     name = output.Substring(1, endOfName - 1);
                     nameLength = name.Length;
                     inputLength = 29 + 3 * nameLength + channelNameLength;
-                    message = output.Substring(inputLength);
-                    Debug.Log(name + ": " + message);
-                    if (message.StartsWith("!"))
+                    if (inputLength < output.Length)
                     {
+                        message = output.Substring(inputLength);
+                        Debug.Log(name + ": " + message);
+                    
                         string[] parts = message.Split(' ');
                         EnemyType enemyType;
                         Direction direction;
