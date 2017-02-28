@@ -69,7 +69,7 @@ public class PlayerController : MonoBehaviour
         m_secondaryWeaponAmmo = m_secondaryWeaponUIObject.GetComponentInChildren<Text>();
 
         m_primaryWeaponObject = (GameObject)Instantiate(m_pistolPrefab);
-        m_primaryWeapon = m_primaryWeaponObject.GetComponent<WeaponPistol>();
+        m_primaryWeapon = m_primaryWeaponObject.GetComponent<Weapon>();
         m_primaryWeapon.m_held = true;
         m_primaryWeapon.m_ammo = m_primaryWeapon.MAX_AMMO;
 

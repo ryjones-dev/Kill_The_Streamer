@@ -23,7 +23,7 @@ public abstract class Weapon : MonoBehaviour {
     /// <summary>
     /// Bool tracking whether a weapon is held by the player or not.
     /// </summary>
-    public bool m_held = false;
+    public bool m_held;
 
     public SpriteRenderer m_spriteRenderer;
 
@@ -71,6 +71,7 @@ public abstract class Weapon : MonoBehaviour {
 
     public virtual void Start()
     {
+        m_held = false;
         if (m_ammo != 0)
         {
             m_ammo = MAX_AMMO;

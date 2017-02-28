@@ -9,6 +9,7 @@ public class WeaponShotgun : Weapon
     float angle = 15.0f;
     public Quaternion m_leftAngle;
     public Quaternion m_rightAngle;
+    public Sprite m_shotgunSprite;
 
     /// <summary>
     /// Prefab of the bullet to be fired.
@@ -35,6 +36,14 @@ public class WeaponShotgun : Weapon
     /// </summary>
     public override string NAME { get { return SHOTGUN_NAME; } }
 
+    public override Sprite WEAPON_SPRITE
+    {
+        get
+        {
+            return m_shotgunSprite;
+        }
+    }
+
     /// <summary>
     /// Fires the weapon in the direction given.
     /// </summary>
@@ -48,14 +57,10 @@ public class WeaponShotgun : Weapon
             GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
             bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
             Vector3 newDir = direction;
-            Debug.Log(m_leftAngle);
-            Debug.Log(m_rightAngle);
-            Debug.Log(newDir);
             //spawn bullets in an arc
             for (int i = 0; i < 2; ++i)
             {
                 newDir = m_leftAngle * newDir;
-                Debug.Log(newDir);
                 bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
                 bullet.GetComponent<Rigidbody>().velocity = newDir * BULLET_SPEED;
             }
@@ -65,7 +70,6 @@ public class WeaponShotgun : Weapon
             for (int i = 0; i < 2; ++i)
             {
                 newDir = m_rightAngle * newDir;
-                Debug.Log(newDir);
                 bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
                 bullet.GetComponent<Rigidbody>().velocity = newDir * BULLET_SPEED;
             }

@@ -1,10 +1,14 @@
 fileFormatVersion: 2
 guid: 2f8131205b6b1a748a131ed15a26c63e
-timeCreated: 1487873157
+timeCreated: 1488304993
 licenseType: Pro
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - m_spriteRenderer: {fileID: 212410960141425668, guid: 5bec654217a6be4498534f5b9ca3f88c,
+      type: 2}
+  - m_bulletPrefab: {fileID: 1850773345478020, guid: 45f88a9036a93724ba53fe97586b591b,
+      type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
