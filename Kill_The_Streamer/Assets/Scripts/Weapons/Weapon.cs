@@ -23,7 +23,9 @@ public abstract class Weapon : MonoBehaviour {
     /// <summary>
     /// Bool tracking whether a weapon is held by the player or not.
     /// </summary>
-    public bool m_held = false;
+    public bool m_held;
+
+    public SpriteRenderer m_spriteRenderer;
 
     /// <summary>
     /// Amount of time m_timer resets to.  A smaller number means
@@ -38,6 +40,11 @@ public abstract class Weapon : MonoBehaviour {
     /// Maximum ammo remaining 
     /// </summary>
     public abstract int MAX_AMMO
+    {
+        get;
+    }
+
+    public abstract Sprite WEAPON_SPRITE
     {
         get;
     }
@@ -64,9 +71,14 @@ public abstract class Weapon : MonoBehaviour {
 
     public virtual void Start()
     {
-        m_ammo = MAX_AMMO;
+        m_held = false;
+        if (m_ammo != 0)
+        {
+            m_ammo = MAX_AMMO;
+        }
         m_timer = 0.0f;
         m_arenaTimer = ARENA_LIFETIME;
+        m_spriteRenderer = this.GetComponent<SpriteRenderer>();
     }
 
     public virtual void Update()
@@ -74,10 +86,37 @@ public abstract class Weapon : MonoBehaviour {
         if (!m_held)
         {
             m_arenaTimer -= Time.deltaTime;
-            if(m_arenaTimer <= 0.0f)
+            if(m_arenaTimer > 0.0f && m_arenaTimer <= 3.0f)
+            {
+                if(((int)(m_arenaTimer * 8)) % 2 == 0)
+                {
+                    this.m_spriteRenderer.enabled = false;
+                }
+                else
+                {
+                    this.m_spriteRenderer.enabled = true;
+                }
+            }
+            else if(m_arenaTimer <= 0.0f)
             {
                 Destroy(gameObject);
             }
         }
+    }
+
+    public virtual void LateUpdate()
+    {
+        if (!m_held)
+        {
+            if (WeaponInRange(PlayerController.s_Player.transform.position))
+            {
+                PlayerController.s_Player.m_weaponPickupText.enabled = true;
+            }
+        }
+    }
+
+    public bool WeaponInRange(Vector3 input)
+    {
+        return (input - transform.position).sqrMagnitude < 3.0f;
     }
 }

@@ -24,15 +24,48 @@ public class AiGhost : MonoBehaviour {
 
     public float triggerDistance = 6.0f;//the distance at which the player will be within the ghost's radius
 
-	void Start () {
+    public bool anarchyMode = false;
+
+    //keeping track of the defaults for each
+    public float defaultSpeed;
+    public float defaultChargeSpeed;
+    public float defaultTimer;
+    public float defaultRotationSpeed;
+
+    //anarchy speed for each
+    private float anarchySpeed;
+    private float anarchyChargeSpeed;
+    private float anarchyTimer;
+    private float anarchyRotationSpeed;
+
+
+
+    void Start () {
         player = GameObject.FindGameObjectWithTag("Player");
         toCharge = false;
         seekSpot = false;
+        defaultSpeed = startSpeed;
+        defaultChargeSpeed = chargeSpeed;
+        defaultTimer = pauseTimer;
+        defaultRotationSpeed = rotationSpeed;
 
-	}
+        anarchySpeed = defaultSpeed*2;
+        anarchyChargeSpeed= defaultChargeSpeed*1.5f;
+        anarchyTimer= defaultTimer/2;
+        anarchyRotationSpeed= rotationSpeed*2;
+
+
+}
+
+public bool AnarchyMode
+    {
+        get { return anarchyMode; }
+        set { anarchyMode = value; }
+    }
 	
 	// Update is called once per frame
 	void Update () {
+        AnarchyEnabled();
         //get the distance between ghost and player
         playerDistance = Vector3.Distance(player.transform.position, transform.position);
         //if player is not in distance, seek it out slowly
@@ -48,6 +81,24 @@ public class AiGhost : MonoBehaviour {
         }	
 		
 	}
+
+    public void AnarchyEnabled()
+    {
+        if(anarchyMode==false)
+        {
+            startSpeed =defaultSpeed;
+            chargeSpeed = defaultChargeSpeed;
+            pauseTimer = defaultTimer ;
+            rotationSpeed = defaultRotationSpeed;
+        }
+        else if(anarchyMode)
+        {
+            startSpeed = anarchySpeed;
+            chargeSpeed = anarchyChargeSpeed;
+            pauseTimer = anarchyTimer;
+            rotationSpeed = anarchyRotationSpeed; 
+        }
+    }
 
    /// <summary>
    /// Moving the ghost to a location of the player(will change based on what state it is in.

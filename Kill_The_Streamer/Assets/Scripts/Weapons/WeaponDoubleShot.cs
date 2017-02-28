@@ -1,11 +1,11 @@
 ﻿using System;
 using UnityEngine;
 
-public class WeaponPistol : Weapon
+public class WeaponDoubleShot : Weapon
 {
     public const float PISTOL_FIRE_RATE = 0.4f;
-    public const int PISTOL_MAX_AMMO = -1;
-    public const string PISTOL_NAME = "Pistol";
+    public const int PISTOL_MAX_AMMO = 110;
+    public const string PISTOL_NAME = "DoubleShot";
     public Sprite PISTOL_SPRITE;
 
     /// <summary>
@@ -41,9 +41,9 @@ public class WeaponPistol : Weapon
     /// <param name="direction">The direction the character is aiming in.</param>
     public override void Fire(Vector3 position, Vector3 direction)
     {
-        if(m_timer <= 0.0f) // && m_ammo > 0 except pistols have infinite ammo
+        if (m_timer <= 0.0f && m_ammo > 0) // && m_ammo > 0 except pistols have infinite ammo
         {
-            //m_ammo--;// Pistols have infinite ammo
+            m_ammo--;// Pistols have infinite ammo
 
             GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
             bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
@@ -63,5 +63,11 @@ public class WeaponPistol : Weapon
         {
             m_timer -= Time.deltaTime;
         }
+    }
+
+    public override void Start()
+    {
+        base.Start();
+        m_ammo = 40;
     }
 }
