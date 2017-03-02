@@ -119,7 +119,7 @@ public class SeekEnemyManager : MonoBehaviour
         return true;
     }
 
-    public GameObject GetActiveEnemy(int p_index)
+    public GameObject GetActiveEnemyGameObject(int p_index)
     {
         if (p_index < 0 || p_index >= m_firstInactiveIndex)
         {
@@ -130,9 +130,43 @@ public class SeekEnemyManager : MonoBehaviour
         return m_seekEnemyGameObjects[p_index];
     }
 
-    public GameObject[] GetAllEnemies(out int p_firstInactiveIndex)
+    public GameObject[] GetAllEnemyGameObjects(out int p_firstInactiveIndex)
     {
         p_firstInactiveIndex = m_firstInactiveIndex;
         return m_seekEnemyGameObjects;
+    }
+
+    public EnemyData GetActiveEnemyData(int p_index)
+    {
+        if (p_index < 0 || p_index >= m_firstInactiveIndex)
+        {
+            Debug.Log("Invalid index " + p_index + " in SeekEnemy array");
+            return null;
+        }
+
+        return m_seekEnemyData[p_index];
+    }
+
+    public EnemyData[] GetAllEnemyData(out int p_firstInactiveIndex)
+    {
+        p_firstInactiveIndex = m_firstInactiveIndex;
+        return m_seekEnemyData;
+    }
+
+    public AiSeeking GetActiveEnemyAI(int p_index)
+    {
+        if (p_index < 0 || p_index >= m_firstInactiveIndex)
+        {
+            Debug.Log("Invalid index " + p_index + " in SeekEnemy array");
+            return null;
+        }
+
+        return m_seekSeekComponents[p_index];
+    }
+
+    public AiSeeking[] GetAllEnemyAI(out int p_firstInactiveIndex)
+    {
+        p_firstInactiveIndex = m_firstInactiveIndex;
+        return m_seekSeekComponents;
     }
 }

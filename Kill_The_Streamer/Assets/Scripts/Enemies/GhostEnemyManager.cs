@@ -119,7 +119,7 @@ public class GhostEnemyManager : MonoBehaviour
         return true;
     }
 
-    public GameObject GetActiveEnemy(int p_index)
+    public GameObject GetActiveEnemyGameObject(int p_index)
     {
         if (p_index < 0 || p_index >= m_firstInactiveIndex)
         {
@@ -130,9 +130,43 @@ public class GhostEnemyManager : MonoBehaviour
         return m_ghostGameObjects[p_index];
     }
 
-    public GameObject[] GetAllEnemies(out int p_firstInactiveIndex)
+    public GameObject[] GetAllEnemyGameObjects(out int p_firstInactiveIndex)
     {
         p_firstInactiveIndex = m_firstInactiveIndex;
         return m_ghostGameObjects;
+    }
+
+    public EnemyData GetActiveEnemyData(int p_index)
+    {
+        if (p_index < 0 || p_index >= m_firstInactiveIndex)
+        {
+            Debug.Log("Invalid index " + p_index + " in GhostEnemy array");
+            return null;
+        }
+
+        return m_ghostEnemyData[p_index];
+    }
+
+    public EnemyData[] GetAllEnemyData(out int p_firstInactiveIndex)
+    {
+        p_firstInactiveIndex = m_firstInactiveIndex;
+        return m_ghostEnemyData;
+    }
+
+    public AiGhost GetActiveEnemyAI(int p_index)
+    {
+        if (p_index < 0 || p_index >= m_firstInactiveIndex)
+        {
+            Debug.Log("Invalid index " + p_index + " in GhostEnemy array");
+            return null;
+        }
+
+        return m_ghostGhostComponents[p_index];
+    }
+
+    public AiGhost[] GetAllEnemyAI(out int p_firstInactiveIndex)
+    {
+        p_firstInactiveIndex = m_firstInactiveIndex;
+        return m_ghostGhostComponents;
     }
 }
