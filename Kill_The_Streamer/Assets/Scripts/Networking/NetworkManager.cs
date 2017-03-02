@@ -13,7 +13,6 @@ public struct EnemyNetworkInfo
     public string name;
     public EnemyType type;
     public Direction direction;
-    public Vector3 position;
 }
 
 public enum Direction
@@ -194,11 +193,7 @@ public class NetworkManager : MonoBehaviour {
                         info.type = enemyType;
                         info.direction = direction;
 
-                        info.position = new Vector3(0, 0, -3);
-
-                        EnemyManager.s_enemyQueueMut.WaitOne();
-                        EnemyManager.s_enemyQueue.Enqueue(info);
-                        EnemyManager.s_enemyQueueMut.ReleaseMutex();
+                        EnemyManager.AddEnemyToQueue(info);
                     }
                 }
             }
@@ -290,7 +285,5 @@ public class NetworkManager : MonoBehaviour {
 		if (m_connected) {
 			Disconnect ();
 		}
-		EnemyManager.s_enemyQueueMut.Close ();
-
     }
 }
