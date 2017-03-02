@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class Constants
 {
-    public const int MAX_ENEMIES = 1024; // The maximum number of each enemy type (not of all enemies in total!)
+    public const int MAX_ENEMIES = 1024; // The maximum number of enemies
 }
