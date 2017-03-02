@@ -14,20 +14,6 @@ public class GhostEnemyManager : MonoBehaviour
 
     private GameObject[] m_spawnLocations;
 
-    private static GhostEnemyManager s_instance;
-
-    private void Awake()
-    {
-        if (s_instance == null)
-        {
-            s_instance = this;
-        }
-        else
-        {
-            Destroy(this);
-        }
-    }
-
     private void Start()
     {
         GameObject spawnpoints = GameObject.FindGameObjectWithTag("Spawnpoints");
@@ -40,42 +26,42 @@ public class GhostEnemyManager : MonoBehaviour
     }
 
     // Called at the beginning of the game by the EnemyManager
-    public static void Init(Transform p_parent)
+    public void Init(Transform p_parent)
     {
         // Initializes the gameobject and component arrays
-        s_instance.m_ghostGameObjects = new GameObject[Constants.MAX_ENEMIES];
-        s_instance.m_ghostEnemyData = new EnemyData[Constants.MAX_ENEMIES];
-        s_instance.m_ghostGhostComponents = new AiGhost[Constants.MAX_ENEMIES];
+        m_ghostGameObjects = new GameObject[Constants.MAX_ENEMIES];
+        m_ghostEnemyData = new EnemyData[Constants.MAX_ENEMIES];
+        m_ghostGhostComponents = new AiGhost[Constants.MAX_ENEMIES];
 
         for (int i = 0; i < Constants.MAX_ENEMIES; i++)
         {
             // Instantiates each enemy
-            GameObject ghost = Instantiate<GameObject>(s_instance.m_ghostPrefab, Vector3.zero, Quaternion.identity, p_parent);
+            GameObject ghost = Instantiate<GameObject>(m_ghostPrefab, Vector3.zero, Quaternion.identity, p_parent);
             EnemyData ghostData = ghost.GetComponent<EnemyData>();
             AiGhost ghostComponent = ghost.GetComponent<AiGhost>();
 
             // Sets the enemy's name and turns it off
-            ghost.name = s_instance.m_ghostPrefab.name + " " + i;
+            ghost.name = m_ghostPrefab.name + " " + i;
             ghost.SetActive(false);
 
             // Saves the gameobject and components in the arrays
-            s_instance.m_ghostGameObjects[i] = ghost;
-            s_instance.m_ghostEnemyData[i] = ghostData;
-            s_instance.m_ghostGhostComponents[i] = ghostComponent;
+            m_ghostGameObjects[i] = ghost;
+            m_ghostEnemyData[i] = ghostData;
+            m_ghostGhostComponents[i] = ghostComponent;
         }
     }
 
     // Called by the enemy manager when activating an enemy. Returns true if successful or false otherwise.
-    public static GameObject ActivateNextEnemy(string p_twitchUsername, Direction p_spawnDirection)
+    public GameObject ActivateNextEnemy(string p_twitchUsername, Direction p_spawnDirection)
     {
         // Prevents adding an enemy if there is no more room in the array
-        if (s_instance.m_firstInactiveIndex == Constants.MAX_ENEMIES) return null;
+        if (m_firstInactiveIndex == Constants.MAX_ENEMIES) return null;
 
         // Gets first inactive enemy gameobject
-        GameObject ghost = s_instance.m_ghostGameObjects[s_instance.m_firstInactiveIndex];
+        GameObject ghost = m_ghostGameObjects[m_firstInactiveIndex];
 
         // Assigns the enemy's array index in the enemy data script
-        s_instance.m_ghostEnemyData[s_instance.m_firstInactiveIndex].m_Index = s_instance.m_firstInactiveIndex;
+        m_ghostEnemyData[m_firstInactiveIndex].m_Index = m_firstInactiveIndex;
 
         // Sets the enemy's name to the twich username
         ghost.name = p_twitchUsername;
@@ -83,69 +69,69 @@ public class GhostEnemyManager : MonoBehaviour
 
         // Converts the spawn direction to a spawnpoint index
         int spawnIndex = (int)p_spawnDirection;
-        if (spawnIndex >= s_instance.m_spawnLocations.Length) { spawnIndex = Random.Range(0, s_instance.m_spawnLocations.Length); }
+        if (spawnIndex >= m_spawnLocations.Length) { spawnIndex = Random.Range(0, m_spawnLocations.Length); }
 
         // Sets the position of the enemy
-        ghost.transform.position = s_instance.m_spawnLocations[spawnIndex].transform.position;
+        ghost.transform.position = m_spawnLocations[spawnIndex].transform.position;
 
         // Enables the gameobject
         ghost.SetActive(true);
 
         // Increments the first inactive index
-        s_instance.m_firstInactiveIndex++;
+        m_firstInactiveIndex++;
 
         // Returns the enemy gameobject
         return ghost;
     }
 
     // Called by the enemy manager when deactivating an enemy. Returns true
-    public static bool DeactivateEnemy(int p_enemyIndex)
+    public bool DeactivateEnemy(int p_enemyIndex)
     {
         // Fails if the enemy index is invalid or if there are no active enemies 
-        if (p_enemyIndex < 0 || p_enemyIndex >= s_instance.m_firstInactiveIndex || s_instance.m_firstInactiveIndex == 0) return false;
+        if (p_enemyIndex < 0 || p_enemyIndex >= m_firstInactiveIndex || m_firstInactiveIndex == 0) return false;
 
         // Temporarily saves the data from the enemy we are deactivating
-        GameObject temp = s_instance.m_ghostGameObjects[p_enemyIndex];
-        EnemyData tempEnemyData = s_instance.m_ghostEnemyData[p_enemyIndex];
-        AiGhost tempAISeekFlee = s_instance.m_ghostGhostComponents[p_enemyIndex];
+        GameObject temp = m_ghostGameObjects[p_enemyIndex];
+        EnemyData tempEnemyData = m_ghostEnemyData[p_enemyIndex];
+        AiGhost tempAISeekFlee = m_ghostGhostComponents[p_enemyIndex];
 
         // Deactivates the enemy
         temp.SetActive(false);
 
         // Moves the enemy at the end of the active section to the deactivated position
-        s_instance.m_ghostGameObjects[p_enemyIndex] = s_instance.m_ghostGameObjects[s_instance.m_firstInactiveIndex - 1];
-        s_instance.m_ghostEnemyData[p_enemyIndex] = s_instance.m_ghostEnemyData[s_instance.m_firstInactiveIndex - 1];
-        s_instance.m_ghostGhostComponents[p_enemyIndex] = s_instance.m_ghostGhostComponents[s_instance.m_firstInactiveIndex - 1];
+        m_ghostGameObjects[p_enemyIndex] = m_ghostGameObjects[m_firstInactiveIndex - 1];
+        m_ghostEnemyData[p_enemyIndex] = m_ghostEnemyData[m_firstInactiveIndex - 1];
+        m_ghostGhostComponents[p_enemyIndex] = m_ghostGhostComponents[m_firstInactiveIndex - 1];
 
         // Moves the deactivated enemy to the start of the inactive section
-        s_instance.m_ghostGameObjects[s_instance.m_firstInactiveIndex - 1] = temp;
-        s_instance.m_ghostEnemyData[s_instance.m_firstInactiveIndex - 1] = tempEnemyData;
-        s_instance.m_ghostGhostComponents[s_instance.m_firstInactiveIndex - 1] = tempAISeekFlee;
+        m_ghostGameObjects[m_firstInactiveIndex - 1] = temp;
+        m_ghostEnemyData[m_firstInactiveIndex - 1] = tempEnemyData;
+        m_ghostGhostComponents[m_firstInactiveIndex - 1] = tempAISeekFlee;
 
         // Makes sure the indices in the enemy data scripts are correct
-        s_instance.m_ghostEnemyData[p_enemyIndex].m_Index = p_enemyIndex;
-        s_instance.m_ghostEnemyData[s_instance.m_firstInactiveIndex - 1].m_Index = s_instance.m_firstInactiveIndex - 1;
+        m_ghostEnemyData[p_enemyIndex].m_Index = p_enemyIndex;
+        m_ghostEnemyData[m_firstInactiveIndex - 1].m_Index = m_firstInactiveIndex - 1;
 
         // Decrements the first inactive index
-        s_instance.m_firstInactiveIndex--;
+        m_firstInactiveIndex--;
 
         return true;
     }
 
-    public static GameObject GetActiveEnemy(int p_index)
+    public GameObject GetActiveEnemy(int p_index)
     {
-        if (p_index < 0 || p_index >= s_instance.m_firstInactiveIndex)
+        if (p_index < 0 || p_index >= m_firstInactiveIndex)
         {
             Debug.Log("Invalid index " + p_index + " in GhostEnemy array");
             return null;
         }
 
-        return s_instance.m_ghostGameObjects[p_index];
+        return m_ghostGameObjects[p_index];
     }
 
-    public static GameObject[] GetAllEnemies(out int p_firstInactiveIndex)
+    public GameObject[] GetAllEnemies(out int p_firstInactiveIndex)
     {
-        p_firstInactiveIndex = s_instance.m_firstInactiveIndex;
-        return s_instance.m_ghostGameObjects;
+        p_firstInactiveIndex = m_firstInactiveIndex;
+        return m_ghostGameObjects;
     }
 }

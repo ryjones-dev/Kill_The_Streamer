@@ -10,6 +10,9 @@ public enum EnemyType
     GhostEnemy
 }
 
+[RequireComponent(typeof(BooEnemyManager))]
+[RequireComponent(typeof(SeekEnemyManager))]
+[RequireComponent(typeof(GhostEnemyManager))]
 public class EnemyManager : MonoBehaviour
 {
     // A parent gameobject to put the enemies in for editor convenience
@@ -23,12 +26,21 @@ public class EnemyManager : MonoBehaviour
     // Singleton instance
     private static EnemyManager s_instance;
 
+    // Eneemy manager components
+    private BooEnemyManager m_booEnemyManager;
+    private SeekEnemyManager m_seekEnemyManager;
+    private GhostEnemyManager m_ghostEnemyManager;
+
     private void Awake()
     {
         // Sets up the singleton
         if(s_instance == null)
         {
             s_instance = this;
+
+            m_booEnemyManager = GetComponent<BooEnemyManager>();
+            m_seekEnemyManager = GetComponent<SeekEnemyManager>();
+            m_ghostEnemyManager = GetComponent<GhostEnemyManager>();
 
             m_enemyQueue = new Queue<EnemyNetworkInfo>();
             m_enemyQueueMut = new Mutex();
@@ -48,9 +60,9 @@ public class EnemyManager : MonoBehaviour
 
     private void InitEnemyTypes()
     {
-        BooEnemyManager.Init(m_enemyParent.transform);
-        SeekEnemyManager.Init(m_enemyParent.transform);
-        GhostEnemyManager.Init(m_enemyParent.transform);
+        m_booEnemyManager.Init(m_enemyParent.transform);
+        m_seekEnemyManager.Init(m_enemyParent.transform);
+        m_ghostEnemyManager.Init(m_enemyParent.transform);
     }
 
     /// <summary>
@@ -64,17 +76,17 @@ public class EnemyManager : MonoBehaviour
         switch(p_enemyType)
         {
             case EnemyType.BooEnemy:
-                GameObject boo = BooEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
+                GameObject boo = s_instance.m_booEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
                 if(boo != null) { s_instance.m_enemyTotal++; }
                 return boo;
 
             case EnemyType.SeekEnemy:
-                GameObject seek = SeekEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
+                GameObject seek = s_instance.m_seekEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
                 if (seek != null) { s_instance.m_enemyTotal++; }
                 return seek;
 
             case EnemyType.GhostEnemy:
-                GameObject ghost = GhostEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
+                GameObject ghost = s_instance.m_ghostEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
                 if (ghost != null) { s_instance.m_enemyTotal++; }
                 return ghost;
 
@@ -92,17 +104,17 @@ public class EnemyManager : MonoBehaviour
         switch(p_enemyType)
         {
             case EnemyType.BooEnemy:
-                bool booSuccess = BooEnemyManager.DeactivateEnemy(p_enemyIndex);
+                bool booSuccess = s_instance.m_booEnemyManager.DeactivateEnemy(p_enemyIndex);
                 if (booSuccess) { s_instance.m_enemyTotal--; }
                 return booSuccess;
 
             case EnemyType.SeekEnemy:
-                bool seekSuccess = SeekEnemyManager.DeactivateEnemy(p_enemyIndex);
+                bool seekSuccess = s_instance.m_seekEnemyManager.DeactivateEnemy(p_enemyIndex);
                 if (seekSuccess) { s_instance.m_enemyTotal--; }
                 return seekSuccess;
 
             case EnemyType.GhostEnemy:
-                bool ghostSuccess = GhostEnemyManager.DeactivateEnemy(p_enemyIndex);
+                bool ghostSuccess = s_instance.m_ghostEnemyManager.DeactivateEnemy(p_enemyIndex);
                 if (ghostSuccess) { s_instance.m_enemyTotal--; }
                 return ghostSuccess;
 
@@ -120,13 +132,13 @@ public class EnemyManager : MonoBehaviour
         switch(p_enemyType)
         {
             case EnemyType.BooEnemy:
-                return BooEnemyManager.GetActiveEnemy(p_index);
+                return s_instance.m_booEnemyManager.GetActiveEnemy(p_index);
 
             case EnemyType.SeekEnemy:
-                return SeekEnemyManager.GetActiveEnemy(p_index);
+                return s_instance.m_seekEnemyManager.GetActiveEnemy(p_index);
 
             case EnemyType.GhostEnemy:
-                return GhostEnemyManager.GetActiveEnemy(p_index);
+                return s_instance.m_ghostEnemyManager.GetActiveEnemy(p_index);
 
             default:
                 return null;
@@ -143,13 +155,13 @@ public class EnemyManager : MonoBehaviour
         switch(p_enemyType)
         {
             case EnemyType.BooEnemy:
-                return BooEnemyManager.GetAllEnemies(out p_firstInactiveIndex);
+                return s_instance.m_booEnemyManager.GetAllEnemies(out p_firstInactiveIndex);
 
             case EnemyType.SeekEnemy:
-                return SeekEnemyManager.GetAllEnemies(out p_firstInactiveIndex);
+                return s_instance.m_seekEnemyManager.GetAllEnemies(out p_firstInactiveIndex);
 
             case EnemyType.GhostEnemy:
-                return GhostEnemyManager.GetAllEnemies(out p_firstInactiveIndex);
+                return s_instance.m_ghostEnemyManager.GetAllEnemies(out p_firstInactiveIndex);
 
             default:
                 p_firstInactiveIndex = -1;
