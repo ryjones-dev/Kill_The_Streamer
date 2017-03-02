@@ -71,7 +71,10 @@ public abstract class Weapon : MonoBehaviour {
 
     public virtual void Start()
     {
-        m_held = false;
+        if (!m_held)
+        {
+            m_held = false;
+        }
         if (m_ammo != 0)
         {
             m_ammo = MAX_AMMO;

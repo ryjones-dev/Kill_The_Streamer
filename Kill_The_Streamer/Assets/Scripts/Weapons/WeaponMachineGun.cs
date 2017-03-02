@@ -4,8 +4,8 @@ using UnityEngine;
 public class WeaponMachineGun : Weapon
 {
     public const float MACHINE_GUN_FIRE_RATE = 0.02f;
-    public const int MACHINE_GUN_MAX_AMMO = -1;
-    public const string MACHINE_GUN_NAME = "Pistol";
+    public const int MACHINE_GUN_MAX_AMMO = 60;
+    public const string MACHINE_GUN_NAME = "Machine Gun";
     public Sprite MACHINE_GUN_SPRITE;
 
     /// <summary>
@@ -41,9 +41,9 @@ public class WeaponMachineGun : Weapon
     /// <param name="direction">The direction the character is aiming in.</param>
     public override void Fire(Vector3 position, Vector3 direction)
     {
-        if (m_timer <= 0.0f) // && m_ammo > 0 except pistols have infinite ammo
+        if (m_timer <= 0.0f && m_ammo > 0)
         {
-            //m_ammo--;// Pistols have infinite ammo
+            m_ammo--;
 
             GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
             bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
