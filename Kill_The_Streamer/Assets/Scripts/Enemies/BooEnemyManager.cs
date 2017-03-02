@@ -72,7 +72,8 @@ public class BooEnemyManager : MonoBehaviour
         if(spawnIndex >= m_spawnLocations.Length) { spawnIndex = Random.Range(0, m_spawnLocations.Length); }
 
         // Sets the position of the enemy
-        boo.transform.position = m_spawnLocations[spawnIndex].transform.position;
+        Vector3 spawnVariance = spawnIndex % 2 == 0 ? new Vector3(Random.Range(-2.0f, 2.0f), 0, 0) : new Vector3(0, 0, Random.Range(-2.0f, 2.0f));
+        boo.transform.position = m_spawnLocations[spawnIndex].transform.position + spawnVariance;
 
         // Enables the gameobject
         boo.SetActive(true);
@@ -118,7 +119,7 @@ public class BooEnemyManager : MonoBehaviour
         return true;
     }
 
-    public GameObject GetActiveEnemy(int p_index)
+    public GameObject GetActiveEnemyGameObject(int p_index)
     {
         if(p_index < 0 || p_index >= m_firstInactiveIndex)
         {

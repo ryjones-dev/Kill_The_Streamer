@@ -132,7 +132,7 @@ public class EnemyManager : MonoBehaviour
         switch(p_enemyType)
         {
             case EnemyType.BooEnemy:
-                return s_instance.m_booEnemyManager.GetActiveEnemy(p_index);
+                return s_instance.m_booEnemyManager.GetActiveEnemyGameObject(p_index);
 
             case EnemyType.SeekEnemy:
                 return s_instance.m_seekEnemyManager.GetActiveEnemy(p_index);
@@ -178,7 +178,20 @@ public class EnemyManager : MonoBehaviour
 
     private void Update()
     {
-        while(s_instance.m_enemyQueue.Count > 0)
+        //-----DEBUG ONLY
+        if (Input.GetKey(KeyCode.P))
+        {
+            EnemyNetworkInfo info = new EnemyNetworkInfo();
+
+            info.name = "lunalovecraft";
+            info.type = EnemyType.BooEnemy;
+            info.direction = Direction.Random;
+
+            AddEnemyToQueue(info);
+        }
+        //-----DEBUG ONLY
+
+        while (s_instance.m_enemyQueue.Count > 0)
         {
             EnemyNetworkInfo enemyInfo = s_instance.m_enemyQueue.Dequeue();
             CreateEnemy(enemyInfo.type, enemyInfo.name, enemyInfo.direction);

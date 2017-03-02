@@ -72,7 +72,8 @@ public class SeekEnemyManager : MonoBehaviour
         if (spawnIndex >= m_spawnLocations.Length) { spawnIndex = Random.Range(0, m_spawnLocations.Length); }
 
         // Sets the position of the enemy
-        seek.transform.position = m_spawnLocations[spawnIndex].transform.position;
+        Vector3 spawnVariance = spawnIndex % 2 == 0 ? new Vector3(Random.Range(-2.0f, 2.0f), 0, 0) : new Vector3(0, 0, Random.Range(-2.0f, 2.0f));
+        seek.transform.position = m_spawnLocations[spawnIndex].transform.position + spawnVariance;
 
         // Enables the gameobject
         seek.SetActive(true);

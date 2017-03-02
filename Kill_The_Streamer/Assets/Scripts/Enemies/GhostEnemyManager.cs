@@ -72,7 +72,8 @@ public class GhostEnemyManager : MonoBehaviour
         if (spawnIndex >= m_spawnLocations.Length) { spawnIndex = Random.Range(0, m_spawnLocations.Length); }
 
         // Sets the position of the enemy
-        ghost.transform.position = m_spawnLocations[spawnIndex].transform.position;
+        Vector3 spawnVariance = spawnIndex % 2 == 0 ? new Vector3(Random.Range(-2.0f, 2.0f), 0, 0) : new Vector3(0, 0, Random.Range(-2.0f, 2.0f));
+        ghost.transform.position = m_spawnLocations[spawnIndex].transform.position + spawnVariance;
 
         // Enables the gameobject
         ghost.SetActive(true);
