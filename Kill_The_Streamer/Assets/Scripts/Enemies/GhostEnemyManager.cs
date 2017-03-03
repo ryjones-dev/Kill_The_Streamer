@@ -65,7 +65,7 @@ public class GhostEnemyManager : MonoBehaviour
 
         // Sets the enemy's name to the twich username
         ghost.name = p_twitchUsername;
-        ghost.GetComponentInChildren<Text>().text = p_twitchUsername;
+        ghost.GetComponentInChildren<TextMesh>().text = p_twitchUsername;
 
         // Converts the spawn direction to a spawnpoint index
         int spawnIndex = (int)p_spawnDirection;

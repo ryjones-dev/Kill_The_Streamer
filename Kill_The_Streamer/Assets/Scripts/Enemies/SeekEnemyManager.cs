@@ -65,7 +65,7 @@ public class SeekEnemyManager : MonoBehaviour
 
         // Sets the enemy's name to the twich username
         seek.name = p_twitchUsername;
-        seek.GetComponentInChildren<Text>().text = p_twitchUsername;
+        seek.GetComponentInChildren<TextMesh>().text = p_twitchUsername;
 
         // Converts the spawn direction to a spawnpoint index
         int spawnIndex = (int)p_spawnDirection;
