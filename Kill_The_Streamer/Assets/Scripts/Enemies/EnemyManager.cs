@@ -7,12 +7,14 @@ public enum EnemyType
 {
     BooEnemy,
     SeekEnemy,
-    GhostEnemy
+    GhostEnemy,
+    ShieldEnemy
 }
 
 [RequireComponent(typeof(BooEnemyManager))]
 [RequireComponent(typeof(SeekEnemyManager))]
 [RequireComponent(typeof(GhostEnemyManager))]
+[RequireComponent(typeof(ShieldEnemyManager))]
 public class EnemyManager : MonoBehaviour
 {
     // A parent gameobject to put the enemies in for editor convenience
@@ -30,6 +32,7 @@ public class EnemyManager : MonoBehaviour
     private BooEnemyManager m_booEnemyManager;
     private SeekEnemyManager m_seekEnemyManager;
     private GhostEnemyManager m_ghostEnemyManager;
+    private ShieldEnemyManager m_shieldEnemyManager;
 
     private void Awake()
     {
@@ -41,6 +44,7 @@ public class EnemyManager : MonoBehaviour
             m_booEnemyManager = GetComponent<BooEnemyManager>();
             m_seekEnemyManager = GetComponent<SeekEnemyManager>();
             m_ghostEnemyManager = GetComponent<GhostEnemyManager>();
+            m_shieldEnemyManager = GetComponent<ShieldEnemyManager>();
 
             m_enemyQueue = new Queue<EnemyNetworkInfo>();
             m_enemyQueueMut = new Mutex();
@@ -63,6 +67,7 @@ public class EnemyManager : MonoBehaviour
         m_booEnemyManager.Init(m_enemyParent.transform);
         m_seekEnemyManager.Init(m_enemyParent.transform);
         m_ghostEnemyManager.Init(m_enemyParent.transform);
+        m_shieldEnemyManager.Init(m_enemyParent.transform);
     }
 
     /// <summary>
@@ -90,6 +95,11 @@ public class EnemyManager : MonoBehaviour
                 GameObject ghost = s_instance.m_ghostEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
                 if (ghost != null) { s_instance.m_enemyTotal++; }
                 return ghost;
+
+            case EnemyType.ShieldEnemy:
+                GameObject shield = s_instance.m_shieldEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
+                if (shield != null) { s_instance.m_enemyTotal++; }
+                return shield;
 
             default:
                 Debug.Log("Invalid enemy type to spawn: " + p_enemyType);
@@ -119,6 +129,11 @@ public class EnemyManager : MonoBehaviour
                 if (ghostSuccess) { s_instance.m_enemyTotal--; }
                 return ghostSuccess;
 
+            case EnemyType.ShieldEnemy:
+                bool shieldSuccess = s_instance.m_shieldEnemyManager.DeactivateEnemy(p_enemyIndex);
+                if(shieldSuccess) { s_instance.m_enemyTotal--; }
+                return shieldSuccess;
+
             default:
                 Debug.Log("Invalid enemy type to destroy: " + p_enemyType);
                 return false;
@@ -140,6 +155,9 @@ public class EnemyManager : MonoBehaviour
 
             case EnemyType.GhostEnemy:
                 return s_instance.m_ghostEnemyManager.GetActiveEnemyGameObject(p_index);
+
+            case EnemyType.ShieldEnemy:
+                return s_instance.m_shieldEnemyManager.GetActiveEnemyGameObject(p_index);
 
             default:
                 return null;
@@ -164,6 +182,9 @@ public class EnemyManager : MonoBehaviour
             case EnemyType.GhostEnemy:
                 return s_instance.m_ghostEnemyManager.GetAllEnemyGameObjects(out p_firstInactiveIndex);
 
+            case EnemyType.ShieldEnemy:
+                return s_instance.m_shieldEnemyManager.GetAllEnemyGameObjects(out p_firstInactiveIndex);
+
             default:
                 p_firstInactiveIndex = -1;
                 return null;
@@ -186,6 +207,9 @@ public class EnemyManager : MonoBehaviour
             case EnemyType.GhostEnemy:
                 return s_instance.m_ghostEnemyManager.GetActiveEnemyData(p_index);
 
+            case EnemyType.ShieldEnemy:
+                return s_instance.m_shieldEnemyManager.GetActiveEnemyData(p_index);
+
             default:
                 return null;
         }
@@ -196,18 +220,21 @@ public class EnemyManager : MonoBehaviour
     /// To loop through all active enemies of that type in the scene, use the first inactive index variable as the upper limit of the loop.
     /// All enemies before that index are guaranteed to be active, and all enemies at and after that index are guaranteed to be inactive.
     /// </summary>
-    public static GameObject[] GetAllEnemyData(EnemyType p_enemyType, out int p_firstInactiveIndex)
+    public static EnemyData[] GetAllEnemyData(EnemyType p_enemyType, out int p_firstInactiveIndex)
     {
         switch (p_enemyType)
         {
             case EnemyType.BooEnemy:
-                return s_instance.m_booEnemyManager.GetAllEnemyGameObjects(out p_firstInactiveIndex);
+                return s_instance.m_booEnemyManager.GetAllEnemyData(out p_firstInactiveIndex);
 
             case EnemyType.SeekEnemy:
-                return s_instance.m_seekEnemyManager.GetAllEnemyGameObjects(out p_firstInactiveIndex);
+                return s_instance.m_seekEnemyManager.GetAllEnemyData(out p_firstInactiveIndex);
 
             case EnemyType.GhostEnemy:
-                return s_instance.m_ghostEnemyManager.GetAllEnemyGameObjects(out p_firstInactiveIndex);
+                return s_instance.m_ghostEnemyManager.GetAllEnemyData(out p_firstInactiveIndex);
+
+            case EnemyType.ShieldEnemy:
+                return s_instance.m_shieldEnemyManager.GetAllEnemyData(out p_firstInactiveIndex);
 
             default:
                 p_firstInactiveIndex = -1;
@@ -218,47 +245,47 @@ public class EnemyManager : MonoBehaviour
     /// <summary>
     /// Returns an enemy's AI scipt of a given type with a given index in the array.
     /// </summary>
-    public static void GetEnemyAI(EnemyType p_enemyType, int p_index)
-    {
-        switch (p_enemyType)
-        {
-            case EnemyType.BooEnemy:
-                return s_instance.m_booEnemyManager.GetActiveEnemyAI(p_index);
+    //public static void GetEnemyAI(EnemyType p_enemyType, int p_index)
+    //{
+    //    switch (p_enemyType)
+    //    {
+    //        case EnemyType.BooEnemy:
+    //            return s_instance.m_booEnemyManager.GetActiveEnemyAI(p_index);
 
-            case EnemyType.SeekEnemy:
-                return s_instance.m_seekEnemyManager.GetActiveEnemyAI(p_index);
+    //        case EnemyType.SeekEnemy:
+    //            return s_instance.m_seekEnemyManager.GetActiveEnemyAI(p_index);
 
-            case EnemyType.GhostEnemy:
-                return s_instance.m_ghostEnemyManager.GetActiveEnemyAI(p_index);
+    //        case EnemyType.GhostEnemy:
+    //            return s_instance.m_ghostEnemyManager.GetActiveEnemyAI(p_index);
 
-            default:
-                return null;
-        }
-    }
+    //        default:
+    //            return null;
+    //    }
+    //}
 
     /// <summary>
     /// Returns an array of all enemy AI scripts of a given type. Also provides the first inactive index through an out parameter.
     /// To loop through all active enemies of that type in the scene, use the first inactive index variable as the upper limit of the loop.
     /// All enemies before that index are guaranteed to be active, and all enemies at and after that index are guaranteed to be inactive.
     /// </summary>
-    public static void[] GetAllEnemyAI(EnemyType p_enemyType, out int p_firstInactiveIndex)
-    {
-        switch (p_enemyType)
-        {
-            case EnemyType.BooEnemy:
-                return s_instance.m_booEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
+    //public static void[] GetAllEnemyAI(EnemyType p_enemyType, out int p_firstInactiveIndex)
+    //{
+    //    switch (p_enemyType)
+    //    {
+    //        case EnemyType.BooEnemy:
+    //            return s_instance.m_booEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
 
-            case EnemyType.SeekEnemy:
-                return s_instance.m_seekEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
+    //        case EnemyType.SeekEnemy:
+    //            return s_instance.m_seekEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
 
-            case EnemyType.GhostEnemy:
-                return s_instance.m_ghostEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
+    //        case EnemyType.GhostEnemy:
+    //            return s_instance.m_ghostEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
 
-            default:
-                p_firstInactiveIndex = -1;
-                return null;
-        }
-    }
+    //        default:
+    //            p_firstInactiveIndex = -1;
+    //            return null;
+    //    }
+    //}
 
     /// <summary>
     /// Adds an enemy to the queue to be spawned.
