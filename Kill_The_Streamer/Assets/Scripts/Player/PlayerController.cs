@@ -58,6 +58,7 @@ public class PlayerController : MonoBehaviour
         m_HealthBarText = m_HealthBarObject.GetComponentInChildren<Text>();
 
         m_weaponPickupText = this.GetComponentInChildren<Text>();
+        Debug.Log(m_weaponPickupText);
 
         m_weaponRenderer = this.GetComponentInChildren<WeaponRotation>().gameObject;
         m_weaponSpriteRenderer = m_weaponRenderer.GetComponent<SpriteRenderer>();

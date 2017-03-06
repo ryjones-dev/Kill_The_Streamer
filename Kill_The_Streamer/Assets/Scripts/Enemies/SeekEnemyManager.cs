@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BooEnemyManager : MonoBehaviour
+public class SeekEnemyManager : MonoBehaviour
 {
-    public GameObject m_booPrefab;
+    public GameObject m_seekPrefab;
 
-    private GameObject[] m_booGameObjects;
-    private EnemyData[] m_booEnemyData;
-    private AiSeekFlee[] m_booSeekFleeComponents;
+    private GameObject[] m_seekEnemyGameObjects;
+    private EnemyData[] m_seekEnemyData;
+    private AiSeeking[] m_seekSeekComponents;
     private int m_firstInactiveIndex = 0;
 
     private GameObject[] m_spawnLocations;
@@ -29,25 +29,25 @@ public class BooEnemyManager : MonoBehaviour
     public void Init(Transform p_parent)
     {
         // Initializes the gameobject and component arrays
-        m_booGameObjects = new GameObject[Constants.MAX_ENEMIES];
-        m_booEnemyData = new EnemyData[Constants.MAX_ENEMIES];
-        m_booSeekFleeComponents = new AiSeekFlee[Constants.MAX_ENEMIES];
+        m_seekEnemyGameObjects = new GameObject[Constants.MAX_ENEMIES];
+        m_seekEnemyData = new EnemyData[Constants.MAX_ENEMIES];
+        m_seekSeekComponents = new AiSeeking[Constants.MAX_ENEMIES];
 
         for (int i = 0; i < Constants.MAX_ENEMIES; i++)
         {
             // Instantiates each enemy
-            GameObject boo = Instantiate<GameObject>(m_booPrefab, Vector3.zero, Quaternion.identity, p_parent);
-            EnemyData booData = boo.GetComponent<EnemyData>();
-            AiSeekFlee booAISeekFlee = boo.GetComponent<AiSeekFlee>();
+            GameObject seek = Instantiate<GameObject>(m_seekPrefab, Vector3.zero, Quaternion.identity, p_parent);
+            EnemyData seekData = seek.GetComponent<EnemyData>();
+            AiSeeking seekComponent = seek.GetComponent<AiSeeking>();
 
             // Sets the enemy's name and turns it off
-            boo.name = m_booPrefab.name + " " + i;
-            boo.SetActive(false);
+            seek.name = m_seekPrefab.name + " " + i;
+            seek.SetActive(false);
 
             // Saves the gameobject and components in the arrays
-            m_booGameObjects[i] = boo;
-            m_booEnemyData[i] = booData;
-            m_booSeekFleeComponents[i] = booAISeekFlee;
+            m_seekEnemyGameObjects[i] = seek;
+            m_seekEnemyData[i] = seekData;
+            m_seekSeekComponents[i] = seekComponent;
         }
     }
 
@@ -58,31 +58,31 @@ public class BooEnemyManager : MonoBehaviour
         if (m_firstInactiveIndex == Constants.MAX_ENEMIES) return null;
 
         // Gets first inactive enemy gameobject
-        GameObject boo = m_booGameObjects[m_firstInactiveIndex];
+        GameObject seek = m_seekEnemyGameObjects[m_firstInactiveIndex];
 
         // Assigns the enemy's array index in the enemy data script
-        m_booEnemyData[m_firstInactiveIndex].m_Index = m_firstInactiveIndex;
+        m_seekEnemyData[m_firstInactiveIndex].m_Index = m_firstInactiveIndex;
 
         // Sets the enemy's name to the twich username
-        boo.name = p_twitchUsername;
-        boo.GetComponentInChildren<TextMesh>().text = p_twitchUsername;
+        seek.name = p_twitchUsername;
+        seek.GetComponentInChildren<TextMesh>().text = p_twitchUsername;
 
         // Converts the spawn direction to a spawnpoint index
         int spawnIndex = (int)p_spawnDirection;
-        if(spawnIndex >= m_spawnLocations.Length) { spawnIndex = Random.Range(0, m_spawnLocations.Length); }
+        if (spawnIndex >= m_spawnLocations.Length) { spawnIndex = Random.Range(0, m_spawnLocations.Length); }
 
         // Sets the position of the enemy
         Vector3 spawnVariance = spawnIndex % 2 == 0 ? new Vector3(Random.Range(-2.0f, 2.0f), 0, 0) : new Vector3(0, 0, Random.Range(-2.0f, 2.0f));
-        boo.transform.position = m_spawnLocations[spawnIndex].transform.position + spawnVariance;
+        seek.transform.position = m_spawnLocations[spawnIndex].transform.position + spawnVariance;
 
         // Enables the gameobject
-        boo.SetActive(true);
+        seek.SetActive(true);
 
         // Increments the first inactive index
         m_firstInactiveIndex++;
 
         // Returns the enemy gameobject
-        return boo;
+        return seek;
     }
 
     // Called by the enemy manager when deactivating an enemy. Returns true
@@ -92,26 +92,26 @@ public class BooEnemyManager : MonoBehaviour
         if (p_enemyIndex < 0 || p_enemyIndex >= m_firstInactiveIndex || m_firstInactiveIndex == 0) return false;
 
         // Temporarily saves the data from the enemy we are deactivating
-        GameObject temp = m_booGameObjects[p_enemyIndex];
-        EnemyData tempEnemyData = m_booEnemyData[p_enemyIndex];
-        AiSeekFlee tempAISeekFlee = m_booSeekFleeComponents[p_enemyIndex];
+        GameObject temp = m_seekEnemyGameObjects[p_enemyIndex];
+        EnemyData tempEnemyData = m_seekEnemyData[p_enemyIndex];
+        AiSeeking tempAISeekFlee = m_seekSeekComponents[p_enemyIndex];
 
         // Deactivates the enemy
         temp.SetActive(false);
 
         // Moves the enemy at the end of the active section to the deactivated position
-        m_booGameObjects[p_enemyIndex] = m_booGameObjects[m_firstInactiveIndex - 1];
-        m_booEnemyData[p_enemyIndex] = m_booEnemyData[m_firstInactiveIndex - 1];
-        m_booSeekFleeComponents[p_enemyIndex] = m_booSeekFleeComponents[m_firstInactiveIndex - 1];
+        m_seekEnemyGameObjects[p_enemyIndex] = m_seekEnemyGameObjects[m_firstInactiveIndex - 1];
+        m_seekEnemyData[p_enemyIndex] = m_seekEnemyData[m_firstInactiveIndex - 1];
+        m_seekSeekComponents[p_enemyIndex] = m_seekSeekComponents[m_firstInactiveIndex - 1];
 
         // Moves the deactivated enemy to the start of the inactive section
-        m_booGameObjects[m_firstInactiveIndex - 1] = temp;
-        m_booEnemyData[m_firstInactiveIndex - 1] = tempEnemyData;
-        m_booSeekFleeComponents[m_firstInactiveIndex - 1] = tempAISeekFlee;
+        m_seekEnemyGameObjects[m_firstInactiveIndex - 1] = temp;
+        m_seekEnemyData[m_firstInactiveIndex - 1] = tempEnemyData;
+        m_seekSeekComponents[m_firstInactiveIndex - 1] = tempAISeekFlee;
 
         // Makes sure the indices in the enemy data scripts are correct
-        m_booEnemyData[p_enemyIndex].m_Index = p_enemyIndex;
-        m_booEnemyData[m_firstInactiveIndex - 1].m_Index = m_firstInactiveIndex - 1;
+        m_seekEnemyData[p_enemyIndex].m_Index = p_enemyIndex;
+        m_seekEnemyData[m_firstInactiveIndex - 1].m_Index = m_firstInactiveIndex - 1;
 
         // Decrements the first inactive index
         m_firstInactiveIndex--;
@@ -119,20 +119,20 @@ public class BooEnemyManager : MonoBehaviour
         return true;
     }
 
-    public GameObject GetActiveEnemyGameObject(int p_index)
+    public GameObject GetActiveEnemy(int p_index)
     {
-        if(p_index < 0 || p_index >= m_firstInactiveIndex)
+        if (p_index < 0 || p_index >= m_firstInactiveIndex)
         {
-            Debug.Log("Invalid index " + p_index + " in BooEnemy array");
+            Debug.Log("Invalid index " + p_index + " in SeekEnemy array");
             return null;
         }
 
-        return m_booGameObjects[p_index];
+        return m_seekEnemyGameObjects[p_index];
     }
 
     public GameObject[] GetAllEnemies(out int p_firstInactiveIndex)
     {
         p_firstInactiveIndex = m_firstInactiveIndex;
-        return m_booGameObjects;
+        return m_seekEnemyGameObjects;
     }
 }
