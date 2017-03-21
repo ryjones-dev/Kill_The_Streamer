@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class WeaponMachineGun : Weapon
+public class WeaponCheese : Weapon
 {
     public const float CHEESE_GUN_FIRE_RATE = 0.1f;
     public const int CHEESE_GUN_MAX_AMMO = 50;
@@ -45,8 +45,8 @@ public class WeaponMachineGun : Weapon
         {
             m_ammo--;
 
-            GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
-            bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
+			GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
+			bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
 
             m_timer = FIRE_RATE;
         }
@@ -64,4 +64,5 @@ public class WeaponMachineGun : Weapon
             m_timer -= Time.deltaTime;
         }
     }
+
 }
