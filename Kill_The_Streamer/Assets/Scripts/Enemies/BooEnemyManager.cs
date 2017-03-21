@@ -8,7 +8,6 @@ public class BooEnemyManager : MonoBehaviour
     public GameObject m_booPrefab;
 
     private GameObject[] m_booGameObjects;
-    private EnemyData[] m_booEnemyData;
     private AiSeekFlee[] m_booSeekFleeComponents;
     private int m_firstInactiveIndex = 0;
 
@@ -30,14 +29,12 @@ public class BooEnemyManager : MonoBehaviour
     {
         // Initializes the gameobject and component arrays
         m_booGameObjects = new GameObject[Constants.MAX_ENEMIES];
-        m_booEnemyData = new EnemyData[Constants.MAX_ENEMIES];
         m_booSeekFleeComponents = new AiSeekFlee[Constants.MAX_ENEMIES];
 
         for (int i = 0; i < Constants.MAX_ENEMIES; i++)
         {
             // Instantiates each enemy
             GameObject boo = Instantiate<GameObject>(m_booPrefab, Vector3.zero, Quaternion.identity, p_parent);
-            EnemyData booData = boo.GetComponent<EnemyData>();
             AiSeekFlee booAISeekFlee = boo.GetComponent<AiSeekFlee>();
 
             // Sets the enemy's name and turns it off
@@ -46,7 +43,6 @@ public class BooEnemyManager : MonoBehaviour
 
             // Saves the gameobject and components in the arrays
             m_booGameObjects[i] = boo;
-            m_booEnemyData[i] = booData;
             m_booSeekFleeComponents[i] = booAISeekFlee;
         }
     }
@@ -60,8 +56,8 @@ public class BooEnemyManager : MonoBehaviour
         // Gets first inactive enemy gameobject
         GameObject boo = m_booGameObjects[m_firstInactiveIndex];
 
-        // Assigns the enemy's array index in the enemy data script
-        m_booEnemyData[m_firstInactiveIndex].m_Index = m_firstInactiveIndex;
+        // Assigns the enemy's array index
+        m_booSeekFleeComponents[m_firstInactiveIndex].Index = m_firstInactiveIndex;
 
         // Sets the enemy's name to the twich username
         boo.name = p_twitchUsername;
@@ -93,7 +89,6 @@ public class BooEnemyManager : MonoBehaviour
 
         // Temporarily saves the data from the enemy we are deactivating
         GameObject temp = m_booGameObjects[p_enemyIndex];
-        EnemyData tempEnemyData = m_booEnemyData[p_enemyIndex];
         AiSeekFlee tempAISeekFlee = m_booSeekFleeComponents[p_enemyIndex];
 
         // Deactivates the enemy
@@ -101,17 +96,15 @@ public class BooEnemyManager : MonoBehaviour
 
         // Moves the enemy at the end of the active section to the deactivated position
         m_booGameObjects[p_enemyIndex] = m_booGameObjects[m_firstInactiveIndex - 1];
-        m_booEnemyData[p_enemyIndex] = m_booEnemyData[m_firstInactiveIndex - 1];
         m_booSeekFleeComponents[p_enemyIndex] = m_booSeekFleeComponents[m_firstInactiveIndex - 1];
 
         // Moves the deactivated enemy to the start of the inactive section
         m_booGameObjects[m_firstInactiveIndex - 1] = temp;
-        m_booEnemyData[m_firstInactiveIndex - 1] = tempEnemyData;
         m_booSeekFleeComponents[m_firstInactiveIndex - 1] = tempAISeekFlee;
 
-        // Makes sure the indices in the enemy data scripts are correct
-        m_booEnemyData[p_enemyIndex].m_Index = p_enemyIndex;
-        m_booEnemyData[m_firstInactiveIndex - 1].m_Index = m_firstInactiveIndex - 1;
+        // Makes sure the indices are correct
+        m_booSeekFleeComponents[p_enemyIndex].Index = p_enemyIndex;
+        m_booSeekFleeComponents[m_firstInactiveIndex - 1].Index = m_firstInactiveIndex - 1;
 
         // Decrements the first inactive index
         m_firstInactiveIndex--;

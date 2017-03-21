@@ -8,7 +8,6 @@ public class SeekEnemyManager : MonoBehaviour
     public GameObject m_seekPrefab;
 
     private GameObject[] m_seekEnemyGameObjects;
-    private EnemyData[] m_seekEnemyData;
     private AiSeeking[] m_seekSeekComponents;
     private int m_firstInactiveIndex = 0;
 
@@ -30,14 +29,12 @@ public class SeekEnemyManager : MonoBehaviour
     {
         // Initializes the gameobject and component arrays
         m_seekEnemyGameObjects = new GameObject[Constants.MAX_ENEMIES];
-        m_seekEnemyData = new EnemyData[Constants.MAX_ENEMIES];
         m_seekSeekComponents = new AiSeeking[Constants.MAX_ENEMIES];
 
         for (int i = 0; i < Constants.MAX_ENEMIES; i++)
         {
             // Instantiates each enemy
             GameObject seek = Instantiate<GameObject>(m_seekPrefab, Vector3.zero, Quaternion.identity, p_parent);
-            EnemyData seekData = seek.GetComponent<EnemyData>();
             AiSeeking seekComponent = seek.GetComponent<AiSeeking>();
 
             // Sets the enemy's name and turns it off
@@ -46,7 +43,6 @@ public class SeekEnemyManager : MonoBehaviour
 
             // Saves the gameobject and components in the arrays
             m_seekEnemyGameObjects[i] = seek;
-            m_seekEnemyData[i] = seekData;
             m_seekSeekComponents[i] = seekComponent;
         }
     }
@@ -60,8 +56,8 @@ public class SeekEnemyManager : MonoBehaviour
         // Gets first inactive enemy gameobject
         GameObject seek = m_seekEnemyGameObjects[m_firstInactiveIndex];
 
-        // Assigns the enemy's array index in the enemy data script
-        m_seekEnemyData[m_firstInactiveIndex].m_Index = m_firstInactiveIndex;
+        // Assigns the enemy's array index
+        m_seekSeekComponents[m_firstInactiveIndex].Index = m_firstInactiveIndex;
 
         // Sets the enemy's name to the twich username
         seek.name = p_twitchUsername;
@@ -93,7 +89,6 @@ public class SeekEnemyManager : MonoBehaviour
 
         // Temporarily saves the data from the enemy we are deactivating
         GameObject temp = m_seekEnemyGameObjects[p_enemyIndex];
-        EnemyData tempEnemyData = m_seekEnemyData[p_enemyIndex];
         AiSeeking tempAISeekFlee = m_seekSeekComponents[p_enemyIndex];
 
         // Deactivates the enemy
@@ -101,17 +96,15 @@ public class SeekEnemyManager : MonoBehaviour
 
         // Moves the enemy at the end of the active section to the deactivated position
         m_seekEnemyGameObjects[p_enemyIndex] = m_seekEnemyGameObjects[m_firstInactiveIndex - 1];
-        m_seekEnemyData[p_enemyIndex] = m_seekEnemyData[m_firstInactiveIndex - 1];
         m_seekSeekComponents[p_enemyIndex] = m_seekSeekComponents[m_firstInactiveIndex - 1];
 
         // Moves the deactivated enemy to the start of the inactive section
         m_seekEnemyGameObjects[m_firstInactiveIndex - 1] = temp;
-        m_seekEnemyData[m_firstInactiveIndex - 1] = tempEnemyData;
         m_seekSeekComponents[m_firstInactiveIndex - 1] = tempAISeekFlee;
 
-        // Makes sure the indices in the enemy data scripts are correct
-        m_seekEnemyData[p_enemyIndex].m_Index = p_enemyIndex;
-        m_seekEnemyData[m_firstInactiveIndex - 1].m_Index = m_firstInactiveIndex - 1;
+        // Makes sure the indices are correct
+        m_seekSeekComponents[p_enemyIndex].Index = p_enemyIndex;
+        m_seekSeekComponents[m_firstInactiveIndex - 1].Index = m_firstInactiveIndex - 1;
 
         // Decrements the first inactive index
         m_firstInactiveIndex--;

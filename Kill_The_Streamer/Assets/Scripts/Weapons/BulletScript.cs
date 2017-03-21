@@ -9,7 +9,7 @@ public class BulletScript : MonoBehaviour
     {
 
         if (collision.collider.gameObject.CompareTag("BooAi")){     
-            EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<EnemyData>().m_Index);
+            EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<AIBase>().Index);
 
         }
 

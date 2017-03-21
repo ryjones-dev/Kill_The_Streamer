@@ -8,7 +8,6 @@ public class GhostEnemyManager : MonoBehaviour
     public GameObject m_ghostPrefab;
 
     private GameObject[] m_ghostGameObjects;
-    private EnemyData[] m_ghostEnemyData;
     private AiGhost[] m_ghostGhostComponents;
     private int m_firstInactiveIndex = 0;
 
@@ -30,14 +29,12 @@ public class GhostEnemyManager : MonoBehaviour
     {
         // Initializes the gameobject and component arrays
         m_ghostGameObjects = new GameObject[Constants.MAX_ENEMIES];
-        m_ghostEnemyData = new EnemyData[Constants.MAX_ENEMIES];
         m_ghostGhostComponents = new AiGhost[Constants.MAX_ENEMIES];
 
         for (int i = 0; i < Constants.MAX_ENEMIES; i++)
         {
             // Instantiates each enemy
             GameObject ghost = Instantiate<GameObject>(m_ghostPrefab, Vector3.zero, Quaternion.identity, p_parent);
-            EnemyData ghostData = ghost.GetComponent<EnemyData>();
             AiGhost ghostComponent = ghost.GetComponent<AiGhost>();
 
             // Sets the enemy's name and turns it off
@@ -46,7 +43,6 @@ public class GhostEnemyManager : MonoBehaviour
 
             // Saves the gameobject and components in the arrays
             m_ghostGameObjects[i] = ghost;
-            m_ghostEnemyData[i] = ghostData;
             m_ghostGhostComponents[i] = ghostComponent;
         }
     }
@@ -60,8 +56,8 @@ public class GhostEnemyManager : MonoBehaviour
         // Gets first inactive enemy gameobject
         GameObject ghost = m_ghostGameObjects[m_firstInactiveIndex];
 
-        // Assigns the enemy's array index in the enemy data script
-        m_ghostEnemyData[m_firstInactiveIndex].m_Index = m_firstInactiveIndex;
+        // Assigns the enemy's array index
+        m_ghostGhostComponents[m_firstInactiveIndex].Index = m_firstInactiveIndex;
 
         // Sets the enemy's name to the twich username
         ghost.name = p_twitchUsername;
@@ -93,7 +89,6 @@ public class GhostEnemyManager : MonoBehaviour
 
         // Temporarily saves the data from the enemy we are deactivating
         GameObject temp = m_ghostGameObjects[p_enemyIndex];
-        EnemyData tempEnemyData = m_ghostEnemyData[p_enemyIndex];
         AiGhost tempAISeekFlee = m_ghostGhostComponents[p_enemyIndex];
 
         // Deactivates the enemy
@@ -101,17 +96,15 @@ public class GhostEnemyManager : MonoBehaviour
 
         // Moves the enemy at the end of the active section to the deactivated position
         m_ghostGameObjects[p_enemyIndex] = m_ghostGameObjects[m_firstInactiveIndex - 1];
-        m_ghostEnemyData[p_enemyIndex] = m_ghostEnemyData[m_firstInactiveIndex - 1];
         m_ghostGhostComponents[p_enemyIndex] = m_ghostGhostComponents[m_firstInactiveIndex - 1];
 
         // Moves the deactivated enemy to the start of the inactive section
         m_ghostGameObjects[m_firstInactiveIndex - 1] = temp;
-        m_ghostEnemyData[m_firstInactiveIndex - 1] = tempEnemyData;
         m_ghostGhostComponents[m_firstInactiveIndex - 1] = tempAISeekFlee;
 
-        // Makes sure the indices in the enemy data scripts are correct
-        m_ghostEnemyData[p_enemyIndex].m_Index = p_enemyIndex;
-        m_ghostEnemyData[m_firstInactiveIndex - 1].m_Index = m_firstInactiveIndex - 1;
+        // Makes sure the indices are correct
+        m_ghostGhostComponents[p_enemyIndex].Index = p_enemyIndex;
+        m_ghostGhostComponents[m_firstInactiveIndex - 1].Index = m_firstInactiveIndex - 1;
 
         // Decrements the first inactive index
         m_firstInactiveIndex--;
