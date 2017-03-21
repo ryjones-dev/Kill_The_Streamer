@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class AiSeeking : MonoBehaviour {
+public class AiSeeking : AIBase
+{
 
     // Use this for initialization
     //all AI needs using UnityEngine.AI;
@@ -35,7 +36,7 @@ public class AiSeeking : MonoBehaviour {
 
     void Start () {
         //finding object with the tag "Player"
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = PlayerController.s_Player.gameObject;
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
         closeShield = 100.00f;
         //give seeker a random range to be away from the leader

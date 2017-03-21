@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class AiShieldSeek : MonoBehaviour {
+public class AiShieldSeek : AIBase{
 
     // Use this for initialization
     //all AI needs using UnityEngine.AI;
@@ -26,7 +26,7 @@ public class AiShieldSeek : MonoBehaviour {
     void Start()
     {
         //finding object with the tag "Player"
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = PlayerController.s_Player.gameObject;
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
         shieldActive = true;
 
