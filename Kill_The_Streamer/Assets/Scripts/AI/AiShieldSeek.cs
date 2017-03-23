@@ -10,7 +10,12 @@ public class AiShieldSeek : AIBase{
     private GameObject player;//the target to seek (player)
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
 
-    public bool shieldActive;
+    private GameObject shield;
+    public int shieldHealthStart;
+    private int shieldHealth;
+
+    private bool shieldActive;
+    public bool ShieldActive { get { return shieldActive; } }
 
     //anarchy and regular values
     public bool anarchyMode = false;
@@ -28,6 +33,9 @@ public class AiShieldSeek : AIBase{
         //finding object with the tag "Player"
         player = PlayerController.s_Player.gameObject;
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
+
+
+        shield = transform.FindChild("Shield").gameObject;
         shieldActive = true;
 
         defaultSpeed = nav.speed;
@@ -83,6 +91,23 @@ public class AiShieldSeek : AIBase{
     public void Seek()
     {
         nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
+    }
 
+    public void ShieldTakeDamage()
+    {
+        shieldHealth--;
+        if(shieldHealth <= 0)
+        {
+            shieldActive = false;
+            shield.SetActive(false);
+        }
+    }
+
+    public void OnDespawn()
+    {
+        Debug.Log("Called");
+        shieldActive = true;
+        shieldHealth = shieldHealthStart;
+        shield.SetActive(true);
     }
 }
