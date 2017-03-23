@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AiGhost : MonoBehaviour {
+public class AiGhost : AIBase {
 
     // Use this for initialization
 
@@ -41,7 +41,7 @@ public class AiGhost : MonoBehaviour {
 
 
     void Start () {
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = PlayerController.s_Player.gameObject;
         toCharge = false;
         seekSpot = false;
         defaultSpeed = startSpeed;

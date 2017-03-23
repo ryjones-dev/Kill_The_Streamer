@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class AiSeekFlee : MonoBehaviour {
+public class AiSeekFlee : AIBase{
 
     // Use this for initialization
     // Use this for initialization
@@ -35,7 +35,7 @@ public class AiSeekFlee : MonoBehaviour {
 
     void Start () {
         //finding object with the tag "Player"
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = PlayerController.s_Player.gameObject;
         //playerTargetting = player.GetComponent<PlayerLookingAtAI>();
         inPlayerSight = false;
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI

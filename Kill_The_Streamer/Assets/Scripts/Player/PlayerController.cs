@@ -46,12 +46,14 @@ public class PlayerController : MonoBehaviour
     private Text m_primaryWeaponAmmo;
     private Text m_secondaryWeaponAmmo;
 
+    void Awake()
+    {
+        s_Player = this;
+    }
+
     // Use this for initialization
     void Start()
     {
-        s_Player = this;
-
-
         speed = defaultSpeed;
         m_health = MAX_HEALTH;
         m_HealthBar = m_HealthBarObject.GetComponent<Image>();
