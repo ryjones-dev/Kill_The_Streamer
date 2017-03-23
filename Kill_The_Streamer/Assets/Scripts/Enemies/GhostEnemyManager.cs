@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GhostEnemyManager : MonoBehaviour
 {
@@ -127,23 +126,6 @@ public class GhostEnemyManager : MonoBehaviour
     {
         p_firstInactiveIndex = m_firstInactiveIndex;
         return m_ghostGameObjects;
-    }
-
-    public EnemyData GetActiveEnemyData(int p_index)
-    {
-        if (p_index < 0 || p_index >= m_firstInactiveIndex)
-        {
-            Debug.Log("Invalid index " + p_index + " in GhostEnemy array");
-            return null;
-        }
-
-        return m_ghostEnemyData[p_index];
-    }
-
-    public EnemyData[] GetAllEnemyData(out int p_firstInactiveIndex)
-    {
-        p_firstInactiveIndex = m_firstInactiveIndex;
-        return m_ghostEnemyData;
     }
 
     public AiGhost GetActiveEnemyAI(int p_index)

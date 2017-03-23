@@ -192,23 +192,24 @@ public class EnemyManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns an enemy's data scipt of a given type with a given index in the array.
+    /// Returns an enemy's AI scipt of a given type with a given index in the array.
+    /// The type returned will be an AIBase, so it will need to be casted to the expected type.
     /// </summary>
-    public static EnemyData GetEnemyData(EnemyType p_enemyType, int p_index)
+    public static AIBase GetEnemyAI(EnemyType p_enemyType, int p_index)
     {
         switch (p_enemyType)
         {
             case EnemyType.BooEnemy:
-                return s_instance.m_booEnemyManager.GetActiveEnemyData(p_index);
+                return s_instance.m_booEnemyManager.GetActiveEnemyAI(p_index);
 
             case EnemyType.SeekEnemy:
-                return s_instance.m_seekEnemyManager.GetActiveEnemyData(p_index);
+                return s_instance.m_seekEnemyManager.GetActiveEnemyAI(p_index);
 
             case EnemyType.GhostEnemy:
-                return s_instance.m_ghostEnemyManager.GetActiveEnemyData(p_index);
+                return s_instance.m_ghostEnemyManager.GetActiveEnemyAI(p_index);
 
             case EnemyType.ShieldEnemy:
-                return s_instance.m_shieldEnemyManager.GetActiveEnemyData(p_index);
+                return s_instance.m_shieldEnemyManager.GetActiveEnemySeekAI(p_index);
 
             default:
                 return null;
@@ -216,76 +217,33 @@ public class EnemyManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns an array of all enemy data scripts of a given type. Also provides the first inactive index through an out parameter.
+    /// Returns an array of all enemy AI scripts of a given type.
+    /// The type returned will be an AIBase, so it will need to be casted to the expected type.
+    /// Provides the first inactive index through an out parameter.
     /// To loop through all active enemies of that type in the scene, use the first inactive index variable as the upper limit of the loop.
     /// All enemies before that index are guaranteed to be active, and all enemies at and after that index are guaranteed to be inactive.
     /// </summary>
-    public static EnemyData[] GetAllEnemyData(EnemyType p_enemyType, out int p_firstInactiveIndex)
+    public static AIBase[] GetAllEnemyAI(EnemyType p_enemyType, out int p_firstInactiveIndex)
     {
         switch (p_enemyType)
         {
             case EnemyType.BooEnemy:
-                return s_instance.m_booEnemyManager.GetAllEnemyData(out p_firstInactiveIndex);
+                return s_instance.m_booEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
 
             case EnemyType.SeekEnemy:
-                return s_instance.m_seekEnemyManager.GetAllEnemyData(out p_firstInactiveIndex);
+                return s_instance.m_seekEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
 
             case EnemyType.GhostEnemy:
-                return s_instance.m_ghostEnemyManager.GetAllEnemyData(out p_firstInactiveIndex);
+                return s_instance.m_ghostEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
 
             case EnemyType.ShieldEnemy:
-                return s_instance.m_shieldEnemyManager.GetAllEnemyData(out p_firstInactiveIndex);
+                return s_instance.m_shieldEnemyManager.GetAllEnemySeekAI(out p_firstInactiveIndex);
 
             default:
                 p_firstInactiveIndex = -1;
                 return null;
         }
     }
-
-    /// <summary>
-    /// Returns an enemy's AI scipt of a given type with a given index in the array.
-    /// </summary>
-    //public static void GetEnemyAI(EnemyType p_enemyType, int p_index)
-    //{
-    //    switch (p_enemyType)
-    //    {
-    //        case EnemyType.BooEnemy:
-    //            return s_instance.m_booEnemyManager.GetActiveEnemyAI(p_index);
-
-    //        case EnemyType.SeekEnemy:
-    //            return s_instance.m_seekEnemyManager.GetActiveEnemyAI(p_index);
-
-    //        case EnemyType.GhostEnemy:
-    //            return s_instance.m_ghostEnemyManager.GetActiveEnemyAI(p_index);
-
-    //        default:
-    //            return null;
-    //    }
-    //}
-
-    /// <summary>
-    /// Returns an array of all enemy AI scripts of a given type. Also provides the first inactive index through an out parameter.
-    /// To loop through all active enemies of that type in the scene, use the first inactive index variable as the upper limit of the loop.
-    /// All enemies before that index are guaranteed to be active, and all enemies at and after that index are guaranteed to be inactive.
-    /// </summary>
-    //public static void[] GetAllEnemyAI(EnemyType p_enemyType, out int p_firstInactiveIndex)
-    //{
-    //    switch (p_enemyType)
-    //    {
-    //        case EnemyType.BooEnemy:
-    //            return s_instance.m_booEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
-
-    //        case EnemyType.SeekEnemy:
-    //            return s_instance.m_seekEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
-
-    //        case EnemyType.GhostEnemy:
-    //            return s_instance.m_ghostEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
-
-    //        default:
-    //            p_firstInactiveIndex = -1;
-    //            return null;
-    //    }
-    //}
 
     /// <summary>
     /// Adds an enemy to the queue to be spawned.
@@ -300,12 +258,45 @@ public class EnemyManager : MonoBehaviour
     private void Update()
     {
         //-----DEBUG ONLY
-        if (Input.GetKey(KeyCode.P))
+        if (Input.GetKey(KeyCode.O))
         {
             EnemyNetworkInfo info = new EnemyNetworkInfo();
 
             info.name = "lunalovecraft";
             info.type = EnemyType.BooEnemy;
+            info.direction = Direction.Random;
+
+            AddEnemyToQueue(info);
+        }
+
+        if(Input.GetKey(KeyCode.P))
+        {
+            EnemyNetworkInfo info = new EnemyNetworkInfo();
+
+            info.name = "lunalovecraft";
+            info.type = EnemyType.GhostEnemy;
+            info.direction = Direction.Random;
+
+            AddEnemyToQueue(info);
+        }
+
+        if (Input.GetKey(KeyCode.LeftBracket))
+        {
+            EnemyNetworkInfo info = new EnemyNetworkInfo();
+
+            info.name = "lunalovecraft";
+            info.type = EnemyType.SeekEnemy;
+            info.direction = Direction.Random;
+
+            AddEnemyToQueue(info);
+        }
+
+        if (Input.GetKey(KeyCode.RightBracket))
+        {
+            EnemyNetworkInfo info = new EnemyNetworkInfo();
+
+            info.name = "lunalovecraft";
+            info.type = EnemyType.ShieldEnemy;
             info.direction = Direction.Random;
 
             AddEnemyToQueue(info);

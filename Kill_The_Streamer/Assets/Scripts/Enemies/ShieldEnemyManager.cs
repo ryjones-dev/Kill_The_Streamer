@@ -1,14 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ShieldEnemyManager : MonoBehaviour
 {
     public GameObject m_shieldPrefab;
 
     private GameObject[] m_shieldEnemyGameObjects;
-    private EnemyData[] m_shieldEnemyData;
     private AiShieldSeek[] m_shieldSeekComponents;
     private ShieldAi[] m_shieldAIComponents;
     private int m_firstInactiveIndex = 0;
@@ -31,7 +29,6 @@ public class ShieldEnemyManager : MonoBehaviour
     {
         // Initializes the gameobject and component arrays
         m_shieldEnemyGameObjects = new GameObject[Constants.MAX_ENEMIES];
-        m_shieldEnemyData = new EnemyData[Constants.MAX_ENEMIES];
         m_shieldSeekComponents = new AiShieldSeek[Constants.MAX_ENEMIES];
         m_shieldAIComponents = new ShieldAi[Constants.MAX_ENEMIES];
 
@@ -39,9 +36,8 @@ public class ShieldEnemyManager : MonoBehaviour
         {
             // Instantiates each enemy
             GameObject shield = Instantiate<GameObject>(m_shieldPrefab, Vector3.zero, Quaternion.identity, p_parent);
-            EnemyData shieldData = shield.GetComponent<EnemyData>();
             AiShieldSeek shieldSeekComponent = shield.GetComponent<AiShieldSeek>();
-            ShieldAi shieldAIComponent = shield.GetComponent<ShieldAi>();
+            ShieldAi shieldAIComponent = shield.GetComponentInChildren<ShieldAi>();
 
             // Sets the enemy's name and turns it off
             shield.name = m_shieldPrefab.name + " " + i;
@@ -49,7 +45,6 @@ public class ShieldEnemyManager : MonoBehaviour
 
             // Saves the gameobject and components in the arrays
             m_shieldEnemyGameObjects[i] = shield;
-            m_shieldEnemyData[i] = shieldData;
             m_shieldSeekComponents[i] = shieldSeekComponent;
             m_shieldAIComponents[i] = shieldAIComponent;
         }
@@ -64,12 +59,13 @@ public class ShieldEnemyManager : MonoBehaviour
         // Gets first inactive enemy gameobject
         GameObject shield = m_shieldEnemyGameObjects[m_firstInactiveIndex];
 
-        // Assigns the enemy's array index in the enemy data script
-        m_shieldEnemyData[m_firstInactiveIndex].m_Index = m_firstInactiveIndex;
+        // Assigns the enemy's array index
+        m_shieldSeekComponents[m_firstInactiveIndex].Index = m_firstInactiveIndex;
+        m_shieldAIComponents[m_firstInactiveIndex].Index = m_firstInactiveIndex;
 
         // Sets the enemy's name to the twich username
         shield.name = p_twitchUsername;
-        shield.GetComponentInChildren<Text>().text = p_twitchUsername;
+        shield.GetComponentInChildren<TextMesh>().text = p_twitchUsername;
 
         // Converts the spawn direction to a spawnpoint index
         int spawnIndex = (int)p_spawnDirection;
@@ -97,7 +93,6 @@ public class ShieldEnemyManager : MonoBehaviour
 
         // Temporarily saves the data from the enemy we are deactivating
         GameObject temp = m_shieldEnemyGameObjects[p_enemyIndex];
-        EnemyData tempEnemyData = m_shieldEnemyData[p_enemyIndex];
         AiShieldSeek tempShieldSeek = m_shieldSeekComponents[p_enemyIndex];
         ShieldAi tempShieldAI = m_shieldAIComponents[p_enemyIndex];
 
@@ -106,19 +101,20 @@ public class ShieldEnemyManager : MonoBehaviour
 
         // Moves the enemy at the end of the active section to the deactivated position
         m_shieldEnemyGameObjects[p_enemyIndex] = m_shieldEnemyGameObjects[m_firstInactiveIndex - 1];
-        m_shieldEnemyData[p_enemyIndex] = m_shieldEnemyData[m_firstInactiveIndex - 1];
         m_shieldSeekComponents[p_enemyIndex] = m_shieldSeekComponents[m_firstInactiveIndex - 1];
         m_shieldAIComponents[p_enemyIndex] = m_shieldAIComponents[m_firstInactiveIndex - 1];
 
         // Moves the deactivated enemy to the start of the inactive section
         m_shieldEnemyGameObjects[m_firstInactiveIndex - 1] = temp;
-        m_shieldEnemyData[m_firstInactiveIndex - 1] = tempEnemyData;
         m_shieldSeekComponents[m_firstInactiveIndex - 1] = tempShieldSeek;
         m_shieldAIComponents[m_firstInactiveIndex - 1] = tempShieldAI;
 
-        // Makes sure the indices in the enemy data scripts are correct
-        m_shieldEnemyData[p_enemyIndex].m_Index = p_enemyIndex;
-        m_shieldEnemyData[m_firstInactiveIndex - 1].m_Index = m_firstInactiveIndex - 1;
+        // Makes sure the indices are correct
+        m_shieldSeekComponents[p_enemyIndex].Index = p_enemyIndex;
+        m_shieldSeekComponents[m_firstInactiveIndex - 1].Index = m_firstInactiveIndex - 1;
+
+        m_shieldAIComponents[p_enemyIndex].Index = p_enemyIndex;
+        m_shieldAIComponents[m_firstInactiveIndex - 1].Index = m_firstInactiveIndex - 1;
 
         // Decrements the first inactive index
         m_firstInactiveIndex--;
@@ -141,23 +137,6 @@ public class ShieldEnemyManager : MonoBehaviour
     {
         p_firstInactiveIndex = m_firstInactiveIndex;
         return m_shieldEnemyGameObjects;
-    }
-
-    public EnemyData GetActiveEnemyData(int p_index)
-    {
-        if (p_index < 0 || p_index >= m_firstInactiveIndex)
-        {
-            Debug.Log("Invalid index " + p_index + " in ShieldEnemy array");
-            return null;
-        }
-
-        return m_shieldEnemyData[p_index];
-    }
-
-    public EnemyData[] GetAllEnemyData(out int p_firstInactiveIndex)
-    {
-        p_firstInactiveIndex = m_firstInactiveIndex;
-        return m_shieldEnemyData;
     }
 
     public AiShieldSeek GetActiveEnemySeekAI(int p_index)
