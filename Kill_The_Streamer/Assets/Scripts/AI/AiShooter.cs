@@ -16,6 +16,7 @@ public class AiShooter : MonoBehaviour
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
     private bool canAttack; //whether or not the AI can attack 
     private float attackTimer;
+    private float attackResetTimer;
     private bool inLineOfSight;
     private bool isStopped;
     private float stopCD;
@@ -26,19 +27,45 @@ public class AiShooter : MonoBehaviour
     public float minimumRange;
     int randMovement;
 
+    //anarchy and regular values
+    public bool anarchyMode = false;
+    //default info
+    public float defaultSpeed;
+    public float defaultRotationSpeed;
+    public float defaultAcceleration;
+    public float defaultShootTimer;
+    //anarchy info
+    private float anarchySpeed;
+    private float anarchyRotationSpeed;
+    private float anarchyAcceleration;
+    private float anarchyShootTimer;
+
     void Start()
     {
         //finding object with the tag "Player"
         player = GameObject.FindGameObjectWithTag("Player");
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
         canAttack = true;
-        attackTimer = 1f;
+        attackResetTimer = 1f;
+        attackTimer = attackResetTimer;
         inLineOfSight = false;
         isStopped = false;
         stopCD = 1.5f;
         isFleeing = false;
         fleeCD = 1.5f;
         minimumRange = 7; // range at which the AI will stop approaching
+
+        defaultSpeed = nav.speed;
+        defaultRotationSpeed = nav.angularSpeed;
+        defaultAcceleration = nav.acceleration;
+        defaultShootTimer = attackResetTimer;
+
+        anarchySpeed = defaultSpeed * 2;
+        anarchyRotationSpeed = defaultRotationSpeed * 2;
+        anarchyAcceleration = defaultAcceleration * 2;
+        anarchyShootTimer = attackResetTimer / 2;
+
+        //stopping distance is closer as to not freeze at the edge outside of stopping distance and freeze on trying to Seek()
         nav.stoppingDistance = minimumRange - 1;
         InvokeRepeating("ChangeRandom", 0, 1.5f);
     }
@@ -91,7 +118,7 @@ public class AiShooter : MonoBehaviour
             if (attackTimer <= 0 && inLineOfSight)
             {
                 canAttack = true;
-                attackTimer = 1;
+                attackTimer = attackResetTimer;
             }
         }
     }
