@@ -24,6 +24,7 @@ public class AiShooter : MonoBehaviour
     private float distFromPlayer;
     private NavMeshHit onlyExistsToRaycast;
     public float minimumRange;
+    int randMovement;
 
     void Start()
     {
@@ -37,8 +38,15 @@ public class AiShooter : MonoBehaviour
         stopCD = 1.5f;
         isFleeing = false;
         fleeCD = 1.5f;
-        minimumRange = 5; // range at which the AI will stop approaching
-        nav.stoppingDistance = minimumRange;
+        minimumRange = 7; // range at which the AI will stop approaching
+        nav.stoppingDistance = minimumRange - 1;
+        InvokeRepeating("ChangeRandom", 0, 1.5f);
+    }
+
+    void ChangeRandom()
+    {
+        randMovement = Random.Range(-1, 2);
+        Debug.Log(randMovement);
     }
 
     // Update is called once per frame
@@ -97,7 +105,7 @@ public class AiShooter : MonoBehaviour
         else if (isFleeing)
         {
             fleeCD -= Time.deltaTime;
-            Flee();
+            Flee(randMovement);
             if (fleeCD <= 0)
             {
                 isFleeing = false;
@@ -123,7 +131,7 @@ public class AiShooter : MonoBehaviour
             if (distFromPlayer <= minimumRange)
             {
                 isFleeing = true;
-                Flee();
+                Flee(randMovement);
             }
             else Seek();
         }
@@ -140,9 +148,25 @@ public class AiShooter : MonoBehaviour
         nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
     }
 
-    public void Flee()
+    /// <summary>
+    /// Used for fleeing from or stafing sideways out from the player.
+    /// Based on NavMesh.
+    /// 3 results, strafe left, strafe right, or move back and flee from the player
+    /// </summary>
+    public void Flee(int movementChoice)
     {
-        Vector3 runTo = 3 *(transform.position - player.transform.position);
-        nav.SetDestination(runTo);
+        //Vector3 lookAtPosition = gameObject.transform.position + gameObject.transform.right;
+        //gameObject.transform.LookAt(lookAtPosition);
+
+        if (movementChoice == 0)
+        {
+            //Vector3 runTo = 2 * (transform.position - player.transform.position);
+            Vector3 runTo = -transform.forward * 0.02f;
+            gameObject.transform.position = gameObject.transform.position + runTo;
+            //nav.SetDestination(runTo);
+        }
+
+        Vector3 moveTo = movementChoice * gameObject.transform.right.normalized * 0.02f;
+        gameObject.transform.position = gameObject.transform.position + moveTo;
     }
 }
