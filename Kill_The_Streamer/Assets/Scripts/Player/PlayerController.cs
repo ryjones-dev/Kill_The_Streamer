@@ -25,17 +25,26 @@ public class PlayerController : MonoBehaviour
     public int m_health;
 
     public GameObject m_pistolPrefab;
-	public GameObject m_weaponRenderer;
+    [HideInInspector]
+    public GameObject m_weaponRenderer;
     public GameObject m_HealthBarObject;
+    [HideInInspector]
     public Image m_HealthBar;
+    [HideInInspector]
     public Text m_HealthBarText;
+    [HideInInspector]
     public Text m_weaponPickupText;
 
+    [HideInInspector]
     public Weapon m_primaryWeapon;
+    [HideInInspector]
     public Weapon m_secondaryWeapon;
+    [HideInInspector]
     public SpriteRenderer m_weaponSpriteRenderer;
 
+    [HideInInspector]
     public GameObject m_primaryWeaponObject;
+    [HideInInspector]
     public GameObject m_secondaryWeaponObject;
     public GameObject m_primaryWeaponUIObject;
     public GameObject m_secondaryWeaponUIObject;
@@ -292,6 +301,14 @@ public class PlayerController : MonoBehaviour
         {
             m_primaryWeapon.Fire(m_weaponRenderer.transform.position, this.transform.forward);
             UpdatePrimaryWeaponAmmo();
+            if(m_primaryWeapon.m_ammo == 0 && m_secondaryWeapon == null)
+            {
+                Destroy(m_primaryWeaponObject);
+                m_primaryWeaponObject = (GameObject)Instantiate(m_pistolPrefab);
+                m_primaryWeapon = m_primaryWeaponObject.GetComponent<Weapon>();
+                m_primaryWeapon.m_held = true;
+                m_primaryWeapon.m_ammo = m_primaryWeapon.MAX_AMMO;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Q) && m_secondaryWeapon != null)
