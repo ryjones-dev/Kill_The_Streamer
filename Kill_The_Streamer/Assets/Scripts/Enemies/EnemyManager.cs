@@ -130,6 +130,9 @@ public class EnemyManager : MonoBehaviour
                 return ghostSuccess;
 
             case EnemyType.ShieldEnemy:
+                GameObject shieldEnemy = s_instance.m_shieldEnemyManager.GetActiveEnemyGameObject(p_enemyIndex);
+                shieldEnemy.SendMessage("OnDespawn", SendMessageOptions.DontRequireReceiver);
+
                 bool shieldSuccess = s_instance.m_shieldEnemyManager.DeactivateEnemy(p_enemyIndex);
                 if(shieldSuccess) { s_instance.m_enemyTotal--; }
                 return shieldSuccess;

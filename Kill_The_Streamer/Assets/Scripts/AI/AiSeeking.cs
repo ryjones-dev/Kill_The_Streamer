@@ -10,7 +10,6 @@ public class AiSeeking : AIBase
     //all AI needs using UnityEngine.AI;
     private GameObject player;//the target to seek (player)
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
-    private ShieldAi shield;//the air to detect if the shield is up to follow
 
     public float distanceActive =12.0f;//will give the distance that it will be able to go to another shield
 
@@ -110,7 +109,9 @@ public class AiSeeking : AIBase
     public void ClosestShield()
     {
         //get all shielders in level
-        GameObject[] shieldsInLevel = GameObject.FindGameObjectsWithTag("Shielder");
+        int activeLength;
+        AiShieldSeek[] shieldsInLevel = (AiShieldSeek[])EnemyManager.GetAllEnemyAI(EnemyType.ShieldEnemy, out activeLength);
+
         //make sure they are enabled
         if (shieldsInLevel.Length == 0)
         {
@@ -127,10 +128,10 @@ public class AiSeeking : AIBase
 
         NavMeshAgent leaderNav=null;//the navmesh for the leader (shield)
         //check the shields
-        for (int i =0; i < shieldsInLevel.Length; i++)
+        for (int i =0; i < activeLength; i++)
         {
             //are the shields active?
-            if(shieldsInLevel[i].GetComponent<AiShieldSeek>().shieldActive)
+            if(shieldsInLevel[i].ShieldActive)
             {
                 //get distance from position to shielder
                 distance = Vector3.Distance(this.transform.position, shieldsInLevel[i].transform.position);
@@ -141,7 +142,7 @@ public class AiSeeking : AIBase
                     if (distance < closeShield)
                     {
                         //Debug.Log(distance);
-                        shieldGameObject = shieldsInLevel[i];
+                        shieldGameObject = shieldsInLevel[i].gameObject;
                         leaderNav = shieldsInLevel[i].gameObject.GetComponent<NavMeshAgent>();
                         //splitOff = false;
                         closeShield = distance;
