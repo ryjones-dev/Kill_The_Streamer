@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,25 +18,36 @@ public class PlayerController : MonoBehaviour
     public Vector3 velocity = new Vector3(0, 0, 0);
     float dashTime = 0.0f;
 
-    
-
 
     public const int MAX_HEALTH = 40000;//40,000
 
     public int m_health;
+    public bool m_isAlive = true;
+
+    private Dictionary<string, int> m_damageDoneByViewers;
+    private string m_killedBy;
 
     public GameObject m_pistolPrefab;
-	public GameObject m_weaponRenderer;
+    [HideInInspector]
+    public GameObject m_weaponRenderer;
     public GameObject m_HealthBarObject;
+    [HideInInspector]
     public Image m_HealthBar;
+    [HideInInspector]
     public Text m_HealthBarText;
+    [HideInInspector]
     public Text m_weaponPickupText;
 
+    [HideInInspector]
     public Weapon m_primaryWeapon;
+    [HideInInspector]
     public Weapon m_secondaryWeapon;
+    [HideInInspector]
     public SpriteRenderer m_weaponSpriteRenderer;
 
+    [HideInInspector]
     public GameObject m_primaryWeaponObject;
+    [HideInInspector]
     public GameObject m_secondaryWeaponObject;
     public GameObject m_primaryWeaponUIObject;
     public GameObject m_secondaryWeaponUIObject;
@@ -81,18 +93,39 @@ public class PlayerController : MonoBehaviour
 
         m_secondaryWeapon = null;
         UpdateWeaponUI();
+
+        m_damageDoneByViewers = new Dictionary<string, int>();
     }
 
     /// <summary>
     /// Deals damage to the player and updates the health bar.
     /// </summary>
     /// <param name="damage"></param>
-    public void TakeDamage(int damage)
+    public void TakeDamage(int damage, string name = "Default")
     {
-        m_health -= damage;
-        if (m_health < 0)
+        if (!m_isAlive)
         {
-            m_health = 0;
+            return;
+        }
+
+        if(damage > m_health){
+            damage = m_health;
+        }
+
+        m_health -= damage;
+        if (m_damageDoneByViewers.ContainsKey(name))
+        {
+            m_damageDoneByViewers[name] += damage;
+        }
+        else
+        {
+            m_damageDoneByViewers.Add(name, damage);
+        }
+
+        if (m_health <= 0)
+        {
+            m_killedBy = name;
+            m_isAlive = false;
             Die();
         }
 
@@ -111,7 +144,19 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     public void Die()
     {
+        List<KeyValuePair<string, int>> sortedList = m_damageDoneByViewers.ToList();
 
+        sortedList.Sort(
+        delegate (KeyValuePair<string, int> kv, KeyValuePair<string, int> kv2)
+        {
+            return kv2.Value.CompareTo(kv.Value);
+        });
+
+        // Change to ending screen here.
+        for(int i = 0; i < sortedList.Count; ++i)
+        {
+            Debug.Log(sortedList[i].Key + ": " + sortedList[i].Value);
+        }
     }
 
     /// <summary>
@@ -292,6 +337,14 @@ public class PlayerController : MonoBehaviour
         {
             m_primaryWeapon.Fire(m_weaponRenderer.transform.position, this.transform.forward);
             UpdatePrimaryWeaponAmmo();
+            if(m_primaryWeapon.m_ammo == 0 && m_secondaryWeapon == null)
+            {
+                Destroy(m_primaryWeaponObject);
+                m_primaryWeaponObject = (GameObject)Instantiate(m_pistolPrefab);
+                m_primaryWeapon = m_primaryWeaponObject.GetComponent<Weapon>();
+                m_primaryWeapon.m_held = true;
+                m_primaryWeapon.m_ammo = m_primaryWeapon.MAX_AMMO;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.Q) && m_secondaryWeapon != null)
@@ -308,7 +361,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        
 
         //check for input
         Vector3 cursorPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);

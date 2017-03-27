@@ -39,6 +39,11 @@ public class AIBase : MonoBehaviour {
         set { damage = value; }
     }
 
+    public EnemyType AIType
+    {
+        get { return aiType; }
+    }
+
     /// <summary>
     /// This is called if the enemy takes damage. If the enemy reaches 0 health
     /// then set inactive
@@ -59,7 +64,4 @@ public class AIBase : MonoBehaviour {
     {
 
     }
-
-
-
 }

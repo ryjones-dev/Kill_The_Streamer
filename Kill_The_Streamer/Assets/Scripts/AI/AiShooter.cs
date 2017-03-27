@@ -16,6 +16,7 @@ public class AiShooter : MonoBehaviour
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
     private bool canAttack; //whether or not the AI can attack 
     private float attackTimer;
+    private float attackResetTimer;
     private bool inLineOfSight;
     private bool isStopped;
     private float stopCD;
@@ -24,6 +25,20 @@ public class AiShooter : MonoBehaviour
     private float distFromPlayer;
     private NavMeshHit onlyExistsToRaycast;
     public float minimumRange;
+    int randMovement;
+
+    //anarchy and regular values
+    public bool anarchyMode = false;
+    //default info
+    public float defaultSpeed;
+    public float defaultRotationSpeed;
+    public float defaultAcceleration;
+    public float defaultShootTimer;
+    //anarchy info
+    private float anarchySpeed;
+    private float anarchyRotationSpeed;
+    private float anarchyAcceleration;
+    private float anarchyShootTimer;
 
     void Start()
     {
@@ -31,14 +46,34 @@ public class AiShooter : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
         canAttack = true;
-        attackTimer = 1f;
+        attackResetTimer = 1f;
+        attackTimer = attackResetTimer;
         inLineOfSight = false;
         isStopped = false;
         stopCD = 1.5f;
         isFleeing = false;
         fleeCD = 1.5f;
-        minimumRange = 5; // range at which the AI will stop approaching
-        nav.stoppingDistance = minimumRange;
+        minimumRange = 7; // range at which the AI will stop approaching
+
+        defaultSpeed = nav.speed;
+        defaultRotationSpeed = nav.angularSpeed;
+        defaultAcceleration = nav.acceleration;
+        defaultShootTimer = attackResetTimer;
+
+        anarchySpeed = defaultSpeed * 2;
+        anarchyRotationSpeed = defaultRotationSpeed * 2;
+        anarchyAcceleration = defaultAcceleration * 2;
+        anarchyShootTimer = attackResetTimer / 2;
+
+        //stopping distance is closer as to not freeze at the edge outside of stopping distance and freeze on trying to Seek()
+        nav.stoppingDistance = minimumRange - 1;
+        InvokeRepeating("ChangeRandom", 0, 1.5f);
+    }
+
+    void ChangeRandom()
+    {
+        randMovement = Random.Range(-1, 2);
+        Debug.Log(randMovement);
     }
 
     // Update is called once per frame
@@ -83,7 +118,7 @@ public class AiShooter : MonoBehaviour
             if (attackTimer <= 0 && inLineOfSight)
             {
                 canAttack = true;
-                attackTimer = 1;
+                attackTimer = attackResetTimer;
             }
         }
     }
@@ -97,7 +132,7 @@ public class AiShooter : MonoBehaviour
         else if (isFleeing)
         {
             fleeCD -= Time.deltaTime;
-            Flee();
+            Flee(randMovement);
             if (fleeCD <= 0)
             {
                 isFleeing = false;
@@ -123,7 +158,7 @@ public class AiShooter : MonoBehaviour
             if (distFromPlayer <= minimumRange)
             {
                 isFleeing = true;
-                Flee();
+                Flee(randMovement);
             }
             else Seek();
         }
@@ -140,9 +175,25 @@ public class AiShooter : MonoBehaviour
         nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
     }
 
-    public void Flee()
+    /// <summary>
+    /// Used for fleeing from or stafing sideways out from the player.
+    /// Based on NavMesh.
+    /// 3 results, strafe left, strafe right, or move back and flee from the player
+    /// </summary>
+    public void Flee(int movementChoice)
     {
-        Vector3 runTo = 3 *(transform.position - player.transform.position);
-        nav.SetDestination(runTo);
+        //Vector3 lookAtPosition = gameObject.transform.position + gameObject.transform.right;
+        //gameObject.transform.LookAt(lookAtPosition);
+
+        if (movementChoice == 0)
+        {
+            //Vector3 runTo = 2 * (transform.position - player.transform.position);
+            Vector3 runTo = -transform.forward * 0.02f;
+            gameObject.transform.position = gameObject.transform.position + runTo;
+            //nav.SetDestination(runTo);
+        }
+
+        Vector3 moveTo = movementChoice * gameObject.transform.right.normalized * 0.02f;
+        gameObject.transform.position = gameObject.transform.position + moveTo;
     }
 }

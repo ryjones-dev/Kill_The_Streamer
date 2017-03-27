@@ -22,23 +22,43 @@ public class AiDestructoid : MonoBehaviour {
 
     private Color defaultColor;
 
-    private Renderer rend;
+    //anarchy and regular values
+    public bool anarchyMode = false;
+    //default info
+    public float defaultSpeed;
+    public float defaultRotationSpeed;
+    public float defaultAcceleration;
+    public float defaultTimer;
+    //anarchy info
+    private float anarchySpeed;
+    private float anarchyRotationSpeed;
+    private float anarchyAcceleration;
+    private float anarchyTimer;
 
     // Use this for initialization
     void Start () {
-        colorChange = GetComponent<SpriteRenderer>();
+        colorChange = GetComponentInChildren<SpriteRenderer>();
         player = GameObject.FindGameObjectWithTag("Player");
 
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
 
-        toExplode = false;
         destructTimer = 2;
+        toExplode = false;
 
-        rend = GetComponent<Renderer>();
+        defaultSpeed = nav.speed;
+        defaultRotationSpeed = nav.angularSpeed;
+        defaultAcceleration = nav.acceleration;
+        defaultTimer = destructTimer;
+
+        anarchySpeed = defaultSpeed * 2;
+        anarchyRotationSpeed = defaultRotationSpeed * 2;
+        anarchyAcceleration = defaultAcceleration * 2;
+        anarchyTimer = defaultTimer / 2;
     }
 	
 	// Update is called once per frame
 	void Update () {
+        AnarchyEnabled();
         distance = Vector3.Distance(player.transform.position, transform.position);
         if (distance < triggerDistance)
         {
@@ -51,6 +71,27 @@ public class AiDestructoid : MonoBehaviour {
             Seek();
         }
 	}
+
+    /// <summary>
+    /// This is the for the speeds and values during anarchy mode.
+    /// </summary>
+    public void AnarchyEnabled()
+    {
+        if (anarchyMode == false)
+        {
+            nav.speed = defaultSpeed;
+            nav.angularSpeed = defaultRotationSpeed;
+            nav.acceleration = defaultAcceleration;
+            destructTimer = defaultTimer;
+        }
+        else if (anarchyMode)
+        {
+            nav.speed = anarchySpeed;
+            nav.angularSpeed = anarchyRotationSpeed;
+            nav.acceleration = anarchyAcceleration;
+            destructTimer = anarchyTimer;
+        }
+    }
 
 
     /// <summary>
@@ -80,8 +121,8 @@ public class AiDestructoid : MonoBehaviour {
             //If would rather have immediate white, then fade out put "1 - whiteValue"
             float whiteValue = 1 - (currentTimer % 0.4f) * 2.5f;
             //Can't use until spriteRenderer is added
-            //colorChange.color = new Color(whiteValue, whiteValue, whiteValue, 1);
-            rend.material.color = new Color(whiteValue, whiteValue, whiteValue, 1);
+            colorChange.color = new Color(whiteValue, whiteValue, whiteValue, 1);
+            //rend.material.color = new Color(whiteValue, whiteValue, whiteValue, 1);
 
             if (currentTimer >= destructTimer)
             {
