@@ -25,7 +25,22 @@ public class SniperBullet : MonoBehaviour
     {
         if (collision.collider.gameObject.CompareTag("BooAi"))
         {
-            EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<EnemyData>().m_Index);
+            EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<AIBase>().Index);
+
+        }
+        if (collision.collider.gameObject.CompareTag("SeekAi"))
+        {
+            EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<AIBase>().Index);
+
+        }
+        if (collision.collider.gameObject.CompareTag("ShielderAi"))
+        {
+            EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<AIBase>().Index);
+
+        }
+        if (collision.collider.gameObject.CompareTag("GhostAi"))
+        {
+            EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<AIBase>().Index);
 
         }
         if (collision.gameObject.CompareTag("Obstacle"))
