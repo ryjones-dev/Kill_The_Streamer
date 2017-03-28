@@ -381,7 +381,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                m_rigidbody.velocity = dir.normalized * 18.0f;
+                m_rigidbody.velocity = dir.normalized * 16.0f;
             }
         }
         else
