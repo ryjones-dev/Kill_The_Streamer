@@ -2,27 +2,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Explosion : MonoBehaviour
+public class SniperBullet : MonoBehaviour
 {
-    public const float life = 0.2f;
-    public float lifeTime;
-    private float radius = 3.0f;
+
+    private float timeAlive = 1.5f; // Amount of time until the projectile is destroyed (range)
+    private float speed = 15f;
+
     // Use this for initialization
     void Start()
     {
-        lifeTime = life;
+        Destroy(gameObject, timeAlive);
     }
 
     // Update is called once per frame
     void Update()
     {
-        lifeTime -= Time.deltaTime;
-        if (lifeTime <= 0)
-        {
-            Destroy(this.gameObject);
-        }
+        
     }
 
+    //should be destroyed if hits wall
     void OnTriggerEnter(Collider collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
@@ -35,6 +33,12 @@ public class Explosion : MonoBehaviour
         {
             AiShieldSeek shieldAI = collision.GetComponentInParent<AiShieldSeek>();
             shieldAI.ShieldTakeDamage();
+        }
+
+        if (collision.gameObject.CompareTag("Terrain"))
+        {
+            //Debug.Log("Collided with obstacle");
+            Destroy(gameObject);
         }
     }
 }
