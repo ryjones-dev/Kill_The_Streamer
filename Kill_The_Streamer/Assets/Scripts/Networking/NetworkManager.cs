@@ -145,14 +145,20 @@ public class NetworkManager : MonoBehaviour {
 
                         switch (parts[0].ToLower().Trim())
                         {
-                            case "kappa":
-                            case "frankerz":
-                            case "mrdestructoid":
-                            case "pjsalt":
-                            case "theilluminati":
-                            case "pogchamp":
-                            case "smorc":
-                                enemyType = EnemyType.BooEnemy;
+						case "kappa":
+							enemyType = EnemyType.SeekEnemy;
+							break;
+						case "frankerz":
+							enemyType = EnemyType.GhostEnemy;
+							break;
+						case "mrdestructoid":
+						case "pjsalt":
+						case "theilluminati":
+							enemyType = EnemyType.BooEnemy;
+							break;
+						case "pogchamp":
+						case "smorc":
+							enemyType = EnemyType.ShieldEnemy;
                                 break;
 
                                 //One part commands

@@ -64,4 +64,9 @@ public class WeaponMachineGun : Weapon
             m_timer -= Time.deltaTime;
         }
     }
+
+	public override void Start(){
+		base.Start ();
+		m_ammo = MAX_AMMO;
+	}
 }

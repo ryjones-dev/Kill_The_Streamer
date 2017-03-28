@@ -25,6 +25,8 @@ public class EnemyManager : MonoBehaviour
 
     private int m_enemyTotal = 0; // A count of the total number of active enemies in the scene
 
+	private int m_enemyDeathCount = 0; // A count of the total number of enemies that have died
+
     // Singleton instance
     private static EnemyManager s_instance;
 
@@ -112,35 +114,57 @@ public class EnemyManager : MonoBehaviour
     /// </summary>
     public static bool DestroyEnemy(EnemyType p_enemyType, int p_enemyIndex)
     {
+		GameObject enemy = s_instance.m_booEnemyManager.GetActiveEnemyGameObject (p_enemyIndex);
+
+		bool success = false;
         switch(p_enemyType)
         {
-            case EnemyType.BooEnemy:
-                bool booSuccess = s_instance.m_booEnemyManager.DeactivateEnemy(p_enemyIndex);
-                if (booSuccess) { s_instance.m_enemyTotal--; }
-                return booSuccess;
+		case EnemyType.BooEnemy:
+			success = s_instance.m_booEnemyManager.DeactivateEnemy (p_enemyIndex);
+			if (success) {
+				s_instance.m_enemyTotal--;
+				s_instance.m_enemyDeathCount++;
+			}
+			break;
 
-            case EnemyType.SeekEnemy:
-                bool seekSuccess = s_instance.m_seekEnemyManager.DeactivateEnemy(p_enemyIndex);
-                if (seekSuccess) { s_instance.m_enemyTotal--; }
-                return seekSuccess;
+		case EnemyType.SeekEnemy:
+			success = s_instance.m_seekEnemyManager.DeactivateEnemy (p_enemyIndex);
+			if (success) { 
+				s_instance.m_enemyTotal--;
+				s_instance.m_enemyDeathCount++;
+			}
+			break;
 
-            case EnemyType.GhostEnemy:
-                bool ghostSuccess = s_instance.m_ghostEnemyManager.DeactivateEnemy(p_enemyIndex);
-                if (ghostSuccess) { s_instance.m_enemyTotal--; }
-                return ghostSuccess;
+		case EnemyType.GhostEnemy:
+			success = s_instance.m_ghostEnemyManager.DeactivateEnemy (p_enemyIndex);
+			if (success) {
+				s_instance.m_enemyTotal--;
+				s_instance.m_enemyDeathCount++;
+			}
+			break;
 
-            case EnemyType.ShieldEnemy:
-                GameObject shieldEnemy = s_instance.m_shieldEnemyManager.GetActiveEnemyGameObject(p_enemyIndex);
-                shieldEnemy.SendMessage("OnDespawn", SendMessageOptions.DontRequireReceiver);
+		case EnemyType.ShieldEnemy:
+			enemy.SendMessage ("OnDespawn", SendMessageOptions.DontRequireReceiver);
 
-                bool shieldSuccess = s_instance.m_shieldEnemyManager.DeactivateEnemy(p_enemyIndex);
-                if(shieldSuccess) { s_instance.m_enemyTotal--; }
-                return shieldSuccess;
+			success = s_instance.m_shieldEnemyManager.DeactivateEnemy (p_enemyIndex);
+			if (success) { 
+				s_instance.m_enemyTotal--;
+				s_instance.m_enemyDeathCount++;
+			}
+			break;
 
             default:
                 Debug.Log("Invalid enemy type to destroy: " + p_enemyType);
                 return false;
         }
+
+		if (s_instance.m_enemyDeathCount % 10 == 0)
+		{
+			Tool_WeaponSpawner.s_instance.SpawnWeapon (enemy.transform.position);
+			Debug.Log ("Spawning at" + enemy.transform.position);
+		}
+
+		return success;
     }
 
     /// <summary>

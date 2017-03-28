@@ -229,6 +229,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+
         newWeapon = closestWeapon.GetComponent<Weapon>();
         if (m_primaryWeapon.NAME == newWeapon.NAME)
         {

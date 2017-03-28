@@ -96,5 +96,6 @@ public class WeaponShotgun : Weapon
         base.Start();
         m_leftAngle = Quaternion.AngleAxis(angle, Vector3.up);
         m_rightAngle = Quaternion.AngleAxis(-angle, Vector3.up);
+		m_ammo = SHOTGUN_MAX_AMMO;
     }
 }
