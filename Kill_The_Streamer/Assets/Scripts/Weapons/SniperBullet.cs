@@ -21,29 +21,21 @@ public class SniperBullet : MonoBehaviour
     }
 
     //should be destroyed if hits wall
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider collision)
     {
-        if (collision.collider.gameObject.CompareTag("BooAi"))
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<AIBase>().Index);
-
+            AIBase ai = collision.GetComponent<AIBase>();
+            ai.TakeDamage();
         }
-        if (collision.collider.gameObject.CompareTag("SeekAi"))
+
+        if (collision.gameObject.CompareTag("Shield"))
         {
-            EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<AIBase>().Index);
-
+            AiShieldSeek shieldAI = collision.GetComponentInParent<AiShieldSeek>();
+            shieldAI.ShieldTakeDamage();
         }
-        if (collision.collider.gameObject.CompareTag("ShielderAi"))
-        {
-            EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<AIBase>().Index);
 
-        }
-        if (collision.collider.gameObject.CompareTag("GhostAi"))
-        {
-            EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<AIBase>().Index);
-
-        }
-        if (collision.gameObject.CompareTag("Obstacle"))
+        if (collision.gameObject.CompareTag("Terrain"))
         {
             //Debug.Log("Collided with obstacle");
             Destroy(gameObject);

@@ -26,7 +26,7 @@ public class BFGBullet : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
 
-        if (collision.collider.gameObject.CompareTag("BooAi"))
+        if (collision.collider.gameObject.CompareTag("Enemy"))
         {
             GameObject explosion = (GameObject)Instantiate(m_bfgPrefab, new Vector3(myBody.position.x, 0, myBody.position.z), Quaternion.identity);
             Destroy(gameObject);

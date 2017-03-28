@@ -23,12 +23,18 @@ public class Explosion : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider collision)
     {
-        if (collision.collider.gameObject.CompareTag("BooAi"))
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<AIBase>().Index);
+            AIBase ai = collision.GetComponent<AIBase>();
+            ai.TakeDamage();
+        }
 
+        if (collision.gameObject.CompareTag("Shield"))
+        {
+            AiShieldSeek shieldAI = collision.GetComponentInParent<AiShieldSeek>();
+            shieldAI.ShieldTakeDamage();
         }
     }
 }

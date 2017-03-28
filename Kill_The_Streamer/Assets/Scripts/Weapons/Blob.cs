@@ -18,12 +18,18 @@ public class Blob : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter(Collision collision)
-	{
+    void OnTriggerEnter(Collider collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            AIBase ai = collision.GetComponent<AIBase>();
+            ai.TakeDamage();
+        }
 
-		if (collision.collider.gameObject.CompareTag("BooAi")){     
-			EnemyManager.DestroyEnemy(EnemyType.BooEnemy, collision.collider.GetComponent<AIBase>().Index);
-
-		}
-	}
+        if (collision.gameObject.CompareTag("Shield"))
+        {
+            AiShieldSeek shieldAI = collision.GetComponentInParent<AiShieldSeek>();
+            shieldAI.ShieldTakeDamage();
+        }
+    }
 }
