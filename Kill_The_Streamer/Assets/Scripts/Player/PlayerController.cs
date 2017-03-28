@@ -11,11 +11,8 @@ public class PlayerController : MonoBehaviour
 
     //variables
 
-    public float defaultSpeed = 8.0f;
-    private float speed;
+
     public bool dash = false;
-    public float dashSpeed = 40.0f;
-    public Vector3 velocity = new Vector3(0, 0, 0);
     float dashTime = 0.0f;
 
 
@@ -52,11 +49,16 @@ public class PlayerController : MonoBehaviour
     public GameObject m_primaryWeaponUIObject;
     public GameObject m_secondaryWeaponUIObject;
 
+    public Rigidbody m_rigidbody;
+
     private Image m_primaryWeaponUI;
     private Image m_secondaryWeaponUI;
 
     private Text m_primaryWeaponAmmo;
     private Text m_secondaryWeaponAmmo;
+
+    public Transform m_myTransform;
+    public Vector3 m_myPosition;
 
     void Awake()
     {
@@ -66,7 +68,9 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        speed = defaultSpeed;
+        m_myTransform = this.transform;
+        m_myPosition = this.transform.position;
+
         m_health = MAX_HEALTH;
         m_HealthBar = m_HealthBarObject.GetComponent<Image>();
         m_HealthBarText = m_HealthBarObject.GetComponentInChildren<Text>();
@@ -83,7 +87,7 @@ public class PlayerController : MonoBehaviour
         m_primaryWeaponAmmo = m_primaryWeaponUIObject.GetComponentInChildren<Text>();
         m_secondaryWeaponAmmo = m_secondaryWeaponUIObject.GetComponentInChildren<Text>();
 
-        m_primaryWeaponObject = (GameObject)Instantiate(m_pistolPrefab);
+        m_primaryWeaponObject = Instantiate(m_pistolPrefab);
         m_primaryWeapon = m_primaryWeaponObject.GetComponent<Weapon>();
         m_primaryWeapon.m_held = true;
         m_primaryWeapon.m_ammo = m_primaryWeapon.MAX_AMMO;
@@ -95,6 +99,13 @@ public class PlayerController : MonoBehaviour
         UpdateWeaponUI();
 
         m_damageDoneByViewers = new Dictionary<string, int>();
+
+        m_rigidbody = GetComponent<Rigidbody>();
+    }
+
+    void LateUpdate()
+    {
+        m_myPosition = m_myTransform.position;
     }
 
     /// <summary>
@@ -331,6 +342,57 @@ public class PlayerController : MonoBehaviour
 
     public void Update()
     {
+        //Debug:
+        Vector3 cursorPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        cursorPos.y = 0;
+        Debug.DrawLine(transform.position, cursorPos, Color.red);
+
+        transform.forward = (cursorPos - transform.position).normalized;
+
+        if (!dash)
+        {
+            Vector3 dir = Vector3.zero;
+            if (Input.GetKey(KeyCode.W))
+            {
+                dir += new Vector3(0, 0, 1);
+            }
+            else if (Input.GetKey(KeyCode.S))
+            {
+                dir += new Vector3(0, 0, -1);
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                dir += new Vector3(1, 0, 0);
+            }
+            else if (Input.GetKey(KeyCode.A))
+            {
+                dir += new Vector3(-1, 0, 0);
+            }
+            //Movement:
+            if (Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                if (dir != Vector3.zero)
+                {
+                    m_rigidbody.velocity = dir.normalized * 100.0f;
+                    dash = true;
+                    dashTime = 0.4f;
+                }
+            }
+            else
+            {
+                m_rigidbody.velocity = dir.normalized * 18.0f;
+            }
+        }
+        else
+        {
+            dashTime -= Time.deltaTime;
+            if(dashTime <= 0.0f)
+            {
+                dash = false;
+            }
+        }
+
+
         m_weaponPickupText.enabled = false;
         //shooting
         if (Input.GetMouseButton(0))
@@ -356,98 +418,5 @@ public class PlayerController : MonoBehaviour
         {
             GrabWeapon();
         }
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-
-        //check for input
-        Vector3 cursorPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 tempVelocity = new Vector3(0,0,0);
-        cursorPos.y = 0;
-        Debug.DrawLine(transform.position, cursorPos, Color.red);
-        
-        //check for dash
-        if (dash == true)
-        {
-            if (Time.time - dashTime >= 0.5f)
-            {
-                dash = false;
-                speed = defaultSpeed;
-            }
-        }
-        //movement
-        
-        if (Input.GetKey(KeyCode.W) && dash == false)
-        {
-
-           tempVelocity += new Vector3(0, 0, 1);
-        }
-
-        if (Input.GetKey(KeyCode.A) && dash == false)
-        {
-            tempVelocity += new Vector3(-1, 0, 0);
-        }
-
-        if (Input.GetKey(KeyCode.S) && dash == false)
-        {
-            tempVelocity += new Vector3(0, 0, -1);
-        }
-
-        if (Input.GetKey(KeyCode.D) && dash == false)
-        {
-            tempVelocity += new Vector3(1, 0, 0);
-        }
-
-        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && dash == false)
-        {
-            speed = dashSpeed;
-            dash = true;
-            dashTime = Time.time;
-        }
-
-        if (tempVelocity != Vector3.zero)
-        {
-            tempVelocity.Normalize();
-        }
-
-        velocity += tempVelocity * speed;
-
-        //cap the speed
-        if(velocity.x >= defaultSpeed && dash == false)
-        {
-            velocity.x = defaultSpeed;
-        }
-
-        if (velocity.x <= -defaultSpeed && dash == false)
-        {
-            velocity.x = -defaultSpeed;
-        }
-
-        if (velocity.y >= defaultSpeed && dash == false)
-        {
-            velocity.y = defaultSpeed;
-        }
-
-        if (velocity.y <= -defaultSpeed && dash == false)
-        {
-            velocity.y = -defaultSpeed;
-        }
-
-        if (velocity.z >= defaultSpeed && dash == false)
-        {
-            velocity.z = defaultSpeed;
-        }
-
-        if (velocity.z <= -defaultSpeed && dash == false)
-        {
-            velocity.z = -defaultSpeed;
-        }
-
-        transform.position += velocity * Time.deltaTime;
-        transform.forward = (cursorPos - transform.position).normalized;
-        velocity = velocity * 0.8f;
-        
     }
 }

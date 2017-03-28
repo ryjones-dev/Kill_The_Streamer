@@ -31,13 +31,23 @@ public class AiSeeking : AIBase
     private float anarchySpeed;
     private float anarchyRotationSpeed;
     private float anarchyAcceleration;
+    public Transform myTransform;
+    public Vector3 myPosition;
+    public AiShieldSeek leader;
+
+    private int skipFrame;
 
 
     void Start () {
+        leader = null;
         //finding object with the tag "Player"
+        myTransform = this.transform;
+        myPosition = myTransform.position;
+        skipFrame = 0;
+
         player = PlayerController.s_Player.gameObject;
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
-        closeShield = 100.00f;
+        closeShield = float.MaxValue;
         //give seeker a random range to be away from the leader
         maxDist = Random.Range(1.5f, 5.0f);
         splitOff = true;//seek out player
@@ -51,23 +61,25 @@ public class AiSeeking : AIBase
         anarchyAcceleration = defaultAcceleration * 2;
 
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    void LateUpdate()
+    {
+        myPosition = myTransform.position;
+    }
+
+    // Update is called once per frame
+    void Update () {
         // Used for seeking out and going to the player.
         // Based on NavMesh.
         // Changing speed and acceleration can be found in inspector.
         //nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
         AnarchyEnabled();
-        if (Vector3.Distance(this.transform.position, player.transform.position) <= distanceAwayPlayer)
+        ClosestShield();
+        Seek();
+        if (leader && !leader.gameObject)
         {
-            Seek();
+            leader = null;
         }
-        else
-        {
-            ClosestShield();
-        }
-
     }
 
 
@@ -98,7 +110,19 @@ public class AiSeeking : AIBase
     /// </summary>
     public void Seek()
     {
-        nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
+        if((PlayerController.s_Player.m_myPosition - myPosition).sqrMagnitude < distanceAwayPlayer * distanceAwayPlayer)
+        {
+            leader = null;
+        }
+
+        if (leader)
+        {
+            nav.SetDestination(leader.myPosition - leader.myTransform.forward);
+        }
+        else
+        {
+            nav.SetDestination(PlayerController.s_Player.m_myPosition);//telling the AI to seek out and go to the player's location
+        }
       
     }
 
@@ -108,6 +132,13 @@ public class AiSeeking : AIBase
     /// </summary>
     public void ClosestShield()
     {
+        if(skipFrame > 0)
+        {
+            skipFrame--;
+            return;
+        }
+        skipFrame = 20;
+
         //get all shielders in level
         int activeLength;
         AiShieldSeek[] shieldsInLevel = (AiShieldSeek[])EnemyManager.GetAllEnemyAI(EnemyType.ShieldEnemy, out activeLength);
@@ -116,7 +147,6 @@ public class AiSeeking : AIBase
         if (shieldsInLevel.Length == 0)
         {
             //splitOff = true;
-            Seek();
             return;
         }
 
@@ -126,7 +156,7 @@ public class AiSeeking : AIBase
         //have it store some gameobjects and the "leader"
         GameObject shieldGameObject=null;//the gameobject of the shield in order to detect which one is closest
 
-        NavMeshAgent leaderNav=null;//the navmesh for the leader (shield)
+ 
         //check the shields
         for (int i =0; i < activeLength; i++)
         {
@@ -134,53 +164,28 @@ public class AiSeeking : AIBase
             if(shieldsInLevel[i].ShieldActive)
             {
                 //get distance from position to shielder
-                distance = Vector3.Distance(this.transform.position, shieldsInLevel[i].transform.position);
+                distance = (myPosition - shieldsInLevel[i].myPosition).sqrMagnitude;
                 //is it close enough?
-                if (distance <= distanceActive)
+                if (distance <= distanceActive * distanceActive)
                 {
                     //store the shield that it is the closest to
                     if (distance < closeShield)
                     {
                         //Debug.Log(distance);
                         shieldGameObject = shieldsInLevel[i].gameObject;
-                        leaderNav = shieldsInLevel[i].gameObject.GetComponent<NavMeshAgent>();
+                        leader = shieldGameObject.GetComponent<AiShieldSeek>();
                         //splitOff = false;
                         closeShield = distance;
-                        Debug.Log(closeShield);
                     }
                 }
 
             }
         }
         //has there not been a closest shield found?
-        if(shieldGameObject ==false && leaderNav ==false)
+        if(!shieldGameObject)
         {
-            closeShield = 100.0f;
-            //splitOff = true;
-            Seek();
-            //return;
+            closeShield = float.MaxValue;
         }
-        //seek out closest shield and leader follow it
-        else
-        {
-            Debug.Log(shieldGameObject.transform.position);
-            nav.SetDestination(LeaderFollowing(shieldGameObject,leaderNav));
-        }
-    }
-
-    /// <summary>
-    /// For seeking and going behind the closest Shielder object.
-    /// </summary>
-    /// <param name="shielderObject">The closest shielder in the level</param>
-    /// <param name="leaderAgent">The navmeshagent of the closest Shielder</param>
-    /// <returns></returns>
-   private Vector3 LeaderFollowing(GameObject shielderObject, NavMeshAgent leaderAgent)
-    {
-        //float dist = Vector3.Distance(this.transform.position, shieldGameObject.transform.position);
-        Vector3 leaderPos = shielderObject.transform.position + (-leaderAgent.velocity).normalized * maxDist;
-        return leaderPos;
-
-        
     }
 
 }

@@ -36,12 +36,12 @@ public class PlayerAnimator : MonoBehaviour {
 		}
 
 		//Determine state
-		if (m_parent.velocity.sqrMagnitude <= 0.01f) { //Not moving
+		if (m_parent.m_rigidbody.velocity.sqrMagnitude <= 0.01f) { //Not moving
 			m_animator.SetInteger ("state", 0);
 
 		} else if (m_parent.dash) { //Moving but dashing
 			m_animator.SetInteger ("state", 2);
-			if (m_parent.velocity.x > 0) {
+			if (m_parent.m_rigidbody.velocity.x > 0) {
 				m_animator.SetInteger ("direction", 0);
 			} else {
 				m_animator.SetInteger ("direction", 7);

@@ -28,8 +28,14 @@ public class AiShieldSeek : AIBase{
     private float anarchyRotationSpeed;
     private float anarchyAcceleration;
 
+    public Transform myTransform;
+    public Vector3 myPosition;
+
     void Start()
     {
+        myTransform = this.transform;
+        myPosition = myTransform.position;
+
         //finding object with the tag "Player"
         player = PlayerController.s_Player.gameObject;
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
@@ -47,6 +53,10 @@ public class AiShieldSeek : AIBase{
         anarchyAcceleration = defaultAcceleration * 2;
 
 
+    }
+    void LateUpdate()
+    {
+        myPosition = myTransform.position;
     }
 
     // Update is called once per frame
