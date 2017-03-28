@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-public class AiDestructoid : MonoBehaviour {
+public class AiDestructoid : AIBase {
 
     public float destructTimer;//how long till detination
     private float currentTimer;//the current number on the timer
@@ -30,13 +31,14 @@ public class AiDestructoid : MonoBehaviour {
     public float defaultAcceleration;
     public float defaultTimer;
     //anarchy info
-    private float anarchySpeed;
-    private float anarchyRotationSpeed;
-    private float anarchyAcceleration;
-    private float anarchyTimer;
+    private const float c_ANARCHY_SPEED_MULT = 2;
+    private const float c_ANARCHY_ROTATION_MULT = 2;
+    private const float c_ANARCHY_ACCELERATION_MULT = 2;
+    private const float c_ANARCHY_TIMER_MULT = 0.5f;
 
     // Use this for initialization
-    void Start () {
+    protected override void Start () {
+        base.Start();
         colorChange = GetComponentInChildren<SpriteRenderer>();
         player = GameObject.FindGameObjectWithTag("Player");
 
@@ -49,16 +51,11 @@ public class AiDestructoid : MonoBehaviour {
         defaultRotationSpeed = nav.angularSpeed;
         defaultAcceleration = nav.acceleration;
         defaultTimer = destructTimer;
-
-        anarchySpeed = defaultSpeed * 2;
-        anarchyRotationSpeed = defaultRotationSpeed * 2;
-        anarchyAcceleration = defaultAcceleration * 2;
-        anarchyTimer = defaultTimer / 2;
+        
     }
 	
-	// Update is called once per frame
-	void Update () {
-        AnarchyEnabled();
+    public override void AILoop()
+    {
         distance = Vector3.Distance(player.transform.position, transform.position);
         if (distance < triggerDistance)
         {
@@ -67,30 +64,32 @@ public class AiDestructoid : MonoBehaviour {
         }
         else
         {
-            if(!toExplode)
-            Seek();
+            if (!toExplode)
+                Seek();
         }
-	}
+    }
 
-    /// <summary>
-    /// This is the for the speeds and values during anarchy mode.
-    /// </summary>
-    public void AnarchyEnabled()
+    public override void UpdateSpeed()
     {
-        if (anarchyMode == false)
+        if (m_anarchyMode)
         {
-            nav.speed = defaultSpeed;
-            nav.angularSpeed = defaultRotationSpeed;
-            nav.acceleration = defaultAcceleration;
+            nav.speed = defaultSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_SPEED_MULT;
+            nav.angularSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_ROTATION_MULT;
+            nav.acceleration = defaultAcceleration * EnemyManager.SpeedMultiplier * c_ANARCHY_ACCELERATION_MULT;
+            destructTimer = defaultTimer * c_ANARCHY_TIMER_MULT;
+        }
+        else
+        {
+            nav.speed = defaultSpeed * EnemyManager.SpeedMultiplier;
+            nav.angularSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier;
+            nav.acceleration = defaultAcceleration * EnemyManager.SpeedMultiplier;
             destructTimer = defaultTimer;
         }
-        else if (anarchyMode)
-        {
-            nav.speed = anarchySpeed;
-            nav.angularSpeed = anarchyRotationSpeed;
-            nav.acceleration = anarchyAcceleration;
-            destructTimer = anarchyTimer;
-        }
+    }
+
+    public override void DealDamage()
+    {
+        throw new NotImplementedException();
     }
 
 

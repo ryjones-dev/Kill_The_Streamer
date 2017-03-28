@@ -5,11 +5,11 @@ using UnityEngine;
 public class PlayerAnimator : MonoBehaviour {
 
 	private Animator m_animator;
-	private PlayerController m_parent;
+	private Player m_parent;
 
 	void Start(){
 		m_animator = this.GetComponentInChildren<Animator> ();
-		m_parent = this.GetComponentInParent<PlayerController> ();
+		m_parent = this.GetComponentInParent<Player> ();
 	}
 
 	// Update is called once per frame

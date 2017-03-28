@@ -4,10 +4,22 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class PlayerController : MonoBehaviour
+public class Player : MonoBehaviour
 {
     //Get the player
-    public static PlayerController s_Player;
+    public static Player s_Player;
+
+    private FastTransform m_transform;
+    public FastTransform FastTransform { get { return m_transform; } }
+
+    private Quaternion m_leftAngle = Quaternion.AngleAxis(-45, Vector3.up);
+    private Quaternion m_rightAngle = Quaternion.AngleAxis(45, Vector3.up);
+
+    private Vector3 m_leftVisionAngle;
+    private Vector3 m_rightVisionAngle;
+
+    public Vector3 LeftVisionAngle { get { return m_leftVisionAngle; } }
+    public Vector3 RightVisionAngle { get { return m_rightVisionAngle; } }
 
     //variables
 
@@ -57,9 +69,6 @@ public class PlayerController : MonoBehaviour
     private Text m_primaryWeaponAmmo;
     private Text m_secondaryWeaponAmmo;
 
-    public Transform m_myTransform;
-    public Vector3 m_myPosition;
-
     void Awake()
     {
         s_Player = this;
@@ -68,8 +77,7 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        m_myTransform = this.transform;
-        m_myPosition = this.transform.position;
+        m_transform = GetComponent<FastTransform>();
 
         m_health = MAX_HEALTH;
         m_HealthBar = m_HealthBarObject.GetComponent<Image>();
@@ -101,11 +109,6 @@ public class PlayerController : MonoBehaviour
         m_damageDoneByViewers = new Dictionary<string, int>();
 
         m_rigidbody = GetComponent<Rigidbody>();
-    }
-
-    void LateUpdate()
-    {
-        m_myPosition = m_myTransform.position;
     }
 
     /// <summary>
@@ -212,7 +215,7 @@ public class PlayerController : MonoBehaviour
         for(int i = 0; i < weapons.Length; ++i)
         {
             newWeapon = weapons[i].GetComponent<Weapon>();
-            float newLength = (weapons[i].transform.position - transform.position).sqrMagnitude;
+            float newLength = (weapons[i].transform.position - m_transform.Position).sqrMagnitude;
             if (!newWeapon.m_held)
             {
                 
@@ -343,12 +346,17 @@ public class PlayerController : MonoBehaviour
 
     public void Update()
     {
+        m_leftVisionAngle = m_leftAngle * FastTransform.Trans.forward;
+        m_rightVisionAngle = m_rightAngle * FastTransform.Trans.forward;
+        Debug.DrawLine(m_transform.Position + m_leftVisionAngle * 10, m_transform.Position, Color.cyan);
+        Debug.DrawLine(m_transform.Position + m_rightVisionAngle * 10, m_transform.Position, Color.cyan);
+
         //Debug:
         Vector3 cursorPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         cursorPos.y = 0;
         Debug.DrawLine(transform.position, cursorPos, Color.red);
 
-        transform.forward = (cursorPos - transform.position).normalized;
+        transform.forward = (cursorPos - m_transform.Position).normalized;
 
         if (!dash)
         {

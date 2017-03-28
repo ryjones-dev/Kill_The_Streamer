@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 67c6f9aa9a6287e439f835a9280ce0a5
-timeCreated: 1490231527
-licenseType: Free
+timeCreated: 1490733180
+licenseType: Pro
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
@@ -9,7 +9,7 @@ MonoImporter:
       type: 2}
   - m_primaryWeapon: {instanceID: 0}
   - m_secondaryWeapon: {instanceID: 0}
-  executionOrder: 0
+  executionOrder: -50
   icon: {instanceID: 0}
   userData: 
   assetBundleName: 

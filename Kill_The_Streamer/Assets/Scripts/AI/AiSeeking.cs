@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -28,79 +29,66 @@ public class AiSeeking : AIBase
     public float defaultRotationSpeed;
     public float defaultAcceleration;
     //anarchy info
-    private float anarchySpeed;
-    private float anarchyRotationSpeed;
-    private float anarchyAcceleration;
-    public Transform myTransform;
-    public Vector3 myPosition;
+    private const float c_ANARCHY_SPEED_MULT = 2;
+    private const float c_ANARCHY_ROTATION_MULT = 2;
+    private const float c_ANARCHY_ACCELERATION_MULT = 2;
+
     public AiShieldSeek leader;
 
     private int skipFrame;
 
 
-    void Start () {
-        leader = null;
-        //finding object with the tag "Player"
-        myTransform = this.transform;
-        myPosition = myTransform.position;
-        skipFrame = 0;
 
-        player = PlayerController.s_Player.gameObject;
+    protected override void Start () {
+        base.Start();
+
+        leader = null;
+        skipFrame = 0;
+        //finding object with the tag "Player"
+
+
+        player = Player.s_Player.gameObject;
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
         closeShield = float.MaxValue;
         //give seeker a random range to be away from the leader
-        maxDist = Random.Range(1.5f, 5.0f);
+        maxDist = UnityEngine.Random.Range(1.5f, 5.0f);
         splitOff = true;//seek out player
 
         defaultSpeed = nav.speed;
         defaultRotationSpeed = nav.angularSpeed;
         defaultAcceleration = nav.acceleration;
-
-        anarchySpeed = defaultSpeed * 2;
-        anarchyRotationSpeed = defaultRotationSpeed * 2;
-        anarchyAcceleration = defaultAcceleration * 2;
-
     }
 
-    void LateUpdate()
+    public override void AILoop()
     {
-        myPosition = myTransform.position;
-    }
-
-    // Update is called once per frame
-    void Update () {
-        // Used for seeking out and going to the player.
-        // Based on NavMesh.
-        // Changing speed and acceleration can be found in inspector.
-        //nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
-        AnarchyEnabled();
-        ClosestShield();
-        Seek();
         if (leader && !leader.gameObject)
         {
             leader = null;
         }
+        
+        ClosestShield();
+        Seek();
     }
 
-
-    /// <summary>
-    /// This is the for the speeds and values during anarchy mode.
-    /// </summary>
-    public void AnarchyEnabled()
+    public override void UpdateSpeed()
     {
-        if (anarchyMode == false)
+        if (m_anarchyMode)
         {
-            nav.speed = defaultSpeed;
-            nav.angularSpeed = defaultRotationSpeed;
-            nav.acceleration = defaultAcceleration;
+            nav.speed = defaultSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_SPEED_MULT;
+            nav.angularSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_ROTATION_MULT;
+            nav.acceleration = defaultAcceleration * EnemyManager.SpeedMultiplier * c_ANARCHY_ACCELERATION_MULT;
         }
-        else if (anarchyMode)
+        else
         {
-            nav.speed = anarchySpeed;
-            nav.angularSpeed = anarchyRotationSpeed;
-            nav.acceleration = anarchyAcceleration;
+            nav.speed = defaultSpeed * EnemyManager.SpeedMultiplier;
+            nav.angularSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier;
+            nav.acceleration = defaultAcceleration * EnemyManager.SpeedMultiplier;
+        }
+    }
 
-        }
+    public override void DealDamage()
+    {
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -110,18 +98,18 @@ public class AiSeeking : AIBase
     /// </summary>
     public void Seek()
     {
-        if((PlayerController.s_Player.m_myPosition - myPosition).sqrMagnitude < distanceAwayPlayer * distanceAwayPlayer)
+        if((Player.s_Player.FastTransform.Position - m_transform.Position).sqrMagnitude < distanceAwayPlayer * distanceAwayPlayer)
         {
             leader = null;
         }
 
         if (leader)
         {
-            nav.SetDestination(leader.myPosition - leader.myTransform.forward);
+            nav.SetDestination(leader.FastTransform.Position - leader.FastTransform.Trans.forward);
         }
         else
         {
-            nav.SetDestination(PlayerController.s_Player.m_myPosition);//telling the AI to seek out and go to the player's location
+            nav.SetDestination(Player.s_Player.FastTransform.Position);//telling the AI to seek out and go to the player's location
         }
       
     }
@@ -164,7 +152,7 @@ public class AiSeeking : AIBase
             if(shieldsInLevel[i].ShieldActive)
             {
                 //get distance from position to shielder
-                distance = (myPosition - shieldsInLevel[i].myPosition).sqrMagnitude;
+                distance = (m_transform.Position - shieldsInLevel[i].FastTransform.Position).sqrMagnitude;
                 //is it close enough?
                 if (distance <= distanceActive * distanceActive)
                 {

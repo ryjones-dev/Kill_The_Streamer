@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -7,7 +8,7 @@ using UnityEngine.AI;
 //1: Stand still before fleeing and standing still again
 //2: Dodge back and forth a bit (not eradically) upon reach a certain distance from the player
 //3: Shooter should stay within a certain distance from the player
-public class AiShooter : MonoBehaviour
+public class AiShooter : AIBase
 {
 
     // Use this for initialization
@@ -27,21 +28,22 @@ public class AiShooter : MonoBehaviour
     public float minimumRange;
     int randMovement;
 
-    //anarchy and regular values
-    public bool anarchyMode = false;
+
     //default info
     public float defaultSpeed;
     public float defaultRotationSpeed;
     public float defaultAcceleration;
     public float defaultShootTimer;
     //anarchy info
-    private float anarchySpeed;
-    private float anarchyRotationSpeed;
-    private float anarchyAcceleration;
+    private const float c_ANARCHY_SPEED_MULT = 2;
+    private const float c_ANARCHY_ROTATION_MULT = 2;
+    private const float c_ANARCHY_ACCELERATION_MULT = 2;
     private float anarchyShootTimer;
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+
         //finding object with the tag "Player"
         player = GameObject.FindGameObjectWithTag("Player");
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
@@ -59,10 +61,7 @@ public class AiShooter : MonoBehaviour
         defaultRotationSpeed = nav.angularSpeed;
         defaultAcceleration = nav.acceleration;
         defaultShootTimer = attackResetTimer;
-
-        anarchySpeed = defaultSpeed * 2;
-        anarchyRotationSpeed = defaultRotationSpeed * 2;
-        anarchyAcceleration = defaultAcceleration * 2;
+        
         anarchyShootTimer = attackResetTimer / 2;
 
         //stopping distance is closer as to not freeze at the edge outside of stopping distance and freeze on trying to Seek()
@@ -72,12 +71,11 @@ public class AiShooter : MonoBehaviour
 
     void ChangeRandom()
     {
-        randMovement = Random.Range(-1, 2);
+        randMovement = UnityEngine.Random.Range(-1, 2);
         Debug.Log(randMovement);
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void AILoop()
     {
         distFromPlayer = Vector3.Distance(player.transform.position, transform.position); //distance from the shooter to the player
         if (nav.Raycast(player.transform.position, out onlyExistsToRaycast)) //whether or not the AI could hit the player from current position
@@ -92,11 +90,37 @@ public class AiShooter : MonoBehaviour
         {
             Stop(); //called between every movement switch in Move()
         }
-        else {
+        else
+        {
             Move(); //if player is within the minimumDistance Flee() for a certain amount of time, else Seek()
         }
+    }
 
+    // Update is called once per frame
+    protected override void Update()
+    {
+        base.Update();
         CheckShoot(); //tick attack's cooldown, shoot if at 0
+    }
+    public override void UpdateSpeed()
+    {
+        if (m_anarchyMode)
+        {
+            nav.speed = defaultSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_SPEED_MULT;
+            nav.angularSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_ROTATION_MULT;
+            nav.acceleration = defaultAcceleration * EnemyManager.SpeedMultiplier * c_ANARCHY_ACCELERATION_MULT;
+        }
+        else
+        {
+            nav.speed = defaultSpeed * EnemyManager.SpeedMultiplier;
+            nav.angularSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier;
+            nav.acceleration = defaultAcceleration * EnemyManager.SpeedMultiplier;
+        }
+    }
+
+    public override void DealDamage()
+    {
+        throw new NotImplementedException();
     }
 
     public void CheckShoot()

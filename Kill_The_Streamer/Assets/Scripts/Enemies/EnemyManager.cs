@@ -36,12 +36,20 @@ public class EnemyManager : MonoBehaviour
     private GhostEnemyManager m_ghostEnemyManager;
     private ShieldEnemyManager m_shieldEnemyManager;
 
+    [SerializeField]
+    private float m_speedMultiplier;
+    private float m_speedTimer;
+
+    public static float SpeedMultiplier {  get { return s_instance.m_speedMultiplier; } }
+
     private void Awake()
     {
         // Sets up the singleton
         if(s_instance == null)
         {
             s_instance = this;
+            m_speedMultiplier = 1.0f;
+            m_speedTimer = 10.0f;
 
             m_booEnemyManager = GetComponent<BooEnemyManager>();
             m_seekEnemyManager = GetComponent<SeekEnemyManager>();
@@ -329,6 +337,14 @@ public class EnemyManager : MonoBehaviour
             AddEnemyToQueue(info);
         }
         //-----DEBUG ONLY
+
+        m_speedTimer -= Time.deltaTime;
+        if(m_speedTimer < 0.0f)
+        {
+            m_speedTimer += 10.0f;
+            m_speedMultiplier *= 1.0116f;
+            Debug.Log(m_speedMultiplier);
+        }
 
         while (s_instance.m_enemyQueue.Count > 0)
         {

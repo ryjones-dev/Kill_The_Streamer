@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class AiGhost : AIBase {
 
@@ -24,8 +26,6 @@ public class AiGhost : AIBase {
 
     public float triggerDistance = 6.0f;//the distance at which the player will be within the ghost's radius
 
-    public bool anarchyMode = false;
-
     //keeping track of the defaults for each
     public float defaultSpeed;
     public float defaultChargeSpeed;
@@ -33,78 +33,69 @@ public class AiGhost : AIBase {
     public float defaultRotationSpeed;
 
     //anarchy speed for each
-    private float anarchySpeed;
-    private float anarchyChargeSpeed;
-    private float anarchyTimer;
-    private float anarchyRotationSpeed;
+    private const float c_ANARCHY_SPEED_MULT = 2;
+    private const float c_ANARCHY_ROTATION_MULT = 2;
+    private const float c_ANARCHY_TIMER_MULT = 0.5f;
+    private const float c_ANARCHY_CHARGE_MULT = 2;
 
-
-
-    void Start () {
-        player = PlayerController.s_Player.gameObject;
+    protected override void Start () {
+        base.Start();
+        player = Player.s_Player.gameObject;
         toCharge = false;
         seekSpot = false;
         defaultSpeed = startSpeed;
         defaultChargeSpeed = chargeSpeed;
         defaultTimer = pauseTimer;
         defaultRotationSpeed = rotationSpeed;
-
-        anarchySpeed = defaultSpeed*2;
-        anarchyChargeSpeed= defaultChargeSpeed*1.5f;
-        anarchyTimer= defaultTimer/2;
-        anarchyRotationSpeed= rotationSpeed*2;
-
+        
 
 }
 
-public bool AnarchyMode
+    protected override void Update()
     {
-        get { return anarchyMode; }
-        set { anarchyMode = value; }
-    }
-	
-	// Update is called once per frame
-	void Update () {
-        AnarchyEnabled();
+        base.Update();
         //get the distance between ghost and player
-        playerDistance = Vector3.Distance(player.transform.position, transform.position);
+        playerDistance = (Player.s_Player.FastTransform.Position - m_transform.Position).sqrMagnitude;
         //if player is not in distance, seek it out slowly
-        if(playerDistance >triggerDistance)
+        if (playerDistance > triggerDistance * triggerDistance)
         {
             Seeking(player.transform.position, startSpeed);
             PlayerLeaves();
         }
         //if player is within the triggerdistance, activate charge!
-        else if(playerDistance<= triggerDistance)
+        else
         {
             ChargePlayer();
-        }	
-		
-	}
-
-    public void AnarchyEnabled()
-    {
-        if(anarchyMode==false)
-        {
-            startSpeed =defaultSpeed;
-            chargeSpeed = defaultChargeSpeed;
-            pauseTimer = defaultTimer ;
-            rotationSpeed = defaultRotationSpeed;
         }
-        else if(anarchyMode)
+    }
+    public override void AILoop()
+    {
+        
+    }
+
+    public override void UpdateSpeed()
+    {
+        if (m_anarchyMode)
         {
-            startSpeed = anarchySpeed;
-            chargeSpeed = anarchyChargeSpeed;
-            pauseTimer = anarchyTimer;
-            rotationSpeed = anarchyRotationSpeed; 
+            startSpeed = defaultSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_SPEED_MULT;
+            rotationSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_ROTATION_MULT;
+            pauseTimer = defaultTimer * c_ANARCHY_TIMER_MULT / EnemyManager.SpeedMultiplier;
+            chargeSpeed = defaultChargeSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_CHARGE_MULT;
+        }
+        else
+        {
+            startSpeed = defaultSpeed * EnemyManager.SpeedMultiplier;
+            rotationSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier;
+            pauseTimer = defaultTimer / EnemyManager.SpeedMultiplier;
+            chargeSpeed = defaultChargeSpeed * EnemyManager.SpeedMultiplier;
         }
     }
 
-   /// <summary>
-   /// Moving the ghost to a location of the player(will change based on what state it is in.
-   /// </summary>
-   /// <param name="p_goTo">The position that the ghost will go to</param>
-   /// <param name="p_speed">The speed that the ghost will go to that position at</param>
+    /// <summary>
+    /// Moving the ghost to a location of the player(will change based on what state it is in.
+    /// </summary>
+    /// <param name="p_goTo">The position that the ghost will go to</param>
+    /// <param name="p_speed">The speed that the ghost will go to that position at</param>
     public void Seeking(Vector3 p_goTo, float p_speed)
     {
         Vector3 ghostPosition = transform.position;
@@ -174,6 +165,11 @@ public bool AnarchyMode
             toCharge = false;
             seekSpot = false;
             currTimer = 0;
+    }
+
+    public override void DealDamage()
+    {
+        throw new NotImplementedException();
     }
 
 }

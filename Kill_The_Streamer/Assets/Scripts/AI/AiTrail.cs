@@ -1,9 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class AiTrail : MonoBehaviour {
+public class AiTrail : AIBase{
 
     //all AI needs using UnityEngine.AI;
     private GameObject player;//the target to seek (player)
@@ -19,12 +20,12 @@ public class AiTrail : MonoBehaviour {
     public float defaultSpeed;
     private float defaultResetTrailTime;
     //anarchy info
-    private float anarchySpeed;
-    private float anarchyResetTrailTime;
+    private const float c_ANARCHY_SPEED_MULT = 2.0f;
 
     // Use this for initialization
-    void Start () {
+    protected override void Start () {
         //finding object with the tag "Player"
+        base.Start();
         player = GameObject.FindGameObjectWithTag("Player");
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
         Instantiate(Resources.Load("Trail"), transform.position, transform.rotation);
@@ -39,34 +40,37 @@ public class AiTrail : MonoBehaviour {
 
         defaultSpeed = speedModifier;
         defaultResetTrailTime = resetTrailTime;
-
-        anarchySpeed = defaultSpeed * 2;
-        anarchyResetTrailTime = defaultResetTrailTime / 2;
+        
     }
 	
 	// Update is called once per frame
-	void Update () {
-        AnarchyEnabled();
-        //more of a frantic dash around than a flee;
-        Flee();
+	protected override void Update () {
+        
+        base.Update();
         //keeps the salt flowing
         DropTrail();
     }
 
-    /// <summary>
-    /// This is the for the speeds and values during anarchy mode.
-    /// </summary>
-    public void AnarchyEnabled()
+    public override void AILoop()
     {
-        if (anarchyMode == false)
+        //more of a frantic dash around than a flee;
+        Flee();
+    }
+
+    public override void DealDamage()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void UpdateSpeed()
+    {
+        if (m_anarchyMode)
         {
-            speedModifier = defaultSpeed;
-            resetTrailTime = defaultResetTrailTime;
+            nav.speed = defaultSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_SPEED_MULT;
         }
-        else if (anarchyMode)
+        else
         {
-            speedModifier = anarchySpeed;
-            resetTrailTime = anarchyResetTrailTime;
+            nav.speed = defaultSpeed * EnemyManager.SpeedMultiplier;
         }
     }
 

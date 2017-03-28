@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -27,15 +28,16 @@ public class AiSeekFlee : AIBase{
     public float defaultRotationSpeed;
     public float defaultAcceleration;
     //anarchy info
-    private float anarchySpeed;
-    private float anarchyRotationSpeed;
-    private float anarchyAcceleration;
 
+    private const float c_ANARCHY_SPEED_MULT = 2;
+    private const float c_ANARCHY_ROTATION_MULT = 2;
+    private const float c_ANARCHY_ACCELERATION_MULT = 2;
 
+    protected override void Start () {
+        base.Start();
 
-    void Start () {
         //finding object with the tag "Player"
-        player = PlayerController.s_Player.gameObject;
+        player = Player.s_Player.gameObject;
         //playerTargetting = player.GetComponent<PlayerLookingAtAI>();
         inPlayerSight = false;
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
@@ -44,49 +46,43 @@ public class AiSeekFlee : AIBase{
         defaultRotationSpeed = nav.angularSpeed;
         defaultAcceleration = nav.acceleration;
 
-        anarchySpeed = defaultSpeed * 2;
-        anarchyRotationSpeed = defaultRotationSpeed * 2;
-        anarchyAcceleration = defaultAcceleration * 2;
-
     }
     public bool InPlayerSight
     {
         get { return inPlayerSight; }
         set { inPlayerSight = value; }
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    protected override void Update()
+    {
+        base.Update();
         CheckPlayerLooking();
-        AnarchyEnabled();
-        if (inPlayerSight==true)
+        if (inPlayerSight)
         {
             Flee();
         }
-        else
+    }
+
+    public override void AILoop()
+    {        
+        if(!InPlayerSight)
         {
             Seek();
         }
-		
-	}
+    }
 
-    /// <summary>
-    /// This is the for the speeds and values during anarchy mode.
-    /// </summary>
-    public void AnarchyEnabled()
+    public override void UpdateSpeed()
     {
-        if (anarchyMode == false)
-        {
-            nav.speed = defaultSpeed;
-            nav.angularSpeed = defaultRotationSpeed;
-            nav.acceleration = defaultAcceleration;
+        if (m_anarchyMode) {
+            nav.speed = defaultSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_SPEED_MULT;
+            nav.angularSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_ROTATION_MULT;
+            nav.acceleration = defaultAcceleration * EnemyManager.SpeedMultiplier * c_ANARCHY_ACCELERATION_MULT;
         }
-        else if (anarchyMode)
+        else
         {
-            nav.speed = anarchySpeed;
-            nav.angularSpeed = anarchyRotationSpeed;
-            nav.acceleration = anarchyAcceleration;
-
+            nav.speed = defaultSpeed * EnemyManager.SpeedMultiplier;
+            nav.angularSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier;
+            nav.acceleration = defaultAcceleration * EnemyManager.SpeedMultiplier;
         }
     }
 
@@ -97,35 +93,27 @@ public class AiSeekFlee : AIBase{
     /// </summary>
     public void Seek()
     {
-        nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
+        nav.SetDestination(Player.s_Player.FastTransform.Position);//telling the AI to seek out and go to the player's location
     }
 
 
     public void Flee()
     {
-        Vector3 runTo = multBy * (transform.position - player.transform.position);
+        Vector3 runTo = multBy * (m_transform.Position - Player.s_Player.FastTransform.Position);
         nav.SetDestination(runTo);
     }
 
     public void CheckPlayerLooking()
     {
-        //getting the forward vector of the player
-        Vector3 leftAngle = Quaternion.AngleAxis(-45, player.transform.up) * player.transform.forward;
-        Vector3 rightAngle = Quaternion.AngleAxis(45, player.transform.up) *player.transform.forward;
-        Debug.DrawLine(player.transform.position + rightAngle * 10, player.transform.position, Color.cyan);
-        Debug.DrawLine(player.transform.position + leftAngle * 10, player.transform.position, Color.cyan);
+        Vector3 playerToEnemy = m_transform.Position - Player.s_Player.FastTransform.Position ;
+        bool positiveLeft = (Vector3.Dot(Player.s_Player.LeftVisionAngle, playerToEnemy) >= 0);
+        bool positiveRight = (Vector3.Dot(Player.s_Player.RightVisionAngle, playerToEnemy) >= 0);
 
-
-
-        Vector3 playerToEnemy = transform.position - player.transform.position ;
-        bool positiveLeft = (Vector3.Dot(leftAngle, playerToEnemy) >= 0);
-        //Debug.DrawLine(transform.position, Vector3.Dot(leftAngle, playerToEnemy));
-        bool positiveRight = (Vector3.Dot(rightAngle, playerToEnemy) >= 0);
         if (positiveLeft && positiveRight)
         {
             //get distance
-            float distance = Vector3.Distance(transform.position, player.transform.position);
-            if (distance <= rangeView)
+            float distance = (Player.s_Player.FastTransform.Position - m_transform.Position).sqrMagnitude ;
+            if (distance <= rangeView * rangeView)
             {
                 //runaway
                 inPlayerSight = true;
@@ -140,5 +128,10 @@ public class AiSeekFlee : AIBase{
             inPlayerSight = false;
         }
     }
-        
+
+    public override void DealDamage()
+    {
+        throw new NotImplementedException();
     }
+
+}

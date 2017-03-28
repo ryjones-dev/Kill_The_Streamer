@@ -111,9 +111,9 @@ public abstract class Weapon : MonoBehaviour {
     {
         if (!m_held)
         {
-            if (WeaponInRange(PlayerController.s_Player.transform.position))
+            if (WeaponInRange(Player.s_Player.transform.position))
             {
-                PlayerController.s_Player.m_weaponPickupText.enabled = true;
+                Player.s_Player.m_weaponPickupText.enabled = true;
             }
         }
     }
