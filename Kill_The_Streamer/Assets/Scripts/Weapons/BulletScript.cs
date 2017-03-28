@@ -5,17 +5,17 @@ using UnityEngine;
 public class BulletScript : MonoBehaviour
 {
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider collision)
     {
-        if (collision.collider.gameObject.CompareTag("Enemy"))
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            AIBase ai = collision.collider.GetComponent<AIBase>();
+            AIBase ai = collision.GetComponent<AIBase>();
             ai.TakeDamage();
         }
 
-        if(collision.collider.gameObject.CompareTag("Shield"))
+        if(collision.gameObject.CompareTag("Shield"))
         {
-            AiShieldSeek shieldAI = collision.collider.GetComponentInParent<AiShieldSeek>();
+            AiShieldSeek shieldAI = collision.GetComponentInParent<AiShieldSeek>();
             shieldAI.ShieldTakeDamage();
         }
 
