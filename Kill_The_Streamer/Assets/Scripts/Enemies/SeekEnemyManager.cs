@@ -2,130 +2,43 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SeekEnemyManager : MonoBehaviour
+public class SeekEnemyManager : EnemyManagerTemplate
 {
-    public GameObject m_seekPrefab;
-
-    private GameObject[] m_seekEnemyGameObjects;
-    private AiSeeking[] m_seekSeekComponents;
-    private int m_firstInactiveIndex = 0;
-
-    private GameObject[] m_spawnLocations;
-
-    private void Start()
-    {
-        GameObject spawnpoints = GameObject.FindGameObjectWithTag("Spawnpoints");
-
-        m_spawnLocations = new GameObject[spawnpoints.transform.childCount];
-        for (int i = 0; i < m_spawnLocations.Length; i++)
-        {
-            m_spawnLocations[i] = spawnpoints.transform.GetChild(i).gameObject;
-        }
-    }
+    private AiSeeking[] m_seekComponents;
 
     // Called at the beginning of the game by the EnemyManager
-    public void Init(Transform p_parent)
+    public override void Init(Transform p_parent)
     {
+        base.Init(p_parent);
+
         // Initializes the gameobject and component arrays
-        m_seekEnemyGameObjects = new GameObject[Constants.MAX_ENEMIES];
-        m_seekSeekComponents = new AiSeeking[Constants.MAX_ENEMIES];
+        m_seekComponents = new AiSeeking[Constants.MAX_ENEMIES];
 
         for (int i = 0; i < Constants.MAX_ENEMIES; i++)
         {
-            // Instantiates each enemy
-            GameObject seek = Instantiate<GameObject>(m_seekPrefab, Vector3.zero, Quaternion.identity, p_parent);
-            AiSeeking seekComponent = seek.GetComponent<AiSeeking>();
-
-            // Sets the enemy's name and turns it off
-            seek.name = m_seekPrefab.name + " " + i;
-            seek.SetActive(false);
-
-            // Saves the gameobject and components in the arrays
-            m_seekEnemyGameObjects[i] = seek;
-            m_seekSeekComponents[i] = seekComponent;
+            m_seekComponents[i] = m_enemyGameObjects[i].GetComponent<AiSeeking>();
         }
     }
 
-    // Called by the enemy manager when activating an enemy. Returns true if successful or false otherwise.
-    public GameObject ActivateNextEnemy(string p_twitchUsername, Direction p_spawnDirection)
-    {
-        // Prevents adding an enemy if there is no more room in the array
-        if (m_firstInactiveIndex == Constants.MAX_ENEMIES) return null;
-
-        // Gets first inactive enemy gameobject
-        GameObject seek = m_seekEnemyGameObjects[m_firstInactiveIndex];
-
-        // Assigns the enemy's array index
-        m_seekSeekComponents[m_firstInactiveIndex].Index = m_firstInactiveIndex;
-
-        // Sets the enemy's name to the twich username
-        seek.name = p_twitchUsername;
-        seek.GetComponentInChildren<TextMesh>().text = p_twitchUsername;
-
-        // Converts the spawn direction to a spawnpoint index
-        int spawnIndex = (int)p_spawnDirection;
-        if (spawnIndex >= m_spawnLocations.Length) { spawnIndex = Random.Range(0, m_spawnLocations.Length); }
-
-        // Sets the position of the enemy
-        Vector3 spawnVariance = spawnIndex % 2 == 0 ? new Vector3(Random.Range(-2.0f, 2.0f), 0, 0) : new Vector3(0, 0, Random.Range(-2.0f, 2.0f));
-        seek.transform.position = m_spawnLocations[spawnIndex].transform.position + spawnVariance;
-
-        // Enables the gameobject
-        seek.SetActive(true);
-
-        // Increments the first inactive index
-        m_firstInactiveIndex++;
-
-        // Returns the enemy gameobject
-        return seek;
-    }
-
     // Called by the enemy manager when deactivating an enemy. Returns true
-    public bool DeactivateEnemy(int p_enemyIndex)
+    public override bool DeactivateEnemy(int p_enemyIndex)
     {
         // Fails if the enemy index is invalid or if there are no active enemies 
-        if (p_enemyIndex < 0 || p_enemyIndex >= m_firstInactiveIndex || m_firstInactiveIndex == 0) return false;
+        if (!base.DeactivateEnemy(p_enemyIndex))
+        {
+            return false;
+        }
 
-        // Temporarily saves the data from the enemy we are deactivating
-        GameObject temp = m_seekEnemyGameObjects[p_enemyIndex];
-        AiSeeking tempAISeekFlee = m_seekSeekComponents[p_enemyIndex];
-
-        // Deactivates the enemy
-        temp.SetActive(false);
-
-        // Moves the enemy at the end of the active section to the deactivated position
-        m_seekEnemyGameObjects[p_enemyIndex] = m_seekEnemyGameObjects[m_firstInactiveIndex - 1];
-        m_seekSeekComponents[p_enemyIndex] = m_seekSeekComponents[m_firstInactiveIndex - 1];
-
-        // Moves the deactivated enemy to the start of the inactive section
-        m_seekEnemyGameObjects[m_firstInactiveIndex - 1] = temp;
-        m_seekSeekComponents[m_firstInactiveIndex - 1] = tempAISeekFlee;
-
-        // Makes sure the indices are correct
-        m_seekSeekComponents[p_enemyIndex].Index = p_enemyIndex;
-        m_seekSeekComponents[m_firstInactiveIndex - 1].Index = m_firstInactiveIndex - 1;
+        AiSeeking tempSeek = m_seekComponents[p_enemyIndex];
+        m_seekComponents[p_enemyIndex] = m_seekComponents[m_firstInactiveIndex - 1];
+        m_seekComponents[m_firstInactiveIndex - 1] = tempSeek;
+        m_seekComponents[p_enemyIndex].Index = p_enemyIndex;
+        m_seekComponents[m_firstInactiveIndex - 1].Index = m_firstInactiveIndex - 1;
 
         // Decrements the first inactive index
         m_firstInactiveIndex--;
 
         return true;
-    }
-
-    public GameObject GetActiveEnemyGameObject(int p_index)
-    {
-        if (p_index < 0 || p_index >= m_firstInactiveIndex)
-        {
-            Debug.Log("Invalid index " + p_index + " in SeekEnemy array");
-            return null;
-        }
-
-        return m_seekEnemyGameObjects[p_index];
-    }
-
-    public GameObject[] GetAllEnemyGameObjects(out int p_firstInactiveIndex)
-    {
-        p_firstInactiveIndex = m_firstInactiveIndex;
-        return m_seekEnemyGameObjects;
     }
 
     public AiSeeking GetActiveEnemyAI(int p_index)
@@ -136,12 +49,12 @@ public class SeekEnemyManager : MonoBehaviour
             return null;
         }
 
-        return m_seekSeekComponents[p_index];
+        return m_seekComponents[p_index];
     }
 
     public AiSeeking[] GetAllEnemyAI(out int p_firstInactiveIndex)
     {
         p_firstInactiveIndex = m_firstInactiveIndex;
-        return m_seekSeekComponents;
+        return m_seekComponents;
     }
 }
