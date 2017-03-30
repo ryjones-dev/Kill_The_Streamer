@@ -11,7 +11,7 @@ public class DestructoidEnemyManager : EnemyManagerTemplate
     {
         base.Init(p_parent);
 
-        // Initializes the gameobject and component arrays
+        // Initializes component array
         m_destructoidAIComponents = new AiDestructoid[Constants.MAX_ENEMIES];
 
         for (int i = 0; i < Constants.MAX_ENEMIES; i++)
@@ -20,7 +20,7 @@ public class DestructoidEnemyManager : EnemyManagerTemplate
         }
     }
 
-    // Called by the enemy manager when deactivating an enemy. Returns true
+    // Called by the enemy manager when deactivating an enemy
     public override bool DeactivateEnemy(int p_enemyIndex)
     {
         // Fails if the enemy index is invalid or if there are no active enemies 

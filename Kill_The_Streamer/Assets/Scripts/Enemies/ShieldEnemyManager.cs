@@ -11,6 +11,7 @@ public class ShieldEnemyManager : EnemyManagerTemplate
     {
         base.Init(p_parent);
 
+        // Initializes component array
         m_shieldSeekComponents = new AiShieldSeek[Constants.MAX_ENEMIES];
 
         for (int i = 0; i < Constants.MAX_ENEMIES; i++)
@@ -19,7 +20,7 @@ public class ShieldEnemyManager : EnemyManagerTemplate
         }
     }
 
-    // Called by the enemy manager when deactivating an enemy. Returns true
+    // Called by the enemy manager when deactivating an enemy
     public override bool DeactivateEnemy(int p_enemyIndex)
     {
         // Fails if the enemy index is invalid or if there are no active enemies 
@@ -51,7 +52,7 @@ public class ShieldEnemyManager : EnemyManagerTemplate
         return m_shieldSeekComponents[p_index];
     }
 
-    public AiShieldSeek[] GetAllEnemySeekAI(out int p_firstInactiveIndex)
+    public AiShieldSeek[] GetAllEnemyAI(out int p_firstInactiveIndex)
     {
         p_firstInactiveIndex = m_firstInactiveIndex;
         return m_shieldSeekComponents;
