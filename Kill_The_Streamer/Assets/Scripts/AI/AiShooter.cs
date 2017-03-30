@@ -66,7 +66,6 @@ public class AiShooter : AIBase
 
         //stopping distance is closer as to not freeze at the edge outside of stopping distance and freeze on trying to Seek()
         nav.stoppingDistance = minimumRange - 1;
-        InvokeRepeating("ChangeRandom", 0, 1.5f);
     }
 
     void ChangeRandom()
