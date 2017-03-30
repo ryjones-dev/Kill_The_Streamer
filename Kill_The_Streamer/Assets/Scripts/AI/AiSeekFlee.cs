@@ -33,7 +33,7 @@ public class AiSeekFlee : AIBase{
     private const float c_ANARCHY_ROTATION_MULT = 2;
     private const float c_ANARCHY_ACCELERATION_MULT = 2;
 
-    protected override void Start () {
+    public override void Start () {
         base.Start();
 
         //finding object with the tag "Player"

@@ -122,12 +122,13 @@ public class EnemyManager : MonoBehaviour
     /// </summary>
     public static bool DestroyEnemy(EnemyType p_enemyType, int p_enemyIndex)
     {
-		GameObject enemy = s_instance.m_booEnemyManager.GetActiveEnemyGameObject (p_enemyIndex);
+		GameObject enemy = null;
 
 		bool success = false;
         switch(p_enemyType)
         {
 		case EnemyType.BooEnemy:
+			enemy = s_instance.m_booEnemyManager.GetActiveEnemyGameObject (p_enemyIndex);
 			success = s_instance.m_booEnemyManager.DeactivateEnemy (p_enemyIndex);
 			if (success) {
 				s_instance.m_enemyTotal--;
@@ -136,6 +137,7 @@ public class EnemyManager : MonoBehaviour
 			break;
 
 		case EnemyType.SeekEnemy:
+			enemy = s_instance.m_seekEnemyManager.GetActiveEnemyGameObject (p_enemyIndex);
 			success = s_instance.m_seekEnemyManager.DeactivateEnemy (p_enemyIndex);
 			if (success) { 
 				s_instance.m_enemyTotal--;
@@ -144,6 +146,7 @@ public class EnemyManager : MonoBehaviour
 			break;
 
 		case EnemyType.GhostEnemy:
+			enemy = s_instance.m_ghostEnemyManager.GetActiveEnemyGameObject (p_enemyIndex);
 			success = s_instance.m_ghostEnemyManager.DeactivateEnemy (p_enemyIndex);
 			if (success) {
 				s_instance.m_enemyTotal--;
@@ -152,8 +155,7 @@ public class EnemyManager : MonoBehaviour
 			break;
 
 		case EnemyType.ShieldEnemy:
-			enemy.SendMessage ("OnDespawn", SendMessageOptions.DontRequireReceiver);
-
+			enemy = s_instance.m_shieldEnemyManager.GetActiveEnemyGameObject (p_enemyIndex);
 			success = s_instance.m_shieldEnemyManager.DeactivateEnemy (p_enemyIndex);
 			if (success) { 
 				s_instance.m_enemyTotal--;
@@ -169,7 +171,7 @@ public class EnemyManager : MonoBehaviour
 		if (s_instance.m_enemyDeathCount % 10 == 0)
 		{
 			Tool_WeaponSpawner.s_instance.SpawnWeapon (enemy.transform.position);
-			Debug.Log ("Spawning at" + enemy.transform.position);
+
 		}
 
 		return success;

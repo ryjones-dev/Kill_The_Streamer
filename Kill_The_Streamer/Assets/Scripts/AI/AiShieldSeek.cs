@@ -31,7 +31,7 @@ public class AiShieldSeek : AIBase{
 
 
 
-    protected override void Start()
+	public override void Start()
     {
         base.Start();
 
@@ -97,11 +97,9 @@ public class AiShieldSeek : AIBase{
         }
     }
 
-    public void OnDespawn()
-    {
-        Debug.Log("Called");
-        shieldActive = true;
-        shieldHealth = shieldHealthStart;
-        shield.SetActive(true);
-    }
+	public override void Initialize(){
+		shieldActive = true;
+		shieldHealth = shieldHealthStart;
+		shield.SetActive(true);
+	}
 }

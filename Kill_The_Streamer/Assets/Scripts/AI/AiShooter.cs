@@ -40,7 +40,7 @@ public class AiShooter : AIBase
     private const float c_ANARCHY_ACCELERATION_MULT = 2;
     private float anarchyShootTimer;
 
-    protected override void Start()
+    public override void Start()
     {
         base.Start();
 

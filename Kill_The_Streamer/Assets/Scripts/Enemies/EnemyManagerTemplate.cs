@@ -37,6 +37,8 @@ public abstract class EnemyManagerTemplate : MonoBehaviour {
             enemy.name = m_enemyPrefab.name + " " + i;
             enemy.SetActive(false);
 
+			enemy.GetComponent<AIBase> ().Start ();
+
             // Saves the gameobject and components in the arrays
             m_enemyGameObjects[i] = enemy;
         }
@@ -52,7 +54,8 @@ public abstract class EnemyManagerTemplate : MonoBehaviour {
         GameObject enemy = m_enemyGameObjects[m_firstInactiveIndex];
 
         // Assigns the enemy's array index
-        enemy.GetComponent<AIBase>().Index = m_firstInactiveIndex;
+		AIBase enemyBase = enemy.GetComponent<AIBase>();
+        enemyBase.Index = m_firstInactiveIndex;
 
         // Sets the enemy's name to the twich username
         enemy.name = p_twitchUsername;
@@ -68,6 +71,7 @@ public abstract class EnemyManagerTemplate : MonoBehaviour {
 
         // Enables the gameobject
         enemy.SetActive(true);
+		enemyBase.Initialize();
 
         // Increments the first inactive index
         m_firstInactiveIndex++;

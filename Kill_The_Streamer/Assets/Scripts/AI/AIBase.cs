@@ -23,7 +23,7 @@ public abstract class AIBase : MonoBehaviour {
     protected float m_aiLoopMax = 0.1f;
 
     // Use this for initialization
-    protected virtual void Start () {
+    public virtual void Start () {
         m_transform = this.GetComponent<FastTransform>();
         m_aiLoopTimer = m_aiLoopMax;
 	}
@@ -67,6 +67,10 @@ public abstract class AIBase : MonoBehaviour {
             UpdateSpeed();
         }
     }
+
+	public virtual void Initialize ()
+	{
+	}
 
     /// <summary>
     /// This is called if the enemy takes damage. If the enemy reaches 0 health

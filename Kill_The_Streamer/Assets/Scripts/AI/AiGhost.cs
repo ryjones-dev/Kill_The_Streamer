@@ -38,7 +38,7 @@ public class AiGhost : AIBase {
     private const float c_ANARCHY_TIMER_MULT = 0.5f;
     private const float c_ANARCHY_CHARGE_MULT = 2;
 
-    protected override void Start () {
+    public override void Start () {
         base.Start();
         player = Player.s_Player.gameObject;
         toCharge = false;
@@ -146,7 +146,8 @@ public class AiGhost : AIBase {
 			if (toCharge == true) {
                 if(seekSpot==false)
                 {
-                    chargeLoc = player.transform.position;
+				Vector2 variance = UnityEngine.Random.insideUnitCircle;
+				chargeLoc = Player.s_Player.FastTransform.Position +  5.0f * (new Vector3(variance.x, 0, variance.y));
                     seekSpot = true;
                 }
                 else if(seekSpot==true)
