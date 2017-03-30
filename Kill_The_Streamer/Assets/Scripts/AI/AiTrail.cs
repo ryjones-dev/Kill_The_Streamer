@@ -59,7 +59,7 @@ public class AiTrail : AIBase{
 
     public override void DealDamage()
     {
-        throw new NotImplementedException();
+		Player.s_Player.TakeDamage(10, name, false);
     }
 
     public override void UpdateSpeed()

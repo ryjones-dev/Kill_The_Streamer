@@ -115,7 +115,7 @@ public class Player : MonoBehaviour
     /// Deals damage to the player and updates the health bar.
     /// </summary>
     /// <param name="damage"></param>
-    public void TakeDamage(int damage, string name = "Default")
+	public void TakeDamage(int damage, string name, bool setInvulnFrames)
     {
         if (!m_isAlive)
         {

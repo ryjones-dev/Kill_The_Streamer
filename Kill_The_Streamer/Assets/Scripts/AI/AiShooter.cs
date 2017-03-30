@@ -120,7 +120,7 @@ public class AiShooter : AIBase
 
     public override void DealDamage()
     {
-        throw new NotImplementedException();
+		Player.s_Player.TakeDamage(100, name, false);
     }
 
     public void CheckShoot()
