@@ -37,7 +37,7 @@ public class AiDestructoid : AIBase {
     private const float c_ANARCHY_TIMER_MULT = 0.5f;
 
     // Use this for initialization
-    protected override void Start () {
+    public override void Start () {
         base.Start();
         colorChange = GetComponentInChildren<SpriteRenderer>();
         player = GameObject.FindGameObjectWithTag("Player");

@@ -39,7 +39,7 @@ public class AiSeeking : AIBase
 
 
 
-    protected override void Start () {
+    public override void Start () {
         base.Start();
 
         leader = null;

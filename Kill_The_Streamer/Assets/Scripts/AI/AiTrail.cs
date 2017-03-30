@@ -23,7 +23,7 @@ public class AiTrail : AIBase{
     private const float c_ANARCHY_SPEED_MULT = 2.0f;
 
     // Use this for initialization
-    protected override void Start () {
+    public override void Start () {
         //finding object with the tag "Player"
         base.Start();
         player = GameObject.FindGameObjectWithTag("Player");
