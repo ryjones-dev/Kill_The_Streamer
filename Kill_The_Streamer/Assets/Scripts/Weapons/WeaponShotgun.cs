@@ -4,7 +4,7 @@ using UnityEngine;
 public class WeaponShotgun : Weapon
 {
     public const float SHOTGUN_FIRE_RATE = 1.0f;
-    public const int SHOTGUN_MAX_AMMO = 2;
+    public const int SHOTGUN_MAX_AMMO = 16;
     public const string SHOTGUN_NAME = "Shotgun";
     float angle = 15.0f;
     public Quaternion m_leftAngle;
@@ -19,7 +19,7 @@ public class WeaponShotgun : Weapon
     /// <summary>
     /// Speed the bullet travels.
     /// </summary>
-    public const float BULLET_SPEED = 10.0f;
+    public const float BULLET_SPEED = 35.0f;
 
     /// <summary>
     /// Rate of fire

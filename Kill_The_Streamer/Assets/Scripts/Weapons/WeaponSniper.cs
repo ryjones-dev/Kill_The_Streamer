@@ -16,7 +16,7 @@ public class WeaponSniper : Weapon
     /// <summary>
     /// Speed the bullet travels.
     /// </summary>
-    public const float BULLET_SPEED = 30.0f;
+    public const float BULLET_SPEED = 50.0f;
 
     /// <summary>
     /// Rate of fire

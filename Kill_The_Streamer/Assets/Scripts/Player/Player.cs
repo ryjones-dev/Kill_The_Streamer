@@ -58,9 +58,9 @@ public class Player : MonoBehaviour
 
     private SpriteRenderer m_playerSpriteRenderer;
 
-    [HideInInspector]
+    //[HideInInspector]
     public GameObject m_primaryWeaponObject;
-    [HideInInspector]
+    //[HideInInspector]
     public GameObject m_secondaryWeaponObject;
     public GameObject m_primaryWeaponUIObject;
     public GameObject m_secondaryWeaponUIObject;
@@ -313,6 +313,9 @@ public class Player : MonoBehaviour
                     m_primaryWeapon.transform.parent = null;
                     m_primaryWeapon.GetComponent<SpriteRenderer>().enabled = true;
                     m_primaryWeapon.m_held = false;
+                    m_primaryWeapon.transform.rotation = Quaternion.Euler(new Vector3(90, 0, 0));
+                    m_primaryWeapon.transform.position = m_transform.Position;
+                    m_primaryWeapon.m_arenaTimer = Weapon.ARENA_LIFETIME;
                 }
 
                 m_primaryWeaponObject = closestWeapon;
@@ -457,9 +460,12 @@ public class Player : MonoBehaviour
             {
                 Destroy(m_primaryWeaponObject);
                 m_primaryWeaponObject = (GameObject)Instantiate(m_pistolPrefab);
+                m_primaryWeaponObject.transform.parent = this.transform;
                 m_primaryWeapon = m_primaryWeaponObject.GetComponent<Weapon>();
+                m_primaryWeaponObject.GetComponent<SpriteRenderer>().enabled = false;
                 m_primaryWeapon.m_held = true;
                 m_primaryWeapon.m_ammo = m_primaryWeapon.MAX_AMMO;
+                UpdateWeaponUI();
             }
         }
 
