@@ -28,7 +28,7 @@ public class AiTrail : AIBase{
         base.Start();
         player = GameObject.FindGameObjectWithTag("Player");
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
-        Instantiate(Resources.Load("Trail"), transform.position, transform.rotation);
+        //Instantiate(Resources.Load("Trail"), transform.position, transform.rotation);
 
 
         resetTrailTime = 0.14f;
@@ -36,7 +36,7 @@ public class AiTrail : AIBase{
 
         //set initialPosition
         NavMeshHit hit;
-        nav.FindClosestEdge(out hit);
+        //nav.FindClosestEdge(out hit);
 
         defaultSpeed = speedModifier;
         defaultResetTrailTime = resetTrailTime;
@@ -59,7 +59,7 @@ public class AiTrail : AIBase{
 
     public override void DealDamage()
     {
-        throw new NotImplementedException();
+		Player.s_Player.TakeDamage(10, name, false);
     }
 
     public override void UpdateSpeed()

@@ -9,7 +9,7 @@ public class Trail : MonoBehaviour {
     // Use this for initialization
     void Start () {
         //set tag to trail
-        gameObject.tag = "Trail";
+        //gameObject.tag = "Trail";
         //destroy after a certain amount of time
         Destroy(gameObject, timeAlive);
         //another option would be to destroy after a certain number of other trail has been spawned

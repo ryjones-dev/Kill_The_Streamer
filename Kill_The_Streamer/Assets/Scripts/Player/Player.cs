@@ -32,9 +32,11 @@ public class Player : MonoBehaviour
 
     public int m_health;
     public bool m_isAlive = true;
+    private float m_invulnTimer = 0;
 
     private Dictionary<string, int> m_damageDoneByViewers;
     private string m_killedBy;
+    public GameObject m_endingScreen;
 
     public GameObject m_pistolPrefab;
     [HideInInspector]
@@ -53,6 +55,8 @@ public class Player : MonoBehaviour
     public Weapon m_secondaryWeapon;
     [HideInInspector]
     public SpriteRenderer m_weaponSpriteRenderer;
+
+    private SpriteRenderer m_playerSpriteRenderer;
 
     [HideInInspector]
     public GameObject m_primaryWeaponObject;
@@ -78,6 +82,13 @@ public class Player : MonoBehaviour
     void Start()
     {
         m_transform = GetComponent<FastTransform>();
+        SpriteRenderer[] playerSpriteRenderers = GetComponentsInChildren<SpriteRenderer>();
+        for (int i = 0; i < playerSpriteRenderers.Length; ++i) {
+            if (playerSpriteRenderers[i].CompareTag("Player")) {
+                m_playerSpriteRenderer = playerSpriteRenderers[i];
+                break;
+            }
+        }
 
         m_health = MAX_HEALTH;
         m_HealthBar = m_HealthBarObject.GetComponent<Image>();
@@ -115,8 +126,18 @@ public class Player : MonoBehaviour
     /// Deals damage to the player and updates the health bar.
     /// </summary>
     /// <param name="damage"></param>
-    public void TakeDamage(int damage, string name = "Default")
+	public void TakeDamage(int damage, string name, bool setInvulnFrames)
     {
+        if (setInvulnFrames)
+        {
+            if(m_invulnTimer > 0.0f)
+            {
+                
+                return;
+            }
+            m_invulnTimer = 0.5f;
+        }
+
         if (!m_isAlive)
         {
             return;
@@ -158,6 +179,7 @@ public class Player : MonoBehaviour
     /// </summary>
     public void Die()
     {
+        Time.timeScale = 0.0f;//Stop the game
         List<KeyValuePair<string, int>> sortedList = m_damageDoneByViewers.ToList();
 
         sortedList.Sort(
@@ -166,10 +188,19 @@ public class Player : MonoBehaviour
             return kv2.Value.CompareTo(kv.Value);
         });
 
-        // Change to ending screen here.
-        for(int i = 0; i < sortedList.Count; ++i)
+        // Set up the final screen.
+        m_endingScreen.SetActive(true);
+        GameObject.FindGameObjectWithTag("KilledTheStreamer").GetComponent<Text>().text = m_killedBy.ToUpper() + " KILLED THE STREAMER!";
+        Text[] leaderboards = new Text[4];
+        leaderboards[0] = GameObject.FindGameObjectWithTag("LeaderboardDamage0").GetComponent<Text>();
+        leaderboards[1] = GameObject.FindGameObjectWithTag("LeaderboardDamage1").GetComponent<Text>();
+        leaderboards[2] = GameObject.FindGameObjectWithTag("LeaderboardDamage2").GetComponent<Text>();
+        leaderboards[3] = GameObject.FindGameObjectWithTag("LeaderboardDamage3").GetComponent<Text>();
+        
+        // Update the leaderboard.
+        for (int i = 0; i < sortedList.Count; ++i)
         {
-            Debug.Log(sortedList[i].Key + ": " + sortedList[i].Value);
+            leaderboards[i % 4].text += sortedList[i].Key.ToUpper() + ": " + sortedList[i].Value + "\n";
         }
     }
 
@@ -346,6 +377,20 @@ public class Player : MonoBehaviour
 
     public void Update()
     {
+        if (m_invulnTimer > 0.0f)
+        {
+            m_invulnTimer -= Time.deltaTime;
+            int frame = (int)(m_invulnTimer * 15);
+            if (frame % 2 == 0)
+            {
+                m_playerSpriteRenderer.color = Color.white;
+            }
+            else
+            {
+                m_playerSpriteRenderer.color = Color.red;
+            }
+        }
+
         m_leftVisionAngle = m_leftAngle * FastTransform.Trans.forward;
         m_rightVisionAngle = m_rightAngle * FastTransform.Trans.forward;
         Debug.DrawLine(m_transform.Position + m_leftVisionAngle * 10, m_transform.Position, Color.cyan);

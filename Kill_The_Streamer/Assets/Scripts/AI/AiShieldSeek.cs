@@ -73,7 +73,7 @@ public class AiShieldSeek : AIBase{
 
     public override void DealDamage()
     {
-        throw new NotImplementedException();
+		Player.s_Player.TakeDamage(1000, name, true);
     }
 
 
@@ -101,5 +101,17 @@ public class AiShieldSeek : AIBase{
 		shieldActive = true;
 		shieldHealth = shieldHealthStart;
 		shield.SetActive(true);
+	}
+
+	void OnTriggerEnter(Collider col){
+		if(col.CompareTag("PlayerHitbox")){
+			DealDamage();
+		}
+	}
+
+	void OnTriggerStay(Collider col){
+		if(col.CompareTag("PlayerHitbox")){
+			DealDamage();
+		}
 	}
 }

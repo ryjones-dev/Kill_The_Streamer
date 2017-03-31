@@ -88,7 +88,7 @@ public class AiSeeking : AIBase
 
     public override void DealDamage()
     {
-        throw new NotImplementedException();
+		Player.s_Player.TakeDamage(1000, name, true);
     }
 
     /// <summary>
@@ -175,5 +175,16 @@ public class AiSeeking : AIBase
             closeShield = float.MaxValue;
         }
     }
+
+	void OnTriggerEnter(Collider col){
+		if(col.CompareTag("PlayerHitbox")){
+			DealDamage();
+		}
+	}
+	void OnTriggerStay(Collider col){
+		if(col.CompareTag("PlayerHitbox")){
+			DealDamage();
+		}
+	}
 
 }
