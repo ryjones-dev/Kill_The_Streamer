@@ -29,9 +29,11 @@ public class AiSeekFlee : AIBase{
     public float defaultAcceleration;
     //anarchy info
 
+    public int booDamage=3000;
+
     private const float c_ANARCHY_SPEED_MULT = 2;
-    private const float c_ANARCHY_ROTATION_MULT = 2;
-    private const float c_ANARCHY_ACCELERATION_MULT = 2;
+    //private const float c_ANARCHY_ROTATION_MULT = 2;
+   // private const float c_ANARCHY_ACCELERATION_MULT = 2;
 
     public override void Start () {
         base.Start();
@@ -75,14 +77,14 @@ public class AiSeekFlee : AIBase{
     {
         if (m_anarchyMode) {
             nav.speed = defaultSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_SPEED_MULT;
-            nav.angularSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_ROTATION_MULT;
-            nav.acceleration = defaultAcceleration * EnemyManager.SpeedMultiplier * c_ANARCHY_ACCELERATION_MULT;
+           // nav.angularSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier * c_ANARCHY_ROTATION_MULT;
+           // nav.acceleration = defaultAcceleration * EnemyManager.SpeedMultiplier * c_ANARCHY_ACCELERATION_MULT;
         }
         else
         {
             nav.speed = defaultSpeed * EnemyManager.SpeedMultiplier;
-            nav.angularSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier;
-            nav.acceleration = defaultAcceleration * EnemyManager.SpeedMultiplier;
+           // nav.angularSpeed = defaultRotationSpeed * EnemyManager.SpeedMultiplier;
+           // nav.acceleration = defaultAcceleration * EnemyManager.SpeedMultiplier;
         }
     }
 
@@ -131,7 +133,7 @@ public class AiSeekFlee : AIBase{
 
     public override void DealDamage()
     {
-		Player.s_Player.TakeDamage(1000, name, true);
+		Player.s_Player.TakeDamage(booDamage, name, true);
     }
 
 	void OnTriggerEnter(Collider col){
