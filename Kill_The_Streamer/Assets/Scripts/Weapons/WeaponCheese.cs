@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class WeaponCheese : Weapon
 {
-    public const float CHEESE_GUN_FIRE_RATE = 0.1f;
-    public const int CHEESE_GUN_MAX_AMMO = 50;
+    public const float CHEESE_GUN_FIRE_RATE = 0.03f;
+    public const int CHEESE_GUN_MAX_AMMO = 150;
     public const string CHEESE_GUN_NAME = "Cheese Gun";
     public Sprite CHEESE_GUN_SPRITE;
 
