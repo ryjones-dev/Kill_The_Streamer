@@ -5,8 +5,10 @@ using UnityEngine;
 public class Tool_WeaponSpawner : MonoBehaviour {
 
     public static Tool_WeaponSpawner s_instance;
-    public GameObject[] SpawnableWeaponPrefabs;
+    public GameObject[] m_spawnableWeaponPrefabs;
+    private int[] m_weaponWeights;
 	private Quaternion m_rotate;
+    private int m_totalWeight;
 
     void Start()
     {
@@ -16,12 +18,27 @@ public class Tool_WeaponSpawner : MonoBehaviour {
         }
 		m_rotate = Quaternion.Euler (90, 0, 0);
 
+        m_totalWeight = 0;
+        m_weaponWeights = new int[m_spawnableWeaponPrefabs.Length];
+        for(int i = 0; i < m_spawnableWeaponPrefabs.Length; ++i)
+        {
+            m_weaponWeights[i] = m_spawnableWeaponPrefabs[i].GetComponent<Weapon>().SPAWNRATE;
+            m_totalWeight += m_weaponWeights[i];
+        }
     }
 
     public void SpawnWeapon(Vector3 position)
     {
-		Instantiate(SpawnableWeaponPrefabs[Random.Range(0, SpawnableWeaponPrefabs.Length)], position, m_rotate);
-
+        int value = Random.Range(0, m_totalWeight);
+        for(int i = 0; i < m_spawnableWeaponPrefabs.Length; ++i)
+        {
+            value -= m_weaponWeights[i];
+            if(value <= 0)
+            {
+                Instantiate(m_spawnableWeaponPrefabs[i], position, m_rotate);
+                return;
+            }
+        }
     }
 
 }
