@@ -36,6 +36,9 @@ public class WeaponMeteorGun : Weapon
     /// </summary>
     public const float spawnVariance = 5.0f;
 
+    private Texture2D m_crosshair;
+    private bool isUsingCrosshair = false;
+
     public override float FIRE_RATE { get { return METEOR_FIRE_RATE; } }
 
     public override int MAX_AMMO { get { return METEOR_MAX_AMMO; } }
@@ -67,10 +70,18 @@ public class WeaponMeteorGun : Weapon
 
                 GameObject meteorBullet = Instantiate<GameObject>(m_bulletPrefab, finalMeteorPosition, Quaternion.identity);
                 meteorBullet.GetComponent<Rigidbody>().velocity = meteorDirection * BULLET_SPEED;
+                meteorBullet.transform.FindChild("Shadow").position += new Vector3(direction.x * 7.5f , 0, direction.z * 7.5f);
             }
 
             m_timer = FIRE_RATE;
         }
+    }
+
+    public override void Start()
+    {
+        base.Start();
+
+        m_crosshair = Resources.Load<Texture2D>("UI/ui_crosshair");
     }
 
     public override void Update()
@@ -80,6 +91,17 @@ public class WeaponMeteorGun : Weapon
         if (m_timer > 0.0f)
         {
             m_timer -= Time.deltaTime;
+        }
+
+        if(!isUsingCrosshair && Player.s_Player.m_primaryWeapon.NAME == METEOR_NAME)
+        {
+            Cursor.SetCursor(m_crosshair, new Vector2(m_crosshair.width / 2, m_crosshair.height / 2), CursorMode.Auto);
+            isUsingCrosshair = true;
+        }
+        else if(isUsingCrosshair && Player.s_Player.m_primaryWeapon.NAME != METEOR_NAME)
+        {
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+            isUsingCrosshair = false;
         }
     }
 }
