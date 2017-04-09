@@ -18,6 +18,7 @@ public abstract class AIBase : MonoBehaviour {
     public bool m_anarchyMode;
 
     protected FastTransform m_transform;
+    protected Rigidbody m_rigidbody;
 
     protected float m_aiLoopTimer;
     protected float m_aiLoopMax = 0.1f;
@@ -25,6 +26,7 @@ public abstract class AIBase : MonoBehaviour {
     // Use this for initialization
     public virtual void Start () {
         m_transform = this.GetComponent<FastTransform>();
+        m_rigidbody = this.GetComponent<Rigidbody>();
         m_aiLoopTimer = m_aiLoopMax;
 	}
 	
@@ -55,6 +57,11 @@ public abstract class AIBase : MonoBehaviour {
     public FastTransform FastTransform
     {
         get { return m_transform; }
+    }
+
+    public Rigidbody RigidBody
+    {
+        get { return m_rigidbody; }
     }
 
     protected virtual void Update()
