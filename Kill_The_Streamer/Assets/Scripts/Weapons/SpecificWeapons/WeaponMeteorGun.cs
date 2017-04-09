@@ -67,6 +67,7 @@ public class WeaponMeteorGun : Weapon
 
                 GameObject meteorBullet = Instantiate<GameObject>(m_bulletPrefab, finalMeteorPosition, Quaternion.identity);
                 meteorBullet.GetComponent<Rigidbody>().velocity = meteorDirection * BULLET_SPEED;
+                meteorBullet.transform.FindChild("Shadow").position += new Vector3(direction.x * 7.5f , 0, direction.z * 7.5f);
             }
 
             m_timer = FIRE_RATE;
