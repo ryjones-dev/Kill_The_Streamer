@@ -338,6 +338,7 @@ public class Player : MonoBehaviour
     private void UpdateWeaponUI()
     {
         m_weaponSpriteRenderer.sprite = m_primaryWeapon.WEAPON_SPRITE;
+        GameObject.FindGameObjectWithTag("WeaponName").GetComponent<Text>().text = m_primaryWeapon.NAME;
 
         m_primaryWeaponUI.sprite = m_primaryWeapon.WEAPON_SPRITE;
         if (m_primaryWeapon.MAX_AMMO != -1)
