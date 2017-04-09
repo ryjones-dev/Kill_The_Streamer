@@ -46,7 +46,7 @@ public class WeaponBounce : Weapon
     {
         if (m_timer <= 0.0f) // && m_ammo > 0 except pistols have infinite ammo
         {
-            //m_ammo--;// Pistols have infinite ammo
+            m_ammo--;// Pistols have infinite ammo
 
             GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
             bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
