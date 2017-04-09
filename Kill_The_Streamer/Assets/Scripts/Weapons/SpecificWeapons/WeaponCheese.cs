@@ -1,12 +1,13 @@
 ﻿using System;
 using UnityEngine;
 
-public class WeaponPistol : Weapon
+public class WeaponCheese : Weapon
 {
-    public const float PISTOL_FIRE_RATE = 0.4f;
-    public const int PISTOL_MAX_AMMO = -1;
-    public const string PISTOL_NAME = "Pistol";
-    public Sprite PISTOL_SPRITE;
+    public const float CHEESE_GUN_FIRE_RATE = 0.03f;
+    public const int CHEESE_GUN_MAX_AMMO = 150;
+    public const string CHEESE_GUN_NAME = "Hot Cheese";
+    public const int CHEESE_GUN_SPAWNRATE = 100;
+    public Sprite CHEESE_GUN_SPRITE;
 
     /// <summary>
     /// Prefab of the bullet to be fired.
@@ -21,19 +22,21 @@ public class WeaponPistol : Weapon
     /// <summary>
     /// Rate of fire
     /// </summary>
-    public override float FIRE_RATE { get { return PISTOL_FIRE_RATE; } }
+    public override float FIRE_RATE { get { return CHEESE_GUN_FIRE_RATE; } }
 
     /// <summary>
     /// Maximum ammo remaining 
     /// </summary>
-    public override int MAX_AMMO { get { return PISTOL_MAX_AMMO; } }
+    public override int MAX_AMMO { get { return CHEESE_GUN_MAX_AMMO; } }
 
     /// <summary>
     /// Name of the weapon type (e.g. Pistol, Sniper, Etc)
     /// </summary>
-    public override string NAME { get { return PISTOL_NAME; } }
+    public override string NAME { get { return CHEESE_GUN_NAME; } }
 
-    public override Sprite WEAPON_SPRITE { get { return PISTOL_SPRITE; } }
+    public override Sprite WEAPON_SPRITE { get { return CHEESE_GUN_SPRITE; } }
+
+    public override int SPAWNRATE { get { return CHEESE_GUN_SPAWNRATE; } }
 
     /// <summary>
     /// Fires the weapon in the direction given.
@@ -41,12 +44,12 @@ public class WeaponPistol : Weapon
     /// <param name="direction">The direction the character is aiming in.</param>
     public override void Fire(Vector3 position, Vector3 direction)
     {
-        if(m_timer <= 0.0f) // && m_ammo > 0 except pistols have infinite ammo
+        if (m_timer <= 0.0f && m_ammo > 0)
         {
-            //m_ammo--;// Pistols have infinite ammo
+            m_ammo--;
 
-            GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
-            bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
+			GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
+			bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
 
             m_timer = FIRE_RATE;
         }
@@ -64,4 +67,9 @@ public class WeaponPistol : Weapon
             m_timer -= Time.deltaTime;
         }
     }
+
+	public override void Start(){
+		base.Start ();
+	}
+
 }

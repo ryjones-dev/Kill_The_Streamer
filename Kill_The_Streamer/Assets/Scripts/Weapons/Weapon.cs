@@ -44,6 +44,11 @@ public abstract class Weapon : MonoBehaviour {
         get;
     }
 
+    public virtual int START_AMMO
+    {
+        get { return MAX_AMMO; }
+    }
+
     public abstract Sprite WEAPON_SPRITE
     {
         get;
@@ -63,6 +68,14 @@ public abstract class Weapon : MonoBehaviour {
     }
 
     /// <summary>
+    /// Spawnrate of the weapon (from 1-1000 usually, 1 meaning almost never, 1000 meaning common).
+    /// </summary>
+    public abstract int SPAWNRATE
+    {
+        get;
+    }
+
+    /// <summary>
     /// Fires the weapon in the direction given.
     /// </summary>
     /// <param name="position">The character's position.</param>
@@ -75,10 +88,7 @@ public abstract class Weapon : MonoBehaviour {
         {
             m_held = false;
         }
-        if (m_ammo != 0)
-        {
-            m_ammo = MAX_AMMO;
-        }
+        m_ammo = START_AMMO;
         m_timer = 0.0f;
         m_arenaTimer = ARENA_LIFETIME;
         m_spriteRenderer = this.GetComponent<SpriteRenderer>();

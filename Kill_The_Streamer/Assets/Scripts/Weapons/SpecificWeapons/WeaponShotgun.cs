@@ -6,6 +6,7 @@ public class WeaponShotgun : Weapon
     public const float SHOTGUN_FIRE_RATE = 1.0f;
     public const int SHOTGUN_MAX_AMMO = 16;
     public const string SHOTGUN_NAME = "Shotgun";
+    public const int SHOTGUN_SPAWNRATE = 500;
     float angle = 15.0f;
     public Quaternion m_leftAngle;
     public Quaternion m_rightAngle;
@@ -35,6 +36,8 @@ public class WeaponShotgun : Weapon
     /// Name of the weapon type (e.g. Pistol, Sniper, Etc)
     /// </summary>
     public override string NAME { get { return SHOTGUN_NAME; } }
+
+    public override int SPAWNRATE { get { return SHOTGUN_SPAWNRATE; } }
 
     public override Sprite WEAPON_SPRITE
     {
@@ -96,6 +99,5 @@ public class WeaponShotgun : Weapon
         base.Start();
         m_leftAngle = Quaternion.AngleAxis(angle, Vector3.up);
         m_rightAngle = Quaternion.AngleAxis(-angle, Vector3.up);
-		m_ammo = SHOTGUN_MAX_AMMO;
     }
 }

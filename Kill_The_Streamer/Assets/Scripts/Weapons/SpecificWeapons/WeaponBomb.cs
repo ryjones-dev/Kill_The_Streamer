@@ -1,12 +1,13 @@
 ﻿using System;
 using UnityEngine;
 
-public class WeaponMachineGun : Weapon
+public class WeaponBomb : Weapon
 {
-    public const float MACHINE_GUN_FIRE_RATE = 0.02f;
-    public const int MACHINE_GUN_MAX_AMMO = 60;
-    public const string MACHINE_GUN_NAME = "Machine Gun";
-    public Sprite MACHINE_GUN_SPRITE;
+    public const float BOMB_FIRE_RATE = 1.0f;
+    public const int BOMB_MAX_AMMO = 5;
+    public const string BOMB_NAME = "Bomb";
+    public const int BOMB_SPAWNRATE = 20;
+    public Sprite BOMB_SPRITE;
 
     /// <summary>
     /// Prefab of the bullet to be fired.
@@ -21,19 +22,21 @@ public class WeaponMachineGun : Weapon
     /// <summary>
     /// Rate of fire
     /// </summary>
-    public override float FIRE_RATE { get { return MACHINE_GUN_FIRE_RATE; } }
+    public override float FIRE_RATE { get { return BOMB_FIRE_RATE; } }
 
     /// <summary>
     /// Maximum ammo remaining 
     /// </summary>
-    public override int MAX_AMMO { get { return MACHINE_GUN_MAX_AMMO; } }
+    public override int MAX_AMMO { get { return BOMB_MAX_AMMO; } }
 
     /// <summary>
     /// Name of the weapon type (e.g. Pistol, Sniper, Etc)
     /// </summary>
-    public override string NAME { get { return MACHINE_GUN_NAME; } }
+    public override string NAME { get { return BOMB_NAME; } }
 
-    public override Sprite WEAPON_SPRITE { get { return MACHINE_GUN_SPRITE; } }
+    public override Sprite WEAPON_SPRITE { get { return BOMB_SPRITE; } }
+
+    public override int SPAWNRATE { get { return BOMB_SPAWNRATE; } }
 
     /// <summary>
     /// Fires the weapon in the direction given.
@@ -41,7 +44,7 @@ public class WeaponMachineGun : Weapon
     /// <param name="direction">The direction the character is aiming in.</param>
     public override void Fire(Vector3 position, Vector3 direction)
     {
-        if (m_timer <= 0.0f && m_ammo > 0)
+        if (m_timer <= 0.0f) // && m_ammo > 0 except pistols have infinite ammo
         {
             m_ammo--;
 
@@ -64,9 +67,4 @@ public class WeaponMachineGun : Weapon
             m_timer -= Time.deltaTime;
         }
     }
-
-	public override void Start(){
-		base.Start ();
-		m_ammo = MAX_AMMO;
-	}
 }

@@ -1,12 +1,14 @@
 ﻿using System;
 using UnityEngine;
 
-public class WeaponBFG : Weapon
+public class WeaponMachineGun : Weapon
 {
-    public const float BFG_FIRE_RATE = 0.1f;
-    public const int BFG_MAX_AMMO = 1;
-    public const string BFG_NAME = "BFG";
-    public Sprite BFG_SPRITE;
+    public const float MACHINE_GUN_FIRE_RATE = 0.02f;
+    public const int MACHINE_GUN_START_AMMO = 60;
+    public const int MACHINE_GUN_MAX_AMMO = 120;
+    public const string MACHINE_GUN_NAME = "Machine Gun";
+    public const int MACHINE_GUN_SPAWNRATE = 500;
+    public Sprite MACHINE_GUN_SPRITE;
 
     /// <summary>
     /// Prefab of the bullet to be fired.
@@ -21,19 +23,23 @@ public class WeaponBFG : Weapon
     /// <summary>
     /// Rate of fire
     /// </summary>
-    public override float FIRE_RATE { get { return BFG_FIRE_RATE; } }
+    public override float FIRE_RATE { get { return MACHINE_GUN_FIRE_RATE; } }
 
     /// <summary>
     /// Maximum ammo remaining 
     /// </summary>
-    public override int MAX_AMMO { get { return BFG_MAX_AMMO; } }
+    public override int MAX_AMMO { get { return MACHINE_GUN_MAX_AMMO; } }
+
+    public override int START_AMMO { get { return MACHINE_GUN_START_AMMO; } }
 
     /// <summary>
     /// Name of the weapon type (e.g. Pistol, Sniper, Etc)
     /// </summary>
-    public override string NAME { get { return BFG_NAME; } }
+    public override string NAME { get { return MACHINE_GUN_NAME; } }
 
-    public override Sprite WEAPON_SPRITE { get { return BFG_SPRITE; } }
+    public override Sprite WEAPON_SPRITE { get { return MACHINE_GUN_SPRITE; } }
+
+    public override int SPAWNRATE { get { return MACHINE_GUN_SPAWNRATE; } }
 
     /// <summary>
     /// Fires the weapon in the direction given.
@@ -67,7 +73,5 @@ public class WeaponBFG : Weapon
 
 	public override void Start(){
 		base.Start ();
-		m_ammo = MAX_AMMO;
 	}
-
 }
