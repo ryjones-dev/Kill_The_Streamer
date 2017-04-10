@@ -9,7 +9,6 @@ public class AiSeeking : AIBase
 
     // Use this for initialization
     //all AI needs using UnityEngine.AI;
-    private GameObject player;//the target to seek (player)
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
 
     public float distanceActive =12.0f;//will give the distance that it will be able to go to another shield
@@ -44,10 +43,7 @@ public class AiSeeking : AIBase
 
         leader = null;
         skipFrame = 0;
-        //finding object with the tag "Player"
 
-
-        player = Player.s_Player.gameObject;
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
         closeShield = float.MaxValue;
         //give seeker a random range to be away from the leader
@@ -98,7 +94,7 @@ public class AiSeeking : AIBase
     /// </summary>
     public void Seek()
     {
-        if((Player.s_Player.FastTransform.Position - m_transform.Position).sqrMagnitude < distanceAwayPlayer * distanceAwayPlayer)
+        if((m_target.position - m_transform.Position).sqrMagnitude < distanceAwayPlayer * distanceAwayPlayer)
         {
             leader = null;
         }
@@ -109,7 +105,7 @@ public class AiSeeking : AIBase
         }
         else
         {
-            nav.SetDestination(Player.s_Player.FastTransform.Position);//telling the AI to seek out and go to the player's location
+            nav.SetDestination(m_target.position);//telling the AI to seek out and go to the player's location
         }
       
     }

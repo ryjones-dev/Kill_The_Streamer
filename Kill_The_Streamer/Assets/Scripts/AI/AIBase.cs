@@ -15,6 +15,9 @@ public abstract class AIBase : MonoBehaviour {
     [SerializeField]
     protected EnemyType aiType;
 
+    protected Transform m_target;
+    public Transform Target { get { return m_target; } set { m_target = value; } }
+
     public bool m_anarchyMode;
 
     protected FastTransform m_transform;
@@ -77,6 +80,7 @@ public abstract class AIBase : MonoBehaviour {
 
 	public virtual void Initialize ()
 	{
+        m_target = Player.s_Player.transform;
 	}
 
     /// <summary>

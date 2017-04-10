@@ -16,13 +16,11 @@ public class AiGhost : AIBase {
     public float pauseTimer=2.0f;//the amount of time the ghost will pause for
     private float currTimer=0.0f;//the current timer the ghost
 
-    private GameObject player; //the player
-
     private Vector3 chargeLoc;//the location the ghost will charge to once timer is over
     private bool seekSpot;//tells if ghost has found where to charge
     private bool toCharge;//tells if ghost is ready to charge
 
-    private float playerDistance;//the distance between the ghost and the acutal player object
+    private float playerDistance;//the distance between the ghost and the actual player object
 
     public float triggerDistance = 6.0f;//the distance at which the player will be within the ghost's radius
 
@@ -40,7 +38,6 @@ public class AiGhost : AIBase {
 
     public override void Start () {
         base.Start();
-        player = Player.s_Player.gameObject;
         toCharge = false;
         seekSpot = false;
         defaultSpeed = startSpeed;
@@ -55,11 +52,11 @@ public class AiGhost : AIBase {
     {
         base.Update();
         //get the distance between ghost and player
-        playerDistance = (Player.s_Player.FastTransform.Position - m_transform.Position).sqrMagnitude;
+        playerDistance = (m_target.position - m_transform.Position).sqrMagnitude;
         //if player is not in distance, seek it out slowly
         if (playerDistance > triggerDistance * triggerDistance)
         {
-            Seeking(player.transform.position, startSpeed);
+            Seeking(m_target.position, startSpeed);
             PlayerLeaves();
         }
         //if player is within the triggerdistance, activate charge!
@@ -117,7 +114,7 @@ public class AiGhost : AIBase {
         float dist;
 		if (currTimer <= pauseTimer) {
 			currTimer += Time.deltaTime;
-            chargeLoc = player.transform.position;
+            chargeLoc = m_target.position;
         }
         //if enemy is ready.... CHARGE!
 		else if (currTimer >= pauseTimer) {
@@ -147,7 +144,7 @@ public class AiGhost : AIBase {
                 if(seekSpot==false)
                 {
 				Vector2 variance = UnityEngine.Random.insideUnitCircle;
-				chargeLoc = Player.s_Player.FastTransform.Position +  5.0f * (new Vector3(variance.x, 0, variance.y));
+				chargeLoc = m_target.position +  5.0f * (new Vector3(variance.x, 0, variance.y));
                     seekSpot = true;
                 }
                 else if(seekSpot==true)
