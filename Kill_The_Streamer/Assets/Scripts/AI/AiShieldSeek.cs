@@ -97,6 +97,14 @@ public class AiShieldSeek : AIBase{
         }
     }
 
+
+    public void shieldDestroy()
+    {
+        shieldActive = false;
+        shield.SetActive(false);
+    }
+
+
 	public override void Initialize(){
 		shieldActive = true;
 		shieldHealth = shieldHealthStart;
