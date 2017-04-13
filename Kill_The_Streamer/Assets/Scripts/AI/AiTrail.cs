@@ -9,7 +9,7 @@ public class AiTrail : AIBase{
     //all AI needs using UnityEngine.AI;
     private GameObject player;//the target to seek (player)
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
-    public float speedModifier = 0.05f;
+    private float speedModifier = 0.05f;
 
     private float trailTimer;
     private float resetTrailTime;
@@ -21,6 +21,7 @@ public class AiTrail : AIBase{
     private float defaultResetTrailTime;
     //anarchy info
     private const float c_ANARCHY_SPEED_MULT = 2.0f;
+    public GameObject trailPrefab;
 
     // Use this for initialization
     public override void Start () {
@@ -28,15 +29,13 @@ public class AiTrail : AIBase{
         base.Start();
         player = GameObject.FindGameObjectWithTag("Player");
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
-        //Instantiate(Resources.Load("Trail"), transform.position, transform.rotation);
-
 
         resetTrailTime = 0.14f;
         trailTimer = resetTrailTime;
 
-        //set initialPosition
-        NavMeshHit hit;
-        //nav.FindClosestEdge(out hit);
+        //set random rotation
+        float randZ = UnityEngine.Random.Range(0, 360);
+        gameObject.transform.Rotate(new Vector3(0, randZ, 0));
 
         defaultSpeed = speedModifier;
         defaultResetTrailTime = resetTrailTime;
@@ -49,6 +48,10 @@ public class AiTrail : AIBase{
         base.Update();
         //keeps the salt flowing
         DropTrail();
+
+        Vector3 moveTo = gameObject.transform.forward.normalized * speedModifier;
+
+        gameObject.transform.position = gameObject.transform.position + moveTo;
     }
 
     public override void AILoop()
@@ -79,7 +82,8 @@ public class AiTrail : AIBase{
         trailTimer -= Time.deltaTime;
         if (trailTimer <= 0)
         {
-            Instantiate(Resources.Load("Trail"), transform.position, transform.rotation);
+            //Instantiate(Resources.Load("Trail"), transform.position, transform.rotation);
+            GameObject enemy = Instantiate<GameObject>(trailPrefab, transform.position, transform.rotation);
             trailTimer = resetTrailTime;
         }
     }
@@ -93,7 +97,7 @@ public class AiTrail : AIBase{
         nav.FindClosestEdge(out currentHit);
 
         //if it gets too close to the player, change direction
-        if (Vector3.Distance(gameObject.transform.position, player.transform.position) <= 1f)
+        if (Vector3.Distance(gameObject.transform.position, player.transform.position) <= 0.2f)
         {
             //change direction
             Vector3 lookAtPosition = gameObject.transform.position - player.transform.position;
@@ -103,15 +107,9 @@ public class AiTrail : AIBase{
             //if distance to wall is small change direction
         if(currentHit.distance <= 0.2)
         {
-            //change direction to offset hit off of wall in somewhat random direction
-            Vector3 lookAtPosition = gameObject.transform.position + -gameObject.transform.right + currentHit.normal;
+            //change direction to offset hit off of wall in somewhat predictable direction
+            Vector3 lookAtPosition = gameObject.transform.position + gameObject.transform.forward + currentHit.normal;
             gameObject.transform.LookAt(lookAtPosition);
-
-            //initialHitPosition = currentHit.position;
         }
-
-        Vector3 moveTo = gameObject.transform.forward.normalized * speedModifier;
-
-        gameObject.transform.position = gameObject.transform.position + moveTo;
     }
 }

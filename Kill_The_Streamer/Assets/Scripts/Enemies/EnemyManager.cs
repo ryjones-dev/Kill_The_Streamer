@@ -438,6 +438,17 @@ public class EnemyManager : MonoBehaviour
 
             AddEnemyToQueue(info);
         }
+
+        if (Input.GetKey(KeyCode.L))
+        {
+            EnemyNetworkInfo info = new EnemyNetworkInfo();
+
+            info.name = "lunalovecraft";
+            info.type = EnemyType.TrailEnemy;
+            info.direction = Direction.Random;
+
+            AddEnemyToQueue(info);
+        }
         //-----DEBUG ONLY
 
         m_speedTimer -= Time.deltaTime;
