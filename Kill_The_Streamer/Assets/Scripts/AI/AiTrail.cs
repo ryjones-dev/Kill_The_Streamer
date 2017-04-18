@@ -7,7 +7,6 @@ using UnityEngine.AI;
 public class AiTrail : AIBase{
 
     //all AI needs using UnityEngine.AI;
-    private GameObject player;//the target to seek (player)
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
     private float speedModifier = 0.05f;
 
@@ -27,7 +26,6 @@ public class AiTrail : AIBase{
     public override void Start () {
         //finding object with the tag "Player"
         base.Start();
-        player = GameObject.FindGameObjectWithTag("Player");
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
 
         resetTrailTime = 0.14f;
@@ -97,10 +95,10 @@ public class AiTrail : AIBase{
         nav.FindClosestEdge(out currentHit);
 
         //if it gets too close to the player, change direction
-        if (Vector3.Distance(gameObject.transform.position, player.transform.position) <= 0.2f)
+        if (Vector3.Distance(gameObject.transform.position, m_target.Position) <= 1f)
         {
             //change direction
-            Vector3 lookAtPosition = gameObject.transform.position - player.transform.position;
+            Vector3 lookAtPosition = gameObject.transform.position - m_target.Position;
             gameObject.transform.LookAt(lookAtPosition);
         }
         

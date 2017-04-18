@@ -9,7 +9,6 @@ public class AiSeekFlee : AIBase{
     // Use this for initialization
     // Use this for initialization
     //all AI needs using UnityEngine.AI;
-    private GameObject player;//the target to seek (player)
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
 
     public int multBy = 5;//the number to multiply by what the Ai should run from
@@ -37,9 +36,7 @@ public class AiSeekFlee : AIBase{
 
     public override void Start () {
         base.Start();
-
-        //finding object with the tag "Player"
-        player = Player.s_Player.gameObject;
+        
         //playerTargetting = player.GetComponent<PlayerLookingAtAI>();
         inPlayerSight = false;
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
@@ -95,26 +92,26 @@ public class AiSeekFlee : AIBase{
     /// </summary>
     public void Seek()
     {
-        nav.SetDestination(Player.s_Player.FastTransform.Position);//telling the AI to seek out and go to the player's location
+        nav.SetDestination(m_target.Position);//telling the AI to seek out and go to the player's location
     }
 
 
     public void Flee()
     {
-        Vector3 runTo = multBy * (m_transform.Position - Player.s_Player.FastTransform.Position);
+        Vector3 runTo = multBy * (m_transform.Position - m_target.Position);
         nav.SetDestination(runTo);
     }
 
     public void CheckPlayerLooking()
     {
-        Vector3 playerToEnemy = m_transform.Position - Player.s_Player.FastTransform.Position ;
-        bool positiveLeft = (Vector3.Dot(Player.s_Player.LeftVisionAngle, playerToEnemy) >= 0);
-        bool positiveRight = (Vector3.Dot(Player.s_Player.RightVisionAngle, playerToEnemy) >= 0);
+        Vector3 playerToEnemy = m_transform.Position - m_target.Position;
+        bool positiveLeft = (Vector3.Dot(m_target.LeftVisionAngle, playerToEnemy) >= 0);
+        bool positiveRight = (Vector3.Dot(m_target.RightVisionAngle, playerToEnemy) >= 0);
 
         if (positiveLeft && positiveRight)
         {
             //get distance
-            float distance = (Player.s_Player.FastTransform.Position - m_transform.Position).sqrMagnitude ;
+            float distance = (m_target.Position - m_transform.Position).sqrMagnitude ;
             if (distance <= rangeView * rangeView)
             {
                 //runaway

@@ -235,7 +235,6 @@ public class EnemyManager : MonoBehaviour
         if (s_instance.m_enemyDeathCount % 10 == 0)
         {
             Tool_WeaponSpawner.s_instance.SpawnWeapon(enemy.transform.position);
-
         }
 
         return success;

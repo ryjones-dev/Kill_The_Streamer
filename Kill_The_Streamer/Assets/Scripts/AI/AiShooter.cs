@@ -13,7 +13,6 @@ public class AiShooter : AIBase
 
     // Use this for initialization
     //all AI needs using UnityEngine.AI;
-    private GameObject player;//the target to seek (player)
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
     private bool canAttack; //whether or not the AI can attack 
     private float attackTimer;
@@ -43,9 +42,7 @@ public class AiShooter : AIBase
     public override void Start()
     {
         base.Start();
-
-        //finding object with the tag "Player"
-        player = GameObject.FindGameObjectWithTag("Player");
+        
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
         canAttack = true;
         attackResetTimer = 1f;
@@ -76,8 +73,8 @@ public class AiShooter : AIBase
 
     public override void AILoop()
     {
-        distFromPlayer = Vector3.Distance(player.transform.position, transform.position); //distance from the shooter to the player
-        if (nav.Raycast(player.transform.position, out onlyExistsToRaycast)) //whether or not the AI could hit the player from current position
+        distFromPlayer = Vector3.Distance(m_target.Position, transform.position); //distance from the shooter to the player
+        if (nav.Raycast(m_target.Position, out onlyExistsToRaycast)) //whether or not the AI could hit the player from current position
         {
             isStopped = false; //instantly begin seeking if player is not in sight
             isFleeing = false;
@@ -127,7 +124,7 @@ public class AiShooter : AIBase
         //Shoot for the player
         if (canAttack)
         {
-            Vector3 enemyToPlayer = player.transform.position - transform.position;
+            Vector3 enemyToPlayer = m_target.Position - transform.position;
             Quaternion rot = Quaternion.LookRotation(enemyToPlayer, Vector3.up);
             Instantiate(Resources.Load("Bullet"), transform.position, rot);
             canAttack = false;
@@ -195,7 +192,7 @@ public class AiShooter : AIBase
     /// </summary>
     public void Seek()
     {
-        nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
+        nav.SetDestination(m_target.Position);//telling the AI to seek out and go to the player's location
     }
 
     /// <summary>

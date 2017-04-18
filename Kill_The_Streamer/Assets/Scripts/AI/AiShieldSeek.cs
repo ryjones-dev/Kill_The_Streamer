@@ -8,7 +8,6 @@ public class AiShieldSeek : AIBase{
 
     // Use this for initialization
     //all AI needs using UnityEngine.AI;
-    private GameObject player;//the target to seek (player)
     private NavMeshAgent nav;//the navmeshAgent for the current AI. All AIs need a navMeshAgent to work.
 
     private GameObject shield;
@@ -34,9 +33,7 @@ public class AiShieldSeek : AIBase{
 	public override void Start()
     {
         base.Start();
-
-        //finding object with the tag "Player"
-        player = Player.s_Player.gameObject;
+        
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
 
 
@@ -84,7 +81,7 @@ public class AiShieldSeek : AIBase{
     /// </summary>
     public void Seek()
     {
-        nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
+        nav.SetDestination(m_target.Position);//telling the AI to seek out and go to the player's location
     }
 
     public void ShieldTakeDamage()
@@ -106,6 +103,8 @@ public class AiShieldSeek : AIBase{
 
 
 	public override void Initialize(){
+        base.Initialize();
+
 		shieldActive = true;
 		shieldHealth = shieldHealthStart;
 		shield.SetActive(true);

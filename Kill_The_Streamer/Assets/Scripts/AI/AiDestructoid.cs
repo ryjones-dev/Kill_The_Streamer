@@ -8,8 +8,6 @@ public class AiDestructoid : AIBase {
     public float destructTimer;//how long till detination
     private float currentTimer;//the current number on the timer
 
-    private GameObject player; //the player
-
     public float triggerDistance = 4.0f;//the distance at which the player will be within the range to trigger. 
     public float damageDistance = 5.0f;//the range at which the player will take damage
 
@@ -40,7 +38,6 @@ public class AiDestructoid : AIBase {
     public override void Start () {
         base.Start();
         colorChange = GetComponentInChildren<SpriteRenderer>();
-        player = GameObject.FindGameObjectWithTag("Player");
 
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
 
@@ -56,7 +53,7 @@ public class AiDestructoid : AIBase {
 	
     public override void AILoop()
     {
-        distance = Vector3.Distance(player.transform.position, transform.position);
+        distance = Vector3.Distance(m_target.Position, transform.position);
         if (distance < triggerDistance)
         {
             toExplode = true;
@@ -100,7 +97,7 @@ public class AiDestructoid : AIBase {
     /// </summary>
     public void Seek()
     {
-        nav.SetDestination(player.transform.position);//telling the AI to seek out and go to the player's location
+        nav.SetDestination(m_target.Position);//telling the AI to seek out and go to the player's location
     }
 
 

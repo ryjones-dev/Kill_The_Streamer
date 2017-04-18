@@ -53,14 +53,17 @@ public class WeaponVacuum : Weapon {
 
                 for(int j = 0; j < length; ++j)
                 {
+                    // If an enemy is deactived while looping, make sure that it's not destroyed again
+                    if (!enemies[j].gameObject.activeSelf) continue;
+
                     Vector3 differenceVector = Player.s_Player.FastTransform.Position - enemies[j].FastTransform.Position;
                     float sqrDistance = differenceVector.sqrMagnitude;
 
                     
                     if (sqrDistance < VACUUM_RANGE)
                     {
-                        bool positiveLeft = Vector3.Dot(differenceVector, Player.s_Player.LeftVisionAngle) < 0;
-                        bool positiveRight = Vector3.Dot(differenceVector, Player.s_Player.RightVisionAngle) < 0;
+                        bool positiveLeft = Vector3.Dot(differenceVector, Player.s_Player.FastTransform.LeftVisionAngle) < 0;
+                        bool positiveRight = Vector3.Dot(differenceVector, Player.s_Player.FastTransform.RightVisionAngle) < 0;
 
                         if (positiveLeft & positiveRight)
                         {
