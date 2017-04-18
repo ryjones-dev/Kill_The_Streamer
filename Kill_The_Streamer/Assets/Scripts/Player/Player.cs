@@ -12,15 +12,6 @@ public class Player : MonoBehaviour
     private FastTransform m_transform;
     public FastTransform FastTransform { get { return m_transform; } }
 
-    private Quaternion m_leftAngle = Quaternion.AngleAxis(-45, Vector3.up);
-    private Quaternion m_rightAngle = Quaternion.AngleAxis(45, Vector3.up);
-
-    private Vector3 m_leftVisionAngle;
-    private Vector3 m_rightVisionAngle;
-
-    public Vector3 LeftVisionAngle { get { return m_leftVisionAngle; } }
-    public Vector3 RightVisionAngle { get { return m_rightVisionAngle; } }
-
     //variables
 
 
@@ -394,11 +385,6 @@ public class Player : MonoBehaviour
                 m_playerSpriteRenderer.color = Color.red;
             }
         }
-
-        m_leftVisionAngle = m_leftAngle * FastTransform.Trans.forward;
-        m_rightVisionAngle = m_rightAngle * FastTransform.Trans.forward;
-        Debug.DrawLine(m_transform.Position + m_leftVisionAngle * 10, m_transform.Position, Color.cyan);
-        Debug.DrawLine(m_transform.Position + m_rightVisionAngle * 10, m_transform.Position, Color.cyan);
 
         //Debug:
         Vector3 cursorPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);

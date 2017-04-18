@@ -104,7 +104,7 @@ public abstract class EnemyManagerTemplate : MonoBehaviour {
     {
         if (p_index < 0 || p_index >= m_firstInactiveIndex)
         {
-            Debug.Log("Invalid index " + p_index + " in SeekEnemy array");
+            Debug.Log("Invalid index " + p_index + " in enemy gameobject array");
             return null;
         }
 

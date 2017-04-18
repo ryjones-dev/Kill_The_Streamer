@@ -53,7 +53,7 @@ public class AiDestructoid : AIBase {
 	
     public override void AILoop()
     {
-        distance = Vector3.Distance(m_target.position, transform.position);
+        distance = Vector3.Distance(m_target.Position, transform.position);
         if (distance < triggerDistance)
         {
             toExplode = true;
@@ -97,7 +97,7 @@ public class AiDestructoid : AIBase {
     /// </summary>
     public void Seek()
     {
-        nav.SetDestination(m_target.position);//telling the AI to seek out and go to the player's location
+        nav.SetDestination(m_target.Position);//telling the AI to seek out and go to the player's location
     }
 
 

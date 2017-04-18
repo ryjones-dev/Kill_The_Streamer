@@ -15,8 +15,8 @@ public abstract class AIBase : MonoBehaviour {
     [SerializeField]
     protected EnemyType aiType;
 
-    protected Transform m_target;
-    public Transform Target { get { return m_target; } set { m_target = value; } }
+    protected FastTransform m_target;
+    public FastTransform Target { get { return m_target; } set { m_target = value; } }
 
     public bool m_anarchyMode;
 
@@ -69,6 +69,11 @@ public abstract class AIBase : MonoBehaviour {
 
     protected virtual void Update()
     {
+        if(!m_target)
+        {
+            m_target = Player.s_Player.GetComponent<FastTransform>();
+        }
+
         m_aiLoopTimer -= Time.deltaTime;
         if(m_aiLoopTimer < 0.0f)
         {
@@ -78,9 +83,17 @@ public abstract class AIBase : MonoBehaviour {
         }
     }
 
-	public virtual void Initialize ()
+	public virtual void Initialize()
 	{
-        m_target = Player.s_Player.transform;
+        GameObject decoy = GameObject.FindGameObjectWithTag("Decoy");
+        if(decoy)
+        {
+            m_target = decoy.GetComponent<FastTransform>();
+        }
+        else
+        {
+            m_target = Player.s_Player.GetComponent<FastTransform>();
+        }
 	}
 
     /// <summary>

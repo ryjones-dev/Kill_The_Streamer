@@ -50,16 +50,17 @@ public class WeaponDecoy : Weapon
         {
             m_ammo--;
 
-            GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
+            GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.Euler(new Vector3(0, transform.root.rotation.eulerAngles.y, 0)));
             bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
 
             for (int i = 0; i < 7; i++)
             {
                 int index;
                 AIBase[] ais = EnemyManager.GetAllEnemyAI((EnemyType)i, out index);
+                FastTransform bullTransform = bullet.GetComponent<FastTransform>();
                 for (int j = 0; j < ais.Length; j++)
                 {
-                    ais[j].Target = bullet.transform;
+                    ais[j].Target = bullTransform;
                 }
             }
 

@@ -92,26 +92,26 @@ public class AiSeekFlee : AIBase{
     /// </summary>
     public void Seek()
     {
-        nav.SetDestination(m_target.position);//telling the AI to seek out and go to the player's location
+        nav.SetDestination(m_target.Position);//telling the AI to seek out and go to the player's location
     }
 
 
     public void Flee()
     {
-        Vector3 runTo = multBy * (m_transform.Position - m_target.position);
+        Vector3 runTo = multBy * (m_transform.Position - m_target.Position);
         nav.SetDestination(runTo);
     }
 
     public void CheckPlayerLooking()
     {
-        Vector3 playerToEnemy = m_transform.Position - m_target.position;
-        bool positiveLeft = (Vector3.Dot(Player.s_Player.LeftVisionAngle, playerToEnemy) >= 0);
-        bool positiveRight = (Vector3.Dot(Player.s_Player.RightVisionAngle, playerToEnemy) >= 0);
+        Vector3 playerToEnemy = m_transform.Position - m_target.Position;
+        bool positiveLeft = (Vector3.Dot(m_target.LeftVisionAngle, playerToEnemy) >= 0);
+        bool positiveRight = (Vector3.Dot(m_target.RightVisionAngle, playerToEnemy) >= 0);
 
         if (positiveLeft && positiveRight)
         {
             //get distance
-            float distance = (Player.s_Player.FastTransform.Position - m_transform.Position).sqrMagnitude ;
+            float distance = (m_target.Position - m_transform.Position).sqrMagnitude ;
             if (distance <= rangeView * rangeView)
             {
                 //runaway

@@ -9,6 +9,8 @@ public class DecoyBullet : MonoBehaviour
     private float m_timer = 0;
     private float travelTime = 0.25f;
 
+    public int health = 100; // Number of times the decoy can damage enemies
+
     private void Start()
     {
         rbody = GetComponent<Rigidbody>();
@@ -16,7 +18,7 @@ public class DecoyBullet : MonoBehaviour
 
     private void Update()
     {
-        if(rbody.velocity.sqrMagnitude > 0)
+        if (rbody.velocity.sqrMagnitude > 0)
         {
             m_timer += Time.deltaTime;
             if (m_timer >= travelTime)
@@ -33,6 +35,17 @@ public class DecoyBullet : MonoBehaviour
         {
             AIBase ai = other.GetComponent<AIBase>();
             ai.TakeDamage();
+            health--;
+
+            if(health <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        if (other.gameObject.CompareTag("Terrain"))
+        {
+            Destroy(gameObject);
         }
     }
 }

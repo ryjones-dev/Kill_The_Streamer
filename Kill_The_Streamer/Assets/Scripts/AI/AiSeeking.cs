@@ -94,7 +94,7 @@ public class AiSeeking : AIBase
     /// </summary>
     public void Seek()
     {
-        if((m_target.position - m_transform.Position).sqrMagnitude < distanceAwayPlayer * distanceAwayPlayer)
+        if((m_target.Position - m_transform.Position).sqrMagnitude < distanceAwayPlayer * distanceAwayPlayer)
         {
             leader = null;
         }
@@ -105,7 +105,7 @@ public class AiSeeking : AIBase
         }
         else
         {
-            nav.SetDestination(m_target.position);//telling the AI to seek out and go to the player's location
+            nav.SetDestination(m_target.Position);//telling the AI to seek out and go to the player's location
         }
       
     }
