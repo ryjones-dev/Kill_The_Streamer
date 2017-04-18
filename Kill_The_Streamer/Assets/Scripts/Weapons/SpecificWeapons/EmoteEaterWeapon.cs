@@ -11,6 +11,8 @@ public class EmoteEaterWeapon : Weapon {
     public const int EMOTE_EATER_SPAWNRATE = 80;
     public Sprite EMOTE_EATER_SPRITE;
 
+    private float rateDecrease = 5f;
+    private float currentTimer = 0f;
     /// <summary>
     /// Prefab of the bullet to be fired.
     /// </summary>
@@ -56,6 +58,7 @@ public class EmoteEaterWeapon : Weapon {
     /// <param name="direction">The direction the character is aiming in.</param>
     public override void Fire(Vector3 position, Vector3 direction)
     {
+        //if(currentTimer >)
 
         if (m_timer <= 0.0f && m_ammo > 0)
         {
@@ -73,7 +76,13 @@ public class EmoteEaterWeapon : Weapon {
     public override void Update()
     {
         base.Update();
-        m_ammo--;
+         currentTimer++;
+        
+        if(currentTimer >= rateDecrease && m_ammo > 0)
+        {
+            currentTimer = 0;
+            m_ammo--;
+        }
         if (m_timer > 0.0f)
         {
             m_timer -= Time.deltaTime;
