@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DecoyBullet : ITargetable
+public class DecoyBullet : Targetable
 {
     private Rigidbody rbody;
 

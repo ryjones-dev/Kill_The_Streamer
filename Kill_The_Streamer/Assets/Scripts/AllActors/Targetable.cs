@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ITargetable : MonoBehaviour
+public class Targetable : MonoBehaviour
 {
     protected Quaternion m_leftAngle = Quaternion.AngleAxis(-45, Vector3.up);
     protected Quaternion m_rightAngle = Quaternion.AngleAxis(45, Vector3.up);

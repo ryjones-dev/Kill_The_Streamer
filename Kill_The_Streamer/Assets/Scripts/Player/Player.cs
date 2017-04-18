@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class Player : ITargetable
+public class Player : Targetable
 {
     //Get the player
     public static Player s_Player;
