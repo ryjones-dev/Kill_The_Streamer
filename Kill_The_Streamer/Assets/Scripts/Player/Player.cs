@@ -61,16 +61,15 @@ public class Player : ITargetable
     private Text m_primaryWeaponAmmo;
     private Text m_secondaryWeaponAmmo;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         s_Player = this;
     }
 
     // Use this for initialization
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
-
         SpriteRenderer[] playerSpriteRenderers = GetComponentsInChildren<SpriteRenderer>();
         for (int i = 0; i < playerSpriteRenderers.Length; ++i) {
             if (playerSpriteRenderers[i].CompareTag("Player")) {
@@ -84,7 +83,6 @@ public class Player : ITargetable
         m_HealthBarText = m_HealthBarObject.GetComponentInChildren<Text>();
 
         m_weaponPickupText = this.GetComponentInChildren<Text>();
-        Debug.Log(m_weaponPickupText);
 
         m_weaponRenderer = this.GetComponentInChildren<WeaponRotation>().gameObject;
         m_weaponSpriteRenderer = m_weaponRenderer.GetComponent<SpriteRenderer>();

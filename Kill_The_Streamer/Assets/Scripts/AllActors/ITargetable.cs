@@ -16,8 +16,7 @@ public class ITargetable : MonoBehaviour
     protected FastTransform m_transform;
     public FastTransform FastTransform { get { return m_transform; } }
 
-    // Use this for initialization
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         m_transform = GetComponent<FastTransform>();
     }

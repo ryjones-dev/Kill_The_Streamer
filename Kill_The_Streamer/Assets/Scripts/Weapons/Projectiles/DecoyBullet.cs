@@ -11,9 +11,8 @@ public class DecoyBullet : ITargetable
 
     public int health = 100; // Number of times the decoy can damage enemies
 
-    protected override void Start()
+    private void Start()
     {
-        base.Start();
         rbody = GetComponent<Rigidbody>();
     }
 
