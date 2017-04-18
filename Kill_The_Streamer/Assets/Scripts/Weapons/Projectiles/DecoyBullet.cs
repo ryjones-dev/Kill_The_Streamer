@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DecoyBullet : MonoBehaviour
+public class DecoyBullet : ITargetable
 {
     private Rigidbody rbody;
 
@@ -11,13 +11,16 @@ public class DecoyBullet : MonoBehaviour
 
     public int health = 100; // Number of times the decoy can damage enemies
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         rbody = GetComponent<Rigidbody>();
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
+
         if (rbody.velocity.sqrMagnitude > 0)
         {
             m_timer += Time.deltaTime;

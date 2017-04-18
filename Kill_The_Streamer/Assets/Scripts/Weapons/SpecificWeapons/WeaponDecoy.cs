@@ -57,10 +57,10 @@ public class WeaponDecoy : Weapon
             {
                 int index;
                 AIBase[] ais = EnemyManager.GetAllEnemyAI((EnemyType)i, out index);
-                FastTransform bullTransform = bullet.GetComponent<FastTransform>();
+                ITargetable bulletTarget = bullet.GetComponent<ITargetable>();
                 for (int j = 0; j < ais.Length; j++)
                 {
-                    ais[j].Target = bullTransform;
+                    ais[j].Target = bulletTarget;
                 }
             }
 

@@ -14,6 +14,7 @@ public class FastTransform : MonoBehaviour {
 
     private Transform m_trans;
     private Vector3 m_position;
+    private Vector3 m_forward;
 
     public Transform Trans
     {
@@ -36,28 +37,29 @@ public class FastTransform : MonoBehaviour {
         }
     }
 
-    private Quaternion m_leftAngle = Quaternion.AngleAxis(-45, Vector3.up);
-    private Quaternion m_rightAngle = Quaternion.AngleAxis(45, Vector3.up);
-
-    private Vector3 m_leftVisionAngle;
-    private Vector3 m_rightVisionAngle;
-
-    public Vector3 LeftVisionAngle { get { return m_leftVisionAngle; } }
-    public Vector3 RightVisionAngle { get { return m_rightVisionAngle; } }
+    public Vector3 Forward
+    {
+        get
+        {
+            return m_forward;
+        }
+        set
+        {
+            m_forward = value;
+            m_trans.forward = value;
+        }
+    }
 
     // Use this for initialization
     void Start () {
         this.m_trans = this.transform;
         this.m_position = this.m_trans.position;
+        this.m_forward = this.m_trans.forward;
 	}
 	
 	// Update is called once per frame
 	void Update () {
         this.m_position = this.m_trans.position;
-
-        m_leftVisionAngle = m_leftAngle * this.m_trans.forward;
-        m_rightVisionAngle = m_rightAngle * this.m_trans.forward;
-        //Debug.DrawLine(this.position + m_leftVisionAngle * 10, this.position, Color.cyan);
-        //Debug.DrawLine(this.position + m_rightVisionAngle * 10, this.position, Color.cyan);
+        this.m_forward = this.m_trans.forward;
     }
 }

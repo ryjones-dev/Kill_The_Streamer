@@ -62,8 +62,8 @@ public class WeaponVacuum : Weapon {
                     
                     if (sqrDistance < VACUUM_RANGE)
                     {
-                        bool positiveLeft = Vector3.Dot(differenceVector, Player.s_Player.FastTransform.LeftVisionAngle) < 0;
-                        bool positiveRight = Vector3.Dot(differenceVector, Player.s_Player.FastTransform.RightVisionAngle) < 0;
+                        bool positiveLeft = Vector3.Dot(differenceVector, Player.s_Player.LeftVisionAngle) < 0;
+                        bool positiveRight = Vector3.Dot(differenceVector, Player.s_Player.RightVisionAngle) < 0;
 
                         if (positiveLeft & positiveRight)
                         {

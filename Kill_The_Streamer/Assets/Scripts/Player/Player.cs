@@ -4,13 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class Player : MonoBehaviour
+public class Player : ITargetable
 {
     //Get the player
     public static Player s_Player;
-
-    private FastTransform m_transform;
-    public FastTransform FastTransform { get { return m_transform; } }
 
     //variables
 
@@ -70,9 +67,10 @@ public class Player : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start()
+    protected override void Start()
     {
-        m_transform = GetComponent<FastTransform>();
+        base.Start();
+
         SpriteRenderer[] playerSpriteRenderers = GetComponentsInChildren<SpriteRenderer>();
         for (int i = 0; i < playerSpriteRenderers.Length; ++i) {
             if (playerSpriteRenderers[i].CompareTag("Player")) {
@@ -370,8 +368,10 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void Update()
+    protected override void Update()
     {
+        base.Update();
+
         if (m_invulnTimer > 0.0f)
         {
             m_invulnTimer -= Time.deltaTime;
