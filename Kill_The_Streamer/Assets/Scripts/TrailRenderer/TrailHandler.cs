@@ -36,12 +36,27 @@ public class TrailHandler : MonoBehaviour
 		int yIndex = screenY / 1024;
 
 		int index = xIndex + yIndex * 1024;
+		bool[] circle = new bool[49] { 
+			false, false, true, true, true, false, false,
+			false, true, true, true, true, true, false,
+			true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true,
+			true, true, true, true, true, true, true,
+			false, true, true, true, true, true, false,
+			false, false, true, true, true, false, false
+		};
 
-		for (int i = 0; i < trailColors.Length; i++)
-		{
-			m_mapTextureArray [index + i] = trailColors [i];
+		// Do bounds checking for location + i + j * 1024
+		// Set the location to be the player's screen coordinates
+
+		int location = 1024 * 10 + 10;
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 7; j++) {
+				if (circle [i * 7 + j]) {
+					m_mapTextureArray [location + i + j * 1024] = new Color (1, 1, 1);
+				}
+			}
 		}
-
 
 
 //		for(int y = yIndex; y < trailTexture.height; y++)
