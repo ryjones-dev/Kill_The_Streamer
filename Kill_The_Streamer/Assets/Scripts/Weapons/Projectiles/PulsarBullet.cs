@@ -49,7 +49,7 @@ public class PulsarBullet : MonoBehaviour {
     }
 
     //should be destroyed if hits wall
-    void OnCollisionEnter(Collider collision)
+    void OnTriggerEnter(Collider collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {

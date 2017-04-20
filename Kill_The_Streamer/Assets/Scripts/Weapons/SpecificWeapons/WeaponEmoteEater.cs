@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EmoteEaterWeapon : Weapon {
+public class WeaponEmoteEater : Weapon {
 
-    public const float EMOTE_EATER_FIRE_RATE = 0.08f;
+    public const float EMOTE_EATER_FIRE_RATE = 0.085f;
     public const int EMOTE_EATER_START_AMMO = 800;
     public const int EMOTE_EATER_MAX_AMMO = 800;
     public const string EMOTE_EATER_NAME = "Emote Eater";
@@ -29,7 +29,7 @@ public class EmoteEaterWeapon : Weapon {
     /// <summary>
     /// Speed the bullet travels.
     /// </summary>
-    public const float BULLET_SPEED = 21.0f;
+    public const float BULLET_SPEED = 20.0f;
 
     /// <summary>
     /// Rate of fire
@@ -64,7 +64,10 @@ public class EmoteEaterWeapon : Weapon {
         {
 
             GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
+	
             bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
+
+			bullet.GetComponent<EaterBullet> ().emoteEaterWeapon = this.gameObject;
 
             m_timer = FIRE_RATE;
         }
@@ -75,14 +78,17 @@ public class EmoteEaterWeapon : Weapon {
     /// </summary>
     public override void Update()
     {
+
         base.Update();
-         currentTimer++;
+		if (m_held) {
+			currentTimer++;
         
-        if(currentTimer >= rateDecrease && m_ammo > 0)
-        {
-            currentTimer = 0;
-            m_ammo--;
-        }
+			if (currentTimer >= rateDecrease && m_ammo > 0) {
+				currentTimer = 0;
+				m_ammo--;
+				Player.s_Player.UpdatePrimaryWeaponAmmo ();
+			}
+		}
         if (m_timer > 0.0f)
         {
             m_timer -= Time.deltaTime;

@@ -367,7 +367,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// Updates the primary weapon's ammo ammounts, to be used after every Fire();
     /// </summary>
-    private void UpdatePrimaryWeaponAmmo()
+    public void UpdatePrimaryWeaponAmmo()
     {
         if (m_primaryWeapon.MAX_AMMO != -1)
         {
