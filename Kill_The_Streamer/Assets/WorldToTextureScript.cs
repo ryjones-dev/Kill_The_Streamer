@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class WorldToTextureScript : MonoBehaviour {
 
-	public Vector4 corners;
-	public float xWidth;
-	public float yWidth;
-	public const int TEXTURE_WIDTH = 1024;
+	private Vector4 corners;
+	private float xWidth;
+	private float yWidth;
+	private const int TEXTURE_WIDTH = 1024;
 
 
 	// Use this for initialization
