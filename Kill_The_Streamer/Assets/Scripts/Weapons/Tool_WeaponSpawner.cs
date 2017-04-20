@@ -9,6 +9,7 @@ public class Tool_WeaponSpawner : MonoBehaviour {
     private int[] m_weaponWeights;
 	private Quaternion m_rotate;
     private int m_totalWeight;
+	public GameObject[] m_shmorgBullets;
 
     void Start()
     {
@@ -25,6 +26,7 @@ public class Tool_WeaponSpawner : MonoBehaviour {
             m_weaponWeights[i] = m_spawnableWeaponPrefabs[i].GetComponent<Weapon>().SPAWNRATE;
             m_totalWeight += m_weaponWeights[i];
         }
+
     }
 
     public void SpawnWeapon(Vector3 position)
