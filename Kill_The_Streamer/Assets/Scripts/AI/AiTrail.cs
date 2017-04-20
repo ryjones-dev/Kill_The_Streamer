@@ -95,10 +95,10 @@ public class AiTrail : AIBase{
         nav.FindClosestEdge(out currentHit);
 
         //if it gets too close to the player, change direction
-        if (Vector3.Distance(gameObject.transform.position, m_target.Position) <= 1f)
+        if (Vector3.Distance(gameObject.transform.position, m_target.FastTransform.Position) <= 1f)
         {
             //change direction
-            Vector3 lookAtPosition = gameObject.transform.position - m_target.Position;
+            Vector3 lookAtPosition = gameObject.transform.position - m_target.FastTransform.Position;
             gameObject.transform.LookAt(lookAtPosition);
         }
         

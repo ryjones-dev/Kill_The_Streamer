@@ -52,11 +52,11 @@ public class AiGhost : AIBase {
     {
         base.Update();
         //get the distance between ghost and player
-        playerDistance = (m_target.Position - m_transform.Position).sqrMagnitude;
+        playerDistance = (m_target.FastTransform.Position - m_transform.Position).sqrMagnitude;
         //if player is not in distance, seek it out slowly
         if (playerDistance > triggerDistance * triggerDistance)
         {
-            Seeking(m_target.Position, startSpeed);
+            Seeking(m_target.FastTransform.Position, startSpeed);
             PlayerLeaves();
         }
         //if player is within the triggerdistance, activate charge!
@@ -114,7 +114,7 @@ public class AiGhost : AIBase {
         float dist;
 		if (currTimer <= pauseTimer) {
 			currTimer += Time.deltaTime;
-            chargeLoc = m_target.Position;
+            chargeLoc = m_target.FastTransform.Position;
         }
         //if enemy is ready.... CHARGE!
 		else if (currTimer >= pauseTimer) {
@@ -144,7 +144,7 @@ public class AiGhost : AIBase {
                 if(seekSpot==false)
                 {
 				Vector2 variance = UnityEngine.Random.insideUnitCircle;
-				chargeLoc = m_target.Position +  5.0f * (new Vector3(variance.x, 0, variance.y));
+				chargeLoc = m_target.FastTransform.Position +  5.0f * (new Vector3(variance.x, 0, variance.y));
                     seekSpot = true;
                 }
                 else if(seekSpot==true)

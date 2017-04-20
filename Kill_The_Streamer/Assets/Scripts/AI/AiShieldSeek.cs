@@ -81,7 +81,7 @@ public class AiShieldSeek : AIBase{
     /// </summary>
     public void Seek()
     {
-        nav.SetDestination(m_target.Position);//telling the AI to seek out and go to the player's location
+        nav.SetDestination(m_target.FastTransform.Position);//telling the AI to seek out and go to the player's location
     }
 
     public void ShieldTakeDamage()

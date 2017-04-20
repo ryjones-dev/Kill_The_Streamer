@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DecoyBullet : MonoBehaviour
+public class DecoyBullet : Targetable
 {
     private Rigidbody rbody;
 
@@ -16,8 +16,10 @@ public class DecoyBullet : MonoBehaviour
         rbody = GetComponent<Rigidbody>();
     }
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
+
         if (rbody.velocity.sqrMagnitude > 0)
         {
             m_timer += Time.deltaTime;

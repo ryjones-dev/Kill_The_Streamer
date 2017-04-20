@@ -4,13 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
-public class Player : MonoBehaviour
+public class Player : Targetable
 {
     //Get the player
     public static Player s_Player;
-
-    private FastTransform m_transform;
-    public FastTransform FastTransform { get { return m_transform; } }
 
     //variables
 
@@ -64,15 +61,15 @@ public class Player : MonoBehaviour
     private Text m_primaryWeaponAmmo;
     private Text m_secondaryWeaponAmmo;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         s_Player = this;
     }
 
     // Use this for initialization
-    void Start()
+    private void Start()
     {
-        m_transform = GetComponent<FastTransform>();
         SpriteRenderer[] playerSpriteRenderers = GetComponentsInChildren<SpriteRenderer>();
         for (int i = 0; i < playerSpriteRenderers.Length; ++i) {
             if (playerSpriteRenderers[i].CompareTag("Player")) {
@@ -86,7 +83,6 @@ public class Player : MonoBehaviour
         m_HealthBarText = m_HealthBarObject.GetComponentInChildren<Text>();
 
         m_weaponPickupText = this.GetComponentInChildren<Text>();
-        Debug.Log(m_weaponPickupText);
 
         m_weaponRenderer = this.GetComponentInChildren<WeaponRotation>().gameObject;
         m_weaponSpriteRenderer = m_weaponRenderer.GetComponent<SpriteRenderer>();
@@ -370,8 +366,10 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void Update()
+    protected override void Update()
     {
+        base.Update();
+
         if (m_invulnTimer > 0.0f)
         {
             m_invulnTimer -= Time.deltaTime;
