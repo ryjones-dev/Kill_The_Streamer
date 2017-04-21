@@ -4,11 +4,23 @@ using UnityEngine;
 
 public class TestDrawTrail : MonoBehaviour
 {
-	public TrailHandler trailHandler;
-	public Texture2D trailTexture;
+	private TrailHandler trailHandler;
 
-	private void Start()
+    private void Start()
+    {
+        trailHandler = GetComponent<TrailHandler>();
+
+        // Debug
+        int texX = 0;
+        int texY = 0;
+        Vector2 playerPos = new Vector2(Player.s_Player.FastTransform.Position.x, Player.s_Player.FastTransform.Position.z);
+        trailHandler.WorldToTexture(playerPos, out texX, out texY);
+
+        trailHandler.DrawTrail(texX, texY);
+    }
+
+	private void Update()
 	{
-		//trailHandler.DrawTrail (trailTexture, 0, 0);
-	}
+        
+    }
 }
