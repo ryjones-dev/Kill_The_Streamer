@@ -69,9 +69,11 @@ public abstract class EnemyManagerTemplate : MonoBehaviour {
         Vector3 spawnVariance = spawnIndex % 2 == 0 ? new Vector3(Random.Range(-2.0f, 2.0f), 0, 0) : new Vector3(0, 0, Random.Range(-2.0f, 2.0f));
         enemy.transform.position = m_spawnLocations[spawnIndex].transform.position + spawnVariance;
 
+
         // Enables the gameobject
         enemy.SetActive(true);
 		enemyBase.Initialize();
+		enemy.transform.position = new Vector3 (enemy.transform.position.x, 0, enemy.transform.position.z);
 
         // Increments the first inactive index
         m_firstInactiveIndex++;

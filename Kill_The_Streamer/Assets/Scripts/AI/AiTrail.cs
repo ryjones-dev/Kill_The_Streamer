@@ -45,17 +45,19 @@ public class AiTrail : AIBase{
         
         base.Update();
         //keeps the salt flowing
-        DropTrail();
+		if (Time.timeScale != 0) {
+			DropTrail ();
 
-        Vector3 moveTo = gameObject.transform.forward.normalized * speedModifier;
+			Vector3 moveTo = m_transform.Forward.normalized * speedModifier;
 
-        gameObject.transform.position = gameObject.transform.position + moveTo;
+			m_transform.Position = m_transform.Position + moveTo;
+		}
     }
 
     public override void AILoop()
     {
         //more of a frantic dash around than a flee;
-        Flee();
+        //Flee();
     }
 
     public override void DealDamage()
@@ -77,13 +79,20 @@ public class AiTrail : AIBase{
 
     public void DropTrail()
     {
+		/*
         trailTimer -= Time.deltaTime;
         if (trailTimer <= 0)
         {
             //Instantiate(Resources.Load("Trail"), transform.position, transform.rotation);
             GameObject enemy = Instantiate<GameObject>(trailPrefab, transform.position, transform.rotation);
             trailTimer = resetTrailTime;
-        }
+        }*/
+
+		int texX = 0;
+		int texY = 0;
+		Vector2 pos = new Vector2(m_transform.Position.x, m_transform.Position.z);
+		TrailHandler.s_instance.WorldToTexture(pos, out texX, out texY);
+		TrailHandler.s_instance.DrawTrail (texX, texY);
     }
     //prefered way of working
     //Start: find closest edge then run away from that

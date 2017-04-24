@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TrailHandler : MonoBehaviour
 {
+
+	public static TrailHandler s_instance;
     private Vector4 corners;
     private float xWidth;
     private float yWidth;
@@ -17,6 +19,12 @@ public class TrailHandler : MonoBehaviour
     private bool[] circle;
 
     private int alphaFadeIndex = 0;
+
+	public const float TIME_TO_FADE = 0.05f;
+	public const int FADE_RATE = 7;
+	private float fadeTimer = TIME_TO_FADE;
+
+	private int applyCounter = 0;
 
     private void Awake()
     {
@@ -37,6 +45,7 @@ public class TrailHandler : MonoBehaviour
 
     private void Start()
     {
+		s_instance = this;
         textureRenderer = GetComponent<Renderer>();
         textureRenderer.material.mainTexture = m_mapTexture;
 
@@ -100,28 +109,40 @@ public class TrailHandler : MonoBehaviour
 
     private void Update()
     {
-        
+		fadeTimer -= Time.deltaTime;
+		if (fadeTimer <= 0.0f) {
+
+			fadeTimer += TIME_TO_FADE;
+
+			int alphaFadeStart = alphaFadeIndex;
+			for (int i = alphaFadeIndex; i < m_mapTextureArray.Length / 4 + alphaFadeStart; i++) {
+
+				m_mapTextureArray [i].a -= (byte)(m_mapTextureArray [i].a > FADE_RATE ? FADE_RATE : m_mapTextureArray [i].a);
+
+				alphaFadeIndex++;
+			}
+
+			alphaFadeIndex %= m_mapTextureArray.Length;
+
+		}
     }
 
     private void FixedUpdate()
     {
-        int alphaFadeStart = alphaFadeIndex;
-        for (int i = alphaFadeIndex; i < m_mapTextureArray.Length / 2 + alphaFadeStart; i++)
-        {
-            if (m_mapTextureArray[i].a > 0)
-            {
-                m_mapTextureArray[i].a -= 5;
-            }
-
-            alphaFadeIndex++;
-        }
-
-        alphaFadeIndex %= m_mapTextureArray.Length;
+        
     }
 
     private void LateUpdate()
     {
-        m_mapTexture.SetPixels32(m_mapTextureArray);
-        m_mapTexture.Apply();
+		if (Time.timeScale != 0) {
+			if (applyCounter != 0) {
+				applyCounter--;
+
+			} else {
+				applyCounter += 3;
+				m_mapTexture.SetPixels32 (m_mapTextureArray);
+				m_mapTexture.Apply ();
+			}
+		}
     }
 }
