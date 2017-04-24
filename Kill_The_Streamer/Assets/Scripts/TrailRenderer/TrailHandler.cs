@@ -13,6 +13,7 @@ public class TrailHandler : MonoBehaviour
 
     private Texture2D m_mapTexture;
     private Color32[] m_mapTextureArray;
+	private string[] m_mapNameArray;
 
     private Renderer textureRenderer;
 
@@ -21,7 +22,7 @@ public class TrailHandler : MonoBehaviour
     private int alphaFadeIndex = 0;
 
 	public const float TIME_TO_FADE = 0.05f;
-	public const int FADE_RATE = 7;
+	public const int FADE_RATE = 11;
 	private float fadeTimer = TIME_TO_FADE;
 
 	private int applyCounter = 0;
@@ -30,6 +31,7 @@ public class TrailHandler : MonoBehaviour
     {
         m_mapTexture = new Texture2D(TEXTURE_WIDTH, TEXTURE_WIDTH);
         m_mapTextureArray = new Color32[TEXTURE_WIDTH * TEXTURE_WIDTH];
+		m_mapNameArray = new string[TEXTURE_WIDTH * TEXTURE_WIDTH];
 
         circle = new bool[49]
         {
@@ -58,7 +60,7 @@ public class TrailHandler : MonoBehaviour
         yWidth = corners[3] - corners[2];
     }
 
-    public void DrawTrail(int screenX, int screenY)
+	public void DrawTrail(int screenX, int screenY, string name)
     {
         int location = 1024 * screenY + screenX;
         for (int y = 0; y < 7; y++)
@@ -68,6 +70,7 @@ public class TrailHandler : MonoBehaviour
                 if (circle[y * 7 + x] && location + x + y * TEXTURE_WIDTH >= 0 && location + x + y * TEXTURE_WIDTH < m_mapTextureArray.Length)
                 {
                     m_mapTextureArray[location + x + y * TEXTURE_WIDTH] = new Color32(255, 255, 255, 255);
+					m_mapNameArray [location + x + y * TEXTURE_WIDTH] = name;
                 }
             }
         }
@@ -126,6 +129,20 @@ public class TrailHandler : MonoBehaviour
 
 		}
     }
+
+	public int GetAlphaAtIndex(int index){
+		if (index > 0 && index < m_mapTextureArray.Length) {
+			return m_mapTextureArray [index].a;
+		}
+		return 0;
+	}
+
+	public string GetNameAtIndex(int index){
+		if (index > 0 && index < m_mapNameArray.Length) {
+			return m_mapNameArray [index];
+		}
+		return "";
+	}
 
     private void FixedUpdate()
     {

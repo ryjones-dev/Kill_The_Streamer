@@ -61,6 +61,8 @@ public class Player : Targetable
     private Text m_primaryWeaponAmmo;
     private Text m_secondaryWeaponAmmo;
 
+	private float m_saltDamageTimer = 0.0f;
+
     protected override void Awake()
     {
         base.Awake();
@@ -369,6 +371,23 @@ public class Player : Targetable
     protected override void Update()
     {
         base.Update();
+
+		if (m_saltDamageTimer > 0) {
+			m_saltDamageTimer -= Time.deltaTime;
+		}
+		else{
+			int index = 0;
+			TrailHandler.s_instance.WorldToTexture (new Vector2 (m_transform.Position.x, m_transform.Position.z - 0.9946f), out index);
+			if (TrailHandler.s_instance.GetAlphaAtIndex (index) > 20) {
+				m_saltDamageTimer += 0.1f;
+				TakeDamage (100, TrailHandler.s_instance.GetNameAtIndex(index), false);
+				m_playerSpriteRenderer.color = Color.red;
+			} else {
+				m_playerSpriteRenderer.color = Color.white;
+			}
+				
+		}
+
 
         if (m_invulnTimer > 0.0f)
         {
