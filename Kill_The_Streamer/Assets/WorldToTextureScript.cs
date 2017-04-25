@@ -60,6 +60,6 @@ public class WorldToTextureScript : MonoBehaviour {
 		int texY = 0;
 		Vector2 playerPos = new Vector2 (Player.s_Player.FastTransform.Position.x, Player.s_Player.FastTransform.Position.z);
 		WorldToTexture (playerPos, out texX, out texY);
-		Debug.Log ("X: " + texX + " Y: " + texY);
+		//Debug.Log ("X: " + texX + " Y: " + texY);
 	}
 }

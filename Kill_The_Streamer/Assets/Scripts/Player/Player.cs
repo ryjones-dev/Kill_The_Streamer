@@ -161,6 +161,26 @@ public class Player : Targetable
         }
     }
 
+	/// <summary>
+	/// Takes the healing from picking up health pack
+	/// </summary>
+	/// <param name="health">Health.</param>
+	public void TakeHealing(int health){
+
+		if (m_health < MAX_HEALTH) {
+			m_health += health;
+		}
+		m_HealthBar.fillAmount = (float)m_health / MAX_HEALTH;
+		if(m_health >= 10000)
+		{
+			m_HealthBarText.text = (m_health / 1000) + "k";
+		}else
+		{
+			m_HealthBarText.text = m_health.ToString();
+		}
+
+	}
+
     /// <summary>
     /// Function called when player dies.
     /// </summary>
