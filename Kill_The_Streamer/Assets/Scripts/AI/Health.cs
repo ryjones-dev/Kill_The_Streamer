@@ -21,6 +21,8 @@ public class Health : MonoBehaviour {
 		m_spriteRenderer = this.GetComponent<SpriteRenderer>();
 		sprite = m_spriteRenderer.sprite;
 	}
+
+ 
 	
 	// Update is called once per frame
 	void Update () {
@@ -48,7 +50,7 @@ public class Health : MonoBehaviour {
         if(coll.tag == "Player")
         {
 			if (Player.s_Player.m_health + healthIncrease < 40000) {
-				Player.s_Player.TakeHealing (healthIncrease);
+				Player.s_Player.TakeHealing (healthIncrease,this.name);
 				Destroy (this.gameObject);
 			}
         }

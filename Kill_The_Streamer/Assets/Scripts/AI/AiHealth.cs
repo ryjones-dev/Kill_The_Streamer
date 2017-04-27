@@ -11,7 +11,7 @@ public class AiHealth : AIBase {
     public float speed = 3.0f;
 
     public GameObject healthPrefab;
-    void Start () {
+    public override void Start () {
 		base.Start ();
         nav = GetComponent<NavMeshAgent>();//getting the navMesh component of the AI
 		UpdateSpeed();
@@ -46,7 +46,10 @@ public class AiHealth : AIBase {
         health--;
         if (health <= 0)
         {
-            Instantiate(healthPrefab, this.transform.position,Quaternion.identity);
+            GameObject pack = (GameObject)Instantiate(healthPrefab, this.transform.position,Quaternion.Euler(90,0,0));
+            pack.GetComponentInChildren<TextMesh>().text = this.GetComponentInChildren<TextMesh>().text;
+            pack.name = this.name;
+
             EnemyManager.DestroyEnemy(aiType, index);
             
 

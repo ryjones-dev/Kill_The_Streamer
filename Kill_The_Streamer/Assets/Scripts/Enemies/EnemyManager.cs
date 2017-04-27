@@ -11,7 +11,8 @@ public enum EnemyType
     ShieldEnemy,
     DestructoidEnemy,
     ShooterEnemy,
-    TrailEnemy
+    TrailEnemy,
+    HealthEnemy
 }
 
 [RequireComponent(typeof(BooEnemyManager))]
@@ -21,6 +22,8 @@ public enum EnemyType
 [RequireComponent(typeof(DestructoidEnemyManager))]
 [RequireComponent(typeof(ShooterEnemyManager))]
 [RequireComponent(typeof(TrailEnemyManager))]
+[RequireComponent(typeof(HealthEnemyManager))]
+
 public class EnemyManager : MonoBehaviour
 {
     // A parent gameobject to put the enemies in for editor convenience
@@ -44,6 +47,7 @@ public class EnemyManager : MonoBehaviour
     private DestructoidEnemyManager m_destructoidEnemyManager;
     private ShooterEnemyManager m_shooterEnemyManager;
     private TrailEnemyManager m_trailEnemyManager;
+    private HealthEnemyManager m_healthEnemyManager;
 
     [SerializeField]
     private float m_speedMultiplier;
@@ -67,6 +71,8 @@ public class EnemyManager : MonoBehaviour
             m_destructoidEnemyManager = GetComponent<DestructoidEnemyManager>();
             m_shooterEnemyManager = GetComponent<ShooterEnemyManager>();
             m_trailEnemyManager = GetComponent<TrailEnemyManager>();
+            m_healthEnemyManager = GetComponent<HealthEnemyManager>();
+            
 
             m_enemyQueue = new Queue<EnemyNetworkInfo>();
             m_enemyQueueMut = new Mutex();
@@ -93,6 +99,7 @@ public class EnemyManager : MonoBehaviour
         m_destructoidEnemyManager.Init(m_enemyParent.transform);
         m_shooterEnemyManager.Init(m_enemyParent.transform);
         m_trailEnemyManager.Init(m_enemyParent.transform);
+        m_healthEnemyManager.Init(m_enemyParent.transform);
     }
 
     /// <summary>
@@ -140,6 +147,11 @@ public class EnemyManager : MonoBehaviour
                 GameObject trail = s_instance.m_trailEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
                 if (trail != null) { s_instance.m_enemyTotal++; }
                 return trail;
+
+            case EnemyType.HealthEnemy:
+                GameObject health = s_instance.m_healthEnemyManager.ActivateNextEnemy(p_twitchUsername, p_spawnDirection);
+                if(health != null) { s_instance.m_enemyTotal++; }
+                return health;
 
             default:
                 Debug.Log("Invalid enemy type to spawn: " + p_enemyType);
@@ -226,6 +238,15 @@ public class EnemyManager : MonoBehaviour
                     s_instance.m_enemyDeathCount++;
                 }
                 break;
+            case EnemyType.HealthEnemy:
+                enemy = s_instance.m_healthEnemyManager.GetActiveEnemyGameObject(p_enemyIndex);
+                success = s_instance.m_healthEnemyManager.DeactivateEnemy(p_enemyIndex);
+                if (success)
+                {
+                    s_instance.m_enemyTotal--;
+                    s_instance.m_enemyDeathCount++;
+                }
+                break;
 
             default:
                 Debug.Log("Invalid enemy type to destroy: " + p_enemyType);
@@ -268,6 +289,9 @@ public class EnemyManager : MonoBehaviour
             case EnemyType.TrailEnemy:
                 return s_instance.m_trailEnemyManager.GetActiveEnemyGameObject(p_index);
 
+            case EnemyType.HealthEnemy:
+                return s_instance.m_healthEnemyManager.GetActiveEnemyGameObject(p_index);
+
             default:
                 return null;
         }
@@ -303,6 +327,9 @@ public class EnemyManager : MonoBehaviour
             case EnemyType.TrailEnemy:
                 return s_instance.m_trailEnemyManager.GetAllEnemyGameObjects(out p_firstInactiveIndex);
 
+            case EnemyType.HealthEnemy:
+                return s_instance.m_healthEnemyManager.GetAllEnemyGameObjects(out p_firstInactiveIndex);
+
             default:
                 p_firstInactiveIndex = -1;
                 return null;
@@ -337,6 +364,9 @@ public class EnemyManager : MonoBehaviour
 
             case EnemyType.TrailEnemy:
                 return s_instance.m_trailEnemyManager.GetActiveEnemyAI(p_index);
+
+            case EnemyType.HealthEnemy:
+                return s_instance.m_healthEnemyManager.GetActiveEnemyAI(p_index);
 
             default:
                 return null;
@@ -375,6 +405,10 @@ public class EnemyManager : MonoBehaviour
             case EnemyType.TrailEnemy:
                 return s_instance.m_trailEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
 
+
+            case EnemyType.HealthEnemy:
+                return s_instance.m_healthEnemyManager.GetAllEnemyAI(out p_firstInactiveIndex);
+
             default:
                 p_firstInactiveIndex = -1;
                 return null;
@@ -400,6 +434,17 @@ public class EnemyManager : MonoBehaviour
 
             info.name = "lunalovecraft";
             info.type = EnemyType.BooEnemy;
+            info.direction = Direction.Random;
+
+            AddEnemyToQueue(info);
+        }
+
+        if (Input.GetKey(KeyCode.I))
+        {
+            EnemyNetworkInfo info = new EnemyNetworkInfo();
+
+            info.name = "lunalovecraft";
+            info.type = EnemyType.HealthEnemy;
             info.direction = Direction.Random;
 
             AddEnemyToQueue(info);

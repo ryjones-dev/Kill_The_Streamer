@@ -26,6 +26,9 @@ public class Player : Targetable
     private string m_killedBy;
     public GameObject m_endingScreen;
 
+
+    private Dictionary<string, int> m_healingDoneByViewers;
+
     public GameObject m_pistolPrefab;
     [HideInInspector]
     public GameObject m_weaponRenderer;
@@ -108,6 +111,8 @@ public class Player : Targetable
 
         m_damageDoneByViewers = new Dictionary<string, int>();
 
+        m_healingDoneByViewers = new Dictionary<string, int>();
+
         m_rigidbody = GetComponent<Rigidbody>();
     }
 
@@ -167,7 +172,8 @@ public class Player : Targetable
 	/// Takes the healing from picking up health pack
 	/// </summary>
 	/// <param name="health">Health.</param>
-	public void TakeHealing(int health){
+	public void TakeHealing(int health, string name)
+    {
 
 		if (m_health < MAX_HEALTH) {
 			m_health += health;
@@ -181,7 +187,16 @@ public class Player : Targetable
 			m_HealthBarText.text = m_health.ToString();
 		}
 
-	}
+        if (m_healingDoneByViewers.ContainsKey(name))
+        {
+            m_healingDoneByViewers[name] += health;
+        }
+        else
+        {
+            m_healingDoneByViewers.Add(name, health);
+        }
+
+    }
 
     /// <summary>
     /// Function called when player dies.
@@ -191,11 +206,19 @@ public class Player : Targetable
         Time.timeScale = 0.0f;//Stop the game
         List<KeyValuePair<string, int>> sortedList = m_damageDoneByViewers.ToList();
 
+        List<KeyValuePair<string, int>> healingList = m_healingDoneByViewers.ToList();
+
         sortedList.Sort(
         delegate (KeyValuePair<string, int> kv, KeyValuePair<string, int> kv2)
         {
             return kv2.Value.CompareTo(kv.Value);
         });
+
+        healingList.Sort(
+      delegate (KeyValuePair<string, int> kv, KeyValuePair<string, int> kv2)
+      {
+          return kv2.Value.CompareTo(kv.Value);
+      });
 
         // Set up the final screen.
         m_endingScreen.SetActive(true);
@@ -205,12 +228,50 @@ public class Player : Targetable
         leaderboards[1] = GameObject.FindGameObjectWithTag("LeaderboardDamage1").GetComponent<Text>();
         leaderboards[2] = GameObject.FindGameObjectWithTag("LeaderboardDamage2").GetComponent<Text>();
         leaderboards[3] = GameObject.FindGameObjectWithTag("LeaderboardDamage3").GetComponent<Text>();
-        
+
+        Text[] leaderboardsH = new Text[4];
+        leaderboardsH[0] = GameObject.FindGameObjectWithTag("LeaderboardHealing0").GetComponent<Text>();
+        leaderboardsH[1] = GameObject.FindGameObjectWithTag("LeaderboardHealing1").GetComponent<Text>();
+        leaderboardsH[2] = GameObject.FindGameObjectWithTag("LeaderboardHealing2").GetComponent<Text>();
+        leaderboardsH[3] = GameObject.FindGameObjectWithTag("LeaderboardHealing3").GetComponent<Text>();
+
         // Update the leaderboard.
-        for (int i = 0; i < sortedList.Count; ++i)
+        //the top 12
+        if(sortedList.Count > 12)
         {
-            leaderboards[i % 4].text += sortedList[i].Key.ToUpper() + ": " + sortedList[i].Value + "\n";
+            for (int i = 0; i < 12; ++i)
+            {
+                leaderboards[i % 4].text += sortedList[i].Key.ToUpper() + ": " + sortedList[i].Value + "\n";
+            }
+
         }
+        else
+        {
+            for (int i = 0; i < sortedList.Count; ++i)
+            {
+                leaderboards[i % 4].text += sortedList[i].Key.ToUpper() + ": " + sortedList[i].Value + "\n";
+            }
+
+        }
+
+        if (healingList.Count > 12)
+        {
+            for (int i = 0; i < 12; ++i)
+            {
+                leaderboardsH[i % 4].text += healingList[i].Key.ToUpper() + ": " + healingList[i].Value + "\n";
+            }
+
+        }
+        else
+        {
+            for (int i = 0; i < healingList.Count; ++i)
+            {
+                leaderboardsH[i % 4].text += healingList[i].Key.ToUpper() + ": " + healingList[i].Value + "\n";
+            }
+
+        }
+
+
     }
 
     /// <summary>
