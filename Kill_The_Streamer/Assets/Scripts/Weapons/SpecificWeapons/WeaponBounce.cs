@@ -5,7 +5,7 @@ public class WeaponBounce : Weapon
 {
     public const float BOUNCE_FIRE_RATE = 0.4f;
     public const int BOUNCE_MAX_AMMO = 10;
-    public const string BOUNCE_NAME = "Pistol";
+    public const string BOUNCE_NAME = "Bouncer";
     public const int BOUNCE_SPAWNRATE = 250;
     public Sprite BOUNCE_SPRITE;
 

@@ -47,7 +47,7 @@ public class WeaponVacuum : Weapon {
         {
             m_ammo--;
             
-            for (int i = 0; i < 6; ++i) {
+            for (int i = 0; i < 7; ++i) {
                 int length = 0;
                 AIBase[] enemies = EnemyManager.GetAllEnemyAI((EnemyType)i, out length);
 
