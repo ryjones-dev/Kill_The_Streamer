@@ -53,6 +53,8 @@ public class Player : Targetable
     public GameObject m_primaryWeaponUIObject;
     public GameObject m_secondaryWeaponUIObject;
 
+	public GameObject m_damageNumberPrefab;
+
     public Rigidbody m_rigidbody;
 
     private Image m_primaryWeaponUI;
@@ -137,6 +139,10 @@ public class Player : Targetable
         }
 
         m_health -= damage;
+		GameObject damageNumber = (GameObject)Instantiate (m_damageNumberPrefab, this.FastTransform.Position + new Vector3(0.5f, 0, 1.0f), Quaternion.Euler(90, 0, 0));
+		damageNumber.GetComponent<DamageText> ().Initialize (damage);
+		Debug.Log (damageNumber);
+
         if (m_damageDoneByViewers.ContainsKey(name))
         {
             m_damageDoneByViewers[name] += damage;
@@ -172,6 +178,10 @@ public class Player : Targetable
 		if (m_health < MAX_HEALTH) {
 			m_health += health;
 		}
+
+		GameObject damageNumber = (GameObject)Instantiate (m_damageNumberPrefab, this.FastTransform.Position + new Vector3(0.5f, 0, 1.0f), Quaternion.Euler(90, 0, 0));
+		damageNumber.GetComponent<DamageText> ().Initialize (health, true);
+
 		m_HealthBar.fillAmount = (float)m_health / MAX_HEALTH;
 		if(m_health >= 10000)
 		{
