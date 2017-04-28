@@ -47,12 +47,10 @@ public class Health : MonoBehaviour {
 
     void OnTriggerEnter(Collider coll)
     {
-        if(coll.tag == "Player")
+        if(coll.tag == "PlayerHitbox")
         {
-			if (Player.s_Player.m_health + healthIncrease < 40000) {
-				Player.s_Player.TakeHealing (healthIncrease,this.name);
-				Destroy (this.gameObject);
-			}
+			Player.s_Player.TakeHealing (healthIncrease,this.name);
+			Destroy (this.gameObject);
         }
     }
 }

@@ -8,17 +8,21 @@ public class DecoyBullet : Targetable
 
     private float m_timer = 0;
     private float travelTime = 0.25f;
+	private float lifeTime = 10.0f;
 
     public int health = 100; // Number of times the decoy can damage enemies
 
     private void Start()
     {
         rbody = GetComponent<Rigidbody>();
+		lifeTime = 10.0f;
     }
 
     protected override void Update()
     {
         base.Update();
+
+
 
         if (rbody.velocity.sqrMagnitude > 0)
         {
@@ -29,6 +33,11 @@ public class DecoyBullet : Targetable
                 rbody.velocity = Vector3.zero;
             }
         }
+		lifeTime -= Time.deltaTime;
+
+		if (lifeTime < 0.0f) {
+			GameObject.Destroy (this.gameObject);
+		}
     }
 
     private void OnTriggerEnter(Collider other)

@@ -47,7 +47,6 @@ public class AiHealth : AIBase {
         if (health <= 0)
         {
             GameObject pack = (GameObject)Instantiate(healthPrefab, this.transform.position,Quaternion.Euler(90,0,0));
-            pack.GetComponentInChildren<TextMesh>().text = this.GetComponentInChildren<TextMesh>().text;
             pack.name = this.name;
 
             EnemyManager.DestroyEnemy(aiType, index);

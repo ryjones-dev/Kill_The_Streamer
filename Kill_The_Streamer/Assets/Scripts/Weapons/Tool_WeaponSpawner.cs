@@ -29,7 +29,7 @@ public class Tool_WeaponSpawner : MonoBehaviour {
 
     }
 
-    public void SpawnWeapon(Vector3 position)
+	public GameObject SpawnWeapon(Vector3 position)
     {
         int value = Random.Range(0, m_totalWeight);
         for(int i = 0; i < m_spawnableWeaponPrefabs.Length; ++i)
@@ -37,10 +37,12 @@ public class Tool_WeaponSpawner : MonoBehaviour {
             value -= m_weaponWeights[i];
             if(value <= 0)
             {
-                Instantiate(m_spawnableWeaponPrefabs[i], position, m_rotate);
-                return;
+                
+				return (GameObject)Instantiate(m_spawnableWeaponPrefabs[i], position, m_rotate);
             }
         }
+
+		return null;
     }
 
 }

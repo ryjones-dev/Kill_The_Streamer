@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class WeaponShmorg : Weapon
 {
-	public const float SHMORG_FIRE_RATE = 0.4f;
-	public const int SHMORG_MAX_AMMO = 15;
+	public const float SHMORG_FIRE_RATE = 0.1f;
+	public const int SHMORG_MAX_AMMO = 30;
 	public const string SHMORG_NAME = "Shmorgishborg";
 	public const int SHMORG_SPAWNRATE = 80;
 	public Sprite SHMORG_SPRITE;
@@ -53,7 +53,7 @@ public class WeaponShmorg : Weapon
 		{
 			m_ammo--;
 			//GameObject[] bullets = { m_bulletPrefab, m_bulletPrefab2, m_bulletPrefab3, m_bulletPrefab4, m_bulletPrefab5};
-			int choice = UnityEngine.Random.Range (0, 5);
+			int choice = UnityEngine.Random.Range (0, Tool_WeaponSpawner.s_instance.m_shmorgBullets.Length);
 
 
 			GameObject bullet = (GameObject)Instantiate(Tool_WeaponSpawner.s_instance.m_shmorgBullets[choice], new Vector3(position.x, 0, position.z), Quaternion.identity);

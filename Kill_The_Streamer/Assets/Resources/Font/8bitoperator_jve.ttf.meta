@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 83f511348ce96de4fb50505fa58a0b52
+timeCreated: 1493314763
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 320
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: 8bitoperator JVE
+  fontNames:
+  - 8bitoperator JVE
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 2
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

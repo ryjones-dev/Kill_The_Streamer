@@ -10,6 +10,7 @@ public class WeaponGatling : Weapon
     public const int GATLING_GUN_SPAWNRATE = 600;
     public Sprite GATLING_GUN_SPRITE;
 	float angle = 1.0f;
+	public Quaternion[] m_angles;
 	public Quaternion m_leftAngle;
 	public Quaternion m_rightAngle;
 	public Quaternion m_leftAngle2;
@@ -41,7 +42,7 @@ public class WeaponGatling : Weapon
     /// <summary>
     /// Speed the bullet travels.
     /// </summary>
-    public const float BULLET_SPEED = 30.0f;
+    public const float BULLET_SPEED = 60.0f;
 
     /// <summary>
     /// Rate of fire
@@ -73,20 +74,16 @@ public class WeaponGatling : Weapon
         if (m_timer <= 0.0f && m_ammo > 0)
         {
             m_ammo--;
-			Vector3[] directions = { direction, (m_leftAngle * direction), (m_rightAngle * direction), (m_leftAngle2 * direction), (m_rightAngle2 * direction),
-				(m_leftAngle3 * direction), (m_rightAngle3 * direction), (m_leftAngle4 * direction), (m_rightAngle4 * direction), (m_leftAngle5 * direction),
-				(m_rightAngle5 * direction), (m_leftAngle6 * direction), (m_rightAngle6 * direction), (m_leftAngle7 * direction), (m_rightAngle7 * direction),
-				(m_leftAngle8 * direction), (m_rightAngle8 * direction), (m_leftAngle9 * direction), (m_rightAngle9 * direction), (m_leftAngle10 * direction), (m_rightAngle10 * direction)};
-			int choice = UnityEngine.Random.Range (0, 20);
 
+			int choice = UnityEngine.Random.Range (0, m_angles.Length);
 
             GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
-			bullet.GetComponent<Rigidbody>().velocity = directions[choice] * BULLET_SPEED;
+			bullet.GetComponent<Rigidbody>().velocity = (m_angles[choice] * direction).normalized * BULLET_SPEED;
 
-			recoil = directions[choice] * -1;
-			recoil = recoil * 0.1f;
+			recoil = bullet.GetComponent<Rigidbody>().velocity * -1;
+			recoil = recoil * 20.0f;
 
-            Player.s_Player.FastTransform.Position += recoil;
+			Player.s_Player.m_rigidbody.AddForce(recoil);
 
             m_timer = FIRE_RATE;
         }
@@ -108,25 +105,10 @@ public class WeaponGatling : Weapon
 	public override void Start()
 	{
 		base.Start();
-		m_leftAngle = Quaternion.AngleAxis(angle, Vector3.up);
-		m_rightAngle = Quaternion.AngleAxis(-angle, Vector3.up);
-		m_leftAngle2 = Quaternion.AngleAxis(angle * 2, Vector3.up);
-		m_rightAngle2 = Quaternion.AngleAxis(-angle * 2, Vector3.up);
-		m_leftAngle3 = Quaternion.AngleAxis(angle * 3, Vector3.up);
-		m_rightAngle3 = Quaternion.AngleAxis(-angle * 3, Vector3.up);
-		m_leftAngle4 = Quaternion.AngleAxis(angle * 4, Vector3.up);
-		m_rightAngle4 = Quaternion.AngleAxis(-angle * 4, Vector3.up);
-		m_leftAngle5 = Quaternion.AngleAxis(angle * 5, Vector3.up);
-		m_rightAngle5 = Quaternion.AngleAxis(-angle * 5, Vector3.up);
-		m_leftAngle6 = Quaternion.AngleAxis(angle * 6, Vector3.up);
-		m_rightAngle6 = Quaternion.AngleAxis(-angle * 6, Vector3.up);
-		m_leftAngle7 = Quaternion.AngleAxis(angle * 7, Vector3.up);
-		m_rightAngle7 = Quaternion.AngleAxis(-angle * 7, Vector3.up);
-		m_leftAngle8 = Quaternion.AngleAxis(angle * 8, Vector3.up);
-		m_rightAngle8 = Quaternion.AngleAxis(-angle * 8, Vector3.up);
-		m_leftAngle9 = Quaternion.AngleAxis(angle * 9, Vector3.up);
-		m_rightAngle9 = Quaternion.AngleAxis(-angle * 9, Vector3.up);
-		m_leftAngle10 = Quaternion.AngleAxis(angle * 10, Vector3.up);
-		m_rightAngle10 = Quaternion.AngleAxis(-angle * 10, Vector3.up);
+
+		m_angles = new Quaternion[21];
+		for (int i = -10; i < m_angles.Length - 10; ++i) {
+			m_angles [i + 10] = Quaternion.AngleAxis (angle * i, Vector3.up); 
+		}
 	}
 }
