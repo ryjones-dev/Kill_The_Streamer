@@ -4,9 +4,9 @@ using UnityEngine;
 public class WeaponBounce : Weapon
 {
     public const float BOUNCE_FIRE_RATE = 0.4f;
-    public const int BOUNCE_MAX_AMMO = 10;
+    public const int BOUNCE_MAX_AMMO = 20;
     public const string BOUNCE_NAME = "Bouncer";
-    public const int BOUNCE_SPAWNRATE = 250;
+    public const int BOUNCE_SPAWNRATE = 150;
     public Sprite BOUNCE_SPRITE;
 
     /// <summary>
@@ -44,7 +44,7 @@ public class WeaponBounce : Weapon
     /// <param name="direction">The direction the character is aiming in.</param>
     public override void Fire(Vector3 position, Vector3 direction)
     {
-        if (m_timer <= 0.0f) // && m_ammo > 0 except pistols have infinite ammo
+		if (m_timer <= 0.0f && m_ammo > 0) // && m_ammo > 0 except pistols have infinite ammo
         {
             m_ammo--;// Pistols have infinite ammo
 
