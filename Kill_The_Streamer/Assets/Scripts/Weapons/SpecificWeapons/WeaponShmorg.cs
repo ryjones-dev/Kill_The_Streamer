@@ -9,16 +9,6 @@ public class WeaponShmorg : Weapon
 	public const int SHMORG_SPAWNRATE = 80;
 	public Sprite SHMORG_SPRITE;
 
-
-
-	/// <summary>
-	/// Prefab of the bullet to be fired.
-	/// </summary>
-	public GameObject m_bulletPrefab;
-	public GameObject m_bulletPrefab2;
-	public GameObject m_bulletPrefab3;
-	public GameObject m_bulletPrefab4;
-	public GameObject m_bulletPrefab5;
 	/// <summary>
 	/// Speed the bullet travels.
 	/// </summary>

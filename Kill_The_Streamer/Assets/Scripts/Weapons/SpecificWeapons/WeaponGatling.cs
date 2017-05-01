@@ -7,30 +7,10 @@ public class WeaponGatling : Weapon
     public const int GATLING_GUN_START_AMMO = 150;
     public const int GATLING_GUN_MAX_AMMO = 200;
     public const string GATLING_GUN_NAME = "Gatling Gun";
-    public const int GATLING_GUN_SPAWNRATE = 600;
+    public const int GATLING_GUN_SPAWNRATE = 300;
     public Sprite GATLING_GUN_SPRITE;
 	float angle = 1.0f;
 	public Quaternion[] m_angles;
-	public Quaternion m_leftAngle;
-	public Quaternion m_rightAngle;
-	public Quaternion m_leftAngle2;
-	public Quaternion m_rightAngle2;
-	public Quaternion m_leftAngle3;
-	public Quaternion m_rightAngle3;
-	public Quaternion m_leftAngle4;
-	public Quaternion m_rightAngle4;
-	public Quaternion m_leftAngle5;
-	public Quaternion m_rightAngle5;
-	public Quaternion m_leftAngle6;
-	public Quaternion m_rightAngle6;
-	public Quaternion m_leftAngle7;
-	public Quaternion m_rightAngle7;
-	public Quaternion m_leftAngle8;
-	public Quaternion m_rightAngle8;
-	public Quaternion m_leftAngle9;
-	public Quaternion m_rightAngle9;
-	public Quaternion m_leftAngle10;
-	public Quaternion m_rightAngle10;
     public Vector3 recoil;
 
 
