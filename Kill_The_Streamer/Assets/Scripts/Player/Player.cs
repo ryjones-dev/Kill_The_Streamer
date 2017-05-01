@@ -39,6 +39,8 @@ public class Player : Targetable
     public Text m_HealthBarText;
     [HideInInspector]
     public Text m_weaponPickupText;
+	[HideInInspector]
+	public Text m_outOfAmmoText;
 
     [HideInInspector]
     public Weapon m_primaryWeapon;
@@ -89,7 +91,8 @@ public class Player : Targetable
         m_HealthBar = m_HealthBarObject.GetComponent<Image>();
         m_HealthBarText = m_HealthBarObject.GetComponentInChildren<Text>();
 
-        m_weaponPickupText = this.GetComponentInChildren<Text>();
+		m_weaponPickupText = GameObject.FindGameObjectWithTag ("WeaponPickup").GetComponent<Text> ();
+		m_outOfAmmoText = GameObject.FindGameObjectWithTag ("OutOfAmmo").GetComponent<Text> ();
 
         m_weaponRenderer = this.GetComponentInChildren<WeaponRotation>().gameObject;
         m_weaponSpriteRenderer = m_weaponRenderer.GetComponent<SpriteRenderer>();
@@ -463,6 +466,8 @@ public class Player : Targetable
     {
         base.Update();
 
+
+
 		if (m_saltDamageTimer > 0) {
 			m_saltDamageTimer -= Time.deltaTime;
 		}
@@ -563,6 +568,9 @@ public class Player : Targetable
                 UpdateWeaponUI();
             }
         }
+
+		//Displays out of ammo text if you're out of ammo on your primary.
+		m_outOfAmmoText.gameObject.SetActive (m_primaryWeapon.m_ammo == 0);
 
         if (Input.GetKeyDown(KeyCode.Q) && m_secondaryWeapon != null)
         {
