@@ -151,20 +151,23 @@ public class NetworkManager : MonoBehaviour {
 						case "frankerz":
 							enemyType = EnemyType.GhostEnemy;
 							break;
-						case "mrdestructoid":
 						case "pjsalt":
+							enemyType = EnemyType.TrailEnemy;
+							break;
 						case "theilluminati":
 							enemyType = EnemyType.BooEnemy;
 							break;
 						case "pogchamp":
+							enemyType = EnemyType.HealthEnemy;
+							break;
 						case "smorc":
 							enemyType = EnemyType.ShieldEnemy;
                                 break;
 
-                                //One part commands
+                              /*  //One part commands
                             case "!start9":
                                 Debug.Log("IMPLEMENT START9");
-                                continue;
+                                continue;*/
                             default:
                                 continue;
                         }
