@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 114e1b855b4ea0141b09775d8ad080a1
+timeCreated: 1487628982
+licenseType: Pro
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - m_bulletPrefab: {fileID: 1850773345478020, guid: 45f88a9036a93724ba53fe97586b591b,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
