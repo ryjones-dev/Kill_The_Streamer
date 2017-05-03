@@ -526,7 +526,7 @@ public class Player : Targetable
                 dir += new Vector3(-1, 0, 0);
             }
             //Movement:
-            if (Input.GetKeyDown(KeyCode.LeftShift))
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift))
             {
                 if (dir != Vector3.zero)
                 {
