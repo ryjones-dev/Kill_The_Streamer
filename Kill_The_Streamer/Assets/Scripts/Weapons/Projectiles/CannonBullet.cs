@@ -5,19 +5,22 @@ using UnityEngine;
 public class CannonBullet : MonoBehaviour
 {
 
-	private float timeAlive = 1.5f; // Amount of time until the projectile is destroyed (range)
 	private float speed = 1.67f;
 
 	// Use this for initialization
 	void Start()
 	{
-		Destroy(gameObject, timeAlive);
+
 	}
 
 	// Update is called once per frame
 	void Update()
 	{
-
+        float distancesqr = (Player.s_Player.FastTransform.Position - this.transform.position).sqrMagnitude;
+        if (distancesqr < 169.0f)
+        {
+            CameraShake.AddShake(new Shake(0.2f * ((169.0f - distancesqr) / 169.0f), 0.01f));
+        }
 	}
 
 	//should be destroyed if hits wall

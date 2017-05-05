@@ -34,7 +34,7 @@ public class BerthaBullet : MonoBehaviour {
             bulletScale = this.transform.localScale;
 
             bulletScale += scalingVector;
-
+            
             this.transform.localScale = bulletScale;
         }
 
@@ -49,6 +49,7 @@ public class BerthaBullet : MonoBehaviour {
             AIBase ai = collision.GetComponent<AIBase>();
             ai.TakeDamage();
             Destroy(gameObject);
+            CameraShake.AddShake(new global::Shake(bulletScale.sqrMagnitude / 2048, 0.05f));
         }
 
         if (collision.gameObject.CompareTag("Shield"))
@@ -58,12 +59,14 @@ public class BerthaBullet : MonoBehaviour {
             shieldAI.shieldDestroy();
             //shieldAI.ShieldTakeDamage();
             Destroy(gameObject);
+            CameraShake.AddShake(new global::Shake(bulletScale.sqrMagnitude / 2048, 0.05f));
         }
 
         
         if (collision.gameObject.CompareTag("Terrain"))
         {
             Destroy(gameObject);
+            CameraShake.AddShake(new global::Shake(bulletScale.sqrMagnitude / 2048, 0.05f));
         }
         
     }

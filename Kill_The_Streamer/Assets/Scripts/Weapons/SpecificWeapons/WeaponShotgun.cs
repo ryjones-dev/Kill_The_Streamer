@@ -55,6 +55,7 @@ public class WeaponShotgun : Weapon
     {
         if (m_timer <= 0.0f && m_ammo > 0)
         {
+            CameraShake.AddFadeShake(5.0f);
             m_ammo--;
 
             GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);

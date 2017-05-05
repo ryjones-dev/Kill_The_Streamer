@@ -26,9 +26,10 @@ public class BFGBullet : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
 
-        if (collision.collider.gameObject.CompareTag("Enemy"))
+        if (collision.collider.gameObject.CompareTag("Enemy") || collision.collider.gameObject.CompareTag("Terrain"))
         {
             GameObject explosion = (GameObject)Instantiate(m_bfgPrefab, new Vector3(myBody.position.x, 0, myBody.position.z), Quaternion.identity);
+            CameraShake.AddFadeShake(7.0f);
             Destroy(gameObject);
         }
     }

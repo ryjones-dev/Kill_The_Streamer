@@ -41,6 +41,9 @@ public class WeaponTornado : Weapon {
 
         if (m_timer <= 0.0f && m_ammo > 0)
         {
+            CameraShake.AddShake(new Shake(0.05f, 0.01f));
+            Tornado.s_Object.SetActive(true);
+            Tornado.s_Tornado.isAlive = 0.1f;
             m_ammo--;
 
             for (int i = 0; i < 8; ++i)

@@ -150,7 +150,7 @@ public class Player : Targetable
 		GameObject damageNumber = (GameObject)Instantiate (m_damageNumberPrefab, this.FastTransform.Position + new Vector3(0.5f, 0, 1.0f), Quaternion.Euler(90, 0, 0));
 		damageNumber.GetComponent<DamageText> ().Initialize (damage);
 		Debug.Log (damageNumber);
-
+        CameraShake.AddFadeShake(damage / 1000.0f);
         if (m_damageDoneByViewers.ContainsKey(name))
         {
             m_damageDoneByViewers[name] += damage;
@@ -465,8 +465,6 @@ public class Player : Targetable
     protected override void Update()
     {
         base.Update();
-
-
 
 		if (m_saltDamageTimer > 0) {
 			m_saltDamageTimer -= Time.deltaTime;

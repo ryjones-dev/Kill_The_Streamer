@@ -66,6 +66,7 @@ public class WeaponGatling : Weapon
 			Player.s_Player.m_rigidbody.AddForce(recoil);
 
             m_timer = FIRE_RATE;
+            CameraShake.AddShake(new Shake(0.1f, 0.1f));
         }
     }
 

@@ -5,14 +5,12 @@ using UnityEngine;
 public class WeaponBigBertha : Weapon {
 
     public const float BERTHA_FIRE_RATE = 0.2f;
-    public const int BERTHA_MAX_AMMO = 70;
+    public const int BERTHA_MAX_AMMO = 30;
     public const string BERTHA_NAME = "Big Bertha";
     public const int BERTHA_SPAWNRATE = 300;
 
 
     public Sprite m_bigBerthaSprite;
-
-
 
     /// <summary>
     /// Prefab of the bullet to be fired.

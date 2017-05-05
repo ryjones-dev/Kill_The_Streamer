@@ -50,6 +50,7 @@ public class WeaponBounce : Weapon
 
             GameObject bullet = (GameObject)Instantiate(m_bulletPrefab, new Vector3(position.x, 0, position.z), Quaternion.identity);
             bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
+            CameraShake.AddShake(new Shake(0.05f, 0.1f));
 
             m_timer = FIRE_RATE;
         }
