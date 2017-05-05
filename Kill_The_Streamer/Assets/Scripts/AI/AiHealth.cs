@@ -32,7 +32,7 @@ public class AiHealth : AIBase {
 
     public override void DealDamage()
     {
-        Player.s_Player.TakeDamage(10000, name, true);
+        Player.s_Player.TakeDamage(9001, name, true);
     }
 
 

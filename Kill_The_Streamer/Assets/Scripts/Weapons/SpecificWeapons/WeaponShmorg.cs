@@ -50,7 +50,10 @@ public class WeaponShmorg : Weapon
 			bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
 
 			m_timer = FIRE_RATE;
+
 		}
+
+        
 	}
 
 	/// <summary>

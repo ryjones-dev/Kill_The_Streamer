@@ -6,7 +6,7 @@ public class WeaponBomb : Weapon
     public const float BOMB_FIRE_RATE = 1.0f;
     public const int BOMB_MAX_AMMO = 5;
     public const string BOMB_NAME = "Bomb";
-    public const int BOMB_SPAWNRATE = 20;
+    public const int BOMB_SPAWNRATE = 0;
     public Sprite BOMB_SPRITE;
 
     /// <summary>

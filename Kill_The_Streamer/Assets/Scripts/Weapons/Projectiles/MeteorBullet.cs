@@ -15,8 +15,10 @@ public class MeteorBullet : MonoBehaviour
 
     private void Update()
     {
+        CameraShake.AddShake(new Shake(0.05f, 0.01f));
         if(transform.position.y <= 0)
         {
+            CameraShake.AddFadeShake(10.0f);
             Destroy(gameObject);
         }
     }

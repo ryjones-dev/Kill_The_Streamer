@@ -6,21 +6,21 @@ public class BounceBullet : MonoBehaviour
 {
     bool isDead = false;
 
-    void OnTriggerEnter(Collider collision)
+    void OnCollisionEnter(Collision collision)
     {
 		if (!isDead)
 		{
-			if (collision.gameObject.CompareTag("Enemy"))
+			if (collision.collider.gameObject.CompareTag("Enemy"))
 			{
-				AIBase ai = collision.GetComponent<AIBase>();
+				AIBase ai = collision.collider.GetComponent<AIBase>();
 				ai.TakeDamage();
 				isDead = true;
 				Destroy(this.gameObject);
 			}
 
-			if (collision.gameObject.CompareTag("Shield"))
+			if (collision.collider.gameObject.CompareTag("Shield"))
 			{
-				AiShieldSeek shieldAI = collision.GetComponentInParent<AiShieldSeek>();
+				AiShieldSeek shieldAI = collision.collider.GetComponentInParent<AiShieldSeek>();
 				shieldAI.ShieldTakeDamage();
 				isDead = true;
 				Destroy(this.gameObject);

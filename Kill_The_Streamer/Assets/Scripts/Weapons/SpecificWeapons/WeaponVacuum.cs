@@ -46,7 +46,9 @@ public class WeaponVacuum : Weapon {
         if (m_timer <= 0.0f && m_ammo > 0)
         {
             m_ammo--;
-            
+
+            int numEnemiesAffected = 0;
+
             for (int i = 0; i < 8; ++i) {
                 int length = 0;
                 AIBase[] enemies = EnemyManager.GetAllEnemyAI((EnemyType)i, out length);
@@ -68,6 +70,7 @@ public class WeaponVacuum : Weapon {
                         if (positiveLeft & positiveRight)
                         {
                             enemies[j].RigidBody.AddForce(differenceVector.normalized * 50);
+                            numEnemiesAffected++;
 
                             if (sqrDistance < VACUUM_KILL_RANGE)
                             {
@@ -78,7 +81,10 @@ public class WeaponVacuum : Weapon {
                 }
 
             }
+
             m_timer += FIRE_RATE;
+
+            CameraShake.AddShake(new Shake(0.02f * numEnemiesAffected + 0.02f, 0.01f));
         }
     }
 
