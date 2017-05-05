@@ -307,7 +307,7 @@ public class Player : Targetable
         else
         {
             m_secondaryWeapon = temp;
-            m_secondaryWeaponObject = m_primaryWeaponObject;
+            m_secondaryWeaponObject = tempObj;
         }
 
         UpdateWeaponUI();
