@@ -26,6 +26,8 @@ public class Player : Targetable
     private string m_killedBy;
     public GameObject m_endingScreen;
 
+	public AudioClip dashing;
+
 
     private Dictionary<string, int> m_healingDoneByViewers;
 
@@ -506,6 +508,9 @@ public class Player : Targetable
 
         if (!dash)
         {
+			GetComponent<AudioSource> ().playOnAwake = false;
+			GetComponent<AudioSource> ().clip = dashing;
+			GetComponent<AudioSource> ().Play ();
             Vector3 dir = Vector3.zero;
             if (Input.GetKey(KeyCode.W))
             {
