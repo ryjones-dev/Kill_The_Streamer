@@ -55,7 +55,7 @@ public class WeaponMachineGun : Weapon
             bullet.GetComponent<Rigidbody>().velocity = direction * BULLET_SPEED;
 
             m_timer = FIRE_RATE;
-            CameraShake.AddShake(new Shake(0.6f, 0.1f));
+            CameraShake.AddShake(new Shake(0.06f, 0.1f));
         }
     }
 
