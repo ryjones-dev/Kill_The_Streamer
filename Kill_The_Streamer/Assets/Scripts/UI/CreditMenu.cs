@@ -18,7 +18,8 @@ public class CreditMenu : MonoBehaviour {
 
 	public void goBack(){
         Debug.Log("Goback");
-		SceneManager.LoadScene ("MainMenu");
+		SceneManager.UnloadSceneAsync ("Credits");
+		//SceneManager.LoadScene ("MainMenu");
 
 
 	}
