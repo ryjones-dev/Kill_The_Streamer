@@ -34,6 +34,8 @@ public class AiSeekFlee : AIBase{
     //private const float c_ANARCHY_ROTATION_MULT = 2;
    // private const float c_ANARCHY_ACCELERATION_MULT = 2;
 
+	public GameObject m_exclamationSprite;
+
     public override void Start () {
         base.Start();
         
@@ -93,6 +95,7 @@ public class AiSeekFlee : AIBase{
     public void Seek()
     {
         nav.SetDestination(m_target.FastTransform.Position);//telling the AI to seek out and go to the player's location
+		m_exclamationSprite.SetActive (false);
     }
 
 
@@ -100,6 +103,7 @@ public class AiSeekFlee : AIBase{
     {
         Vector3 runTo = multBy * (m_transform.Position - m_target.FastTransform.Position);
         nav.SetDestination(runTo);
+		m_exclamationSprite.SetActive (true);
     }
 
     public void CheckPlayerLooking()

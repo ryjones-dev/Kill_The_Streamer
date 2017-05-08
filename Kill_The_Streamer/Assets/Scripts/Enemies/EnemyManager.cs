@@ -176,6 +176,8 @@ public class EnemyManager : MonoBehaviour
                 {
                     s_instance.m_enemyTotal--;
                     s_instance.m_enemyDeathCount++;
+
+				Scoreboard.s_points += (int)(100 * SpeedMultiplier);
                 }
                 break;
 
@@ -186,6 +188,8 @@ public class EnemyManager : MonoBehaviour
                 {
                     s_instance.m_enemyTotal--;
                     s_instance.m_enemyDeathCount++;
+
+				Scoreboard.s_points += (int)(100 * SpeedMultiplier);
                 }
                 break;
 
@@ -196,6 +200,8 @@ public class EnemyManager : MonoBehaviour
                 {
                     s_instance.m_enemyTotal--;
                     s_instance.m_enemyDeathCount++;
+
+				Scoreboard.s_points += (int)(100 * SpeedMultiplier);
                 }
                 break;
 
@@ -206,6 +212,8 @@ public class EnemyManager : MonoBehaviour
                 {
                     s_instance.m_enemyTotal--;
                     s_instance.m_enemyDeathCount++;
+
+				Scoreboard.s_points += (int)(100 * SpeedMultiplier);
                 }
                 break;
 
@@ -216,6 +224,8 @@ public class EnemyManager : MonoBehaviour
                 {
                     s_instance.m_enemyTotal--;
                     s_instance.m_enemyDeathCount++;
+
+				Scoreboard.s_points += (int)(100 * SpeedMultiplier);
                 }
                 break;
 
@@ -226,6 +236,7 @@ public class EnemyManager : MonoBehaviour
                 {
                     s_instance.m_enemyTotal--;
                     s_instance.m_enemyDeathCount++;
+				Scoreboard.s_points += (int)(100 * SpeedMultiplier);
                 }
                 break;
 
@@ -236,6 +247,7 @@ public class EnemyManager : MonoBehaviour
                 {
                     s_instance.m_enemyTotal--;
                     s_instance.m_enemyDeathCount++;
+				Scoreboard.s_points += (int)(100 * SpeedMultiplier);
                 }
                 break;
             case EnemyType.HealthEnemy:
@@ -428,7 +440,7 @@ public class EnemyManager : MonoBehaviour
     private void Update()
     {
         //-----DEBUG ONLY
-        if (Input.GetKey(KeyCode.O))
+		if (Input.GetKey(KeyCode.O) && Input.GetKey(KeyCode.RightShift))
         {
             EnemyNetworkInfo info = new EnemyNetworkInfo();
 
@@ -439,7 +451,7 @@ public class EnemyManager : MonoBehaviour
             AddEnemyToQueue(info);
         }
 
-        if (Input.GetKey(KeyCode.I))
+		if (Input.GetKey(KeyCode.I) && Input.GetKey(KeyCode.RightShift))
         {
             EnemyNetworkInfo info = new EnemyNetworkInfo();
 
@@ -450,7 +462,7 @@ public class EnemyManager : MonoBehaviour
             AddEnemyToQueue(info);
         }
 
-        if (Input.GetKey(KeyCode.P))
+		if (Input.GetKey(KeyCode.P) && Input.GetKey(KeyCode.RightShift))
         {
             EnemyNetworkInfo info = new EnemyNetworkInfo();
 
@@ -461,7 +473,7 @@ public class EnemyManager : MonoBehaviour
             AddEnemyToQueue(info);
         }
 
-        if (Input.GetKey(KeyCode.LeftBracket))
+		if (Input.GetKey(KeyCode.LeftBracket) && Input.GetKey(KeyCode.RightShift))
         {
             EnemyNetworkInfo info = new EnemyNetworkInfo();
 
@@ -472,7 +484,7 @@ public class EnemyManager : MonoBehaviour
             AddEnemyToQueue(info);
         }
 
-        if (Input.GetKey(KeyCode.RightBracket))
+		if (Input.GetKey(KeyCode.RightBracket) && Input.GetKey(KeyCode.RightShift))
         {
             EnemyNetworkInfo info = new EnemyNetworkInfo();
 
@@ -483,7 +495,7 @@ public class EnemyManager : MonoBehaviour
             AddEnemyToQueue(info);
         }
 
-        if (Input.GetKey(KeyCode.L))
+		if (Input.GetKey(KeyCode.L) && Input.GetKey(KeyCode.RightShift))
         {
             EnemyNetworkInfo info = new EnemyNetworkInfo();
 
