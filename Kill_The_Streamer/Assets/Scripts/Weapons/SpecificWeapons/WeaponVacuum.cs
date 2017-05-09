@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -49,7 +50,8 @@ public class WeaponVacuum : Weapon {
 
             int numEnemiesAffected = 0;
 
-            for (int i = 0; i < 8; ++i) {
+            int enemyTypesLength = Enum.GetNames(typeof(EnemyType)).Length;
+            for (int i = 0; i < enemyTypesLength; ++i) {
                 int length = 0;
                 AIBase[] enemies = EnemyManager.GetAllEnemyAI((EnemyType)i, out length);
 

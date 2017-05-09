@@ -26,9 +26,9 @@ public abstract class EnemyManagerTemplate : MonoBehaviour {
     public virtual void Init(Transform p_parent)
     {
         // Initializes the gameobject and component arrays
-        m_enemyGameObjects = new GameObject[Constants.MAX_ENEMIES];
+        m_enemyGameObjects = new GameObject[Settings.maxEnemies];
 
-        for (int i = 0; i < Constants.MAX_ENEMIES; i++)
+        for (int i = 0; i < Settings.maxEnemies; i++)
         {
             // Instantiates each enemy
             GameObject enemy = Instantiate<GameObject>(m_enemyPrefab, Vector3.zero, Quaternion.identity, p_parent);
@@ -48,7 +48,7 @@ public abstract class EnemyManagerTemplate : MonoBehaviour {
     public virtual GameObject ActivateNextEnemy(string p_twitchUsername, Direction p_spawnDirection)
     {
         // Prevents adding an enemy if there is no more room in the array
-        if (m_firstInactiveIndex == Constants.MAX_ENEMIES) return null;
+        if (m_firstInactiveIndex == Settings.maxEnemies) return null;
 
         // Gets first inactive enemy gameobject
         GameObject enemy = m_enemyGameObjects[m_firstInactiveIndex];

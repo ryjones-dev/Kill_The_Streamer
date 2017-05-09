@@ -12,9 +12,9 @@ public class ShooterEnemyManager : EnemyManagerTemplate
         base.Init(p_parent);
 
         // Initializes component array
-        m_shooterAIComponents = new AiShooter[Constants.MAX_ENEMIES];
+        m_shooterAIComponents = new AiShooter[Settings.maxEnemies];
 
-        for (int i = 0; i < Constants.MAX_ENEMIES; i++)
+        for (int i = 0; i < Settings.maxEnemies; i++)
         {
             m_shooterAIComponents[i] = m_enemyGameObjects[i].GetComponent<AiShooter>();
         }

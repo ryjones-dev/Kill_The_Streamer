@@ -12,9 +12,9 @@ public class TrailEnemyManager : EnemyManagerTemplate
         base.Init(p_parent);
 
         // Initializes component array
-        m_trailAIComponents = new AiTrail[Constants.MAX_ENEMIES];
+        m_trailAIComponents = new AiTrail[Settings.maxEnemies];
 
-        for (int i = 0; i < Constants.MAX_ENEMIES; i++)
+        for (int i = 0; i < Settings.maxEnemies; i++)
         {
             m_trailAIComponents[i] = m_enemyGameObjects[i].GetComponent<AiTrail>();
         }

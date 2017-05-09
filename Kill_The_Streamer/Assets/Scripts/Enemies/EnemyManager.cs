@@ -109,7 +109,7 @@ public class EnemyManager : MonoBehaviour
     public static GameObject CreateEnemy(EnemyType p_enemyType, string p_twitchUsername, Direction p_spawnDirection)
     {
         // Prevents creating a new enemy if there are already the maximum number of active enemies in the scene
-        if (s_instance.m_enemyTotal >= Constants.MAX_ENEMIES) return null;
+        if (s_instance.m_enemyTotal >= Settings.maxEnemies) return null;
 
         switch (p_enemyType)
         {

@@ -12,9 +12,9 @@ public class HealthEnemyManager : EnemyManagerTemplate {
         base.Init(p_parent);
 
         // Initializes component array
-        m_healthComponents = new AiHealth[Constants.MAX_ENEMIES];
+        m_healthComponents = new AiHealth[Settings.maxEnemies];
 
-        for (int i = 0; i < Constants.MAX_ENEMIES; i++)
+        for (int i = 0; i < Settings.maxEnemies; i++)
         {
             m_healthComponents[i] = m_enemyGameObjects[i].GetComponent<AiHealth>();
         }

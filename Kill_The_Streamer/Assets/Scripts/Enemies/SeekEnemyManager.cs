@@ -12,9 +12,9 @@ public class SeekEnemyManager : EnemyManagerTemplate
         base.Init(p_parent);
 
         // Initializes component array
-        m_seekComponents = new AiSeeking[Constants.MAX_ENEMIES];
+        m_seekComponents = new AiSeeking[Settings.maxEnemies];
 
-        for (int i = 0; i < Constants.MAX_ENEMIES; i++)
+        for (int i = 0; i < Settings.maxEnemies; i++)
         {
             m_seekComponents[i] = m_enemyGameObjects[i].GetComponent<AiSeeking>();
         }

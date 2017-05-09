@@ -9,8 +9,8 @@ public class MainMenu : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
-	}
+        
+    }
 
 	public void StartGame()
 	{
@@ -27,4 +27,8 @@ public class MainMenu : MonoBehaviour {
 		SceneManager.LoadScene ("Credits", LoadSceneMode.Additive);
 	}
 
+    public void ClickOptions()
+    {
+        SceneManager.LoadScene("Options", LoadSceneMode.Additive);
+    }
 }

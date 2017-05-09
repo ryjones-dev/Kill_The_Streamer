@@ -507,24 +507,24 @@ public class Player : Targetable
         if (!dash)
         {
             Vector3 dir = Vector3.zero;
-            if (Input.GetKey(KeyCode.W))
+            if (Input.GetKey(Settings.upKeyCode))
             {
                 dir += new Vector3(0, 0, 1);
             }
-            else if (Input.GetKey(KeyCode.S))
+            else if (Input.GetKey(Settings.downKeyCode))
             {
                 dir += new Vector3(0, 0, -1);
             }
-            if (Input.GetKey(KeyCode.D))
+            if (Input.GetKey(Settings.rightKeyCode))
             {
                 dir += new Vector3(1, 0, 0);
             }
-            else if (Input.GetKey(KeyCode.A))
+            else if (Input.GetKey(Settings.leftKeyCode))
             {
                 dir += new Vector3(-1, 0, 0);
             }
             //Movement:
-            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.LeftShift))
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(Settings.dashKeyCode))
             {
                 if (dir != Vector3.zero)
                 {
@@ -570,12 +570,12 @@ public class Player : Targetable
 		//Displays out of ammo text if you're out of ammo on your primary.
 		m_outOfAmmoText.gameObject.SetActive (m_primaryWeapon.m_ammo == 0);
 
-        if (Input.GetKeyDown(KeyCode.Q) && m_secondaryWeapon != null)
+        if (Input.GetKeyDown(Settings.switchWeaponKeyCode) && m_secondaryWeapon != null)
         {
 
             SwapWeapon();
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(Settings.pickupWeaponKeyCode))
         {
             GrabWeapon();
         }

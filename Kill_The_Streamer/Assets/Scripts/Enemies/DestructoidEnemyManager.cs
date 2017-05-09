@@ -12,9 +12,9 @@ public class DestructoidEnemyManager : EnemyManagerTemplate
         base.Init(p_parent);
 
         // Initializes component array
-        m_destructoidAIComponents = new AiDestructoid[Constants.MAX_ENEMIES];
+        m_destructoidAIComponents = new AiDestructoid[Settings.maxEnemies];
 
-        for (int i = 0; i < Constants.MAX_ENEMIES; i++)
+        for (int i = 0; i < Settings.maxEnemies; i++)
         {
             m_destructoidAIComponents[i] = m_enemyGameObjects[i].GetComponent<AiDestructoid>();
         }
