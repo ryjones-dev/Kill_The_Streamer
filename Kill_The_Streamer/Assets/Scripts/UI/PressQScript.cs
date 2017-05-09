@@ -16,7 +16,7 @@ public class PressQScript : MonoBehaviour {
 			gameObject.SetActive (false);
 		}
 
-		if (Input.GetKeyDown (KeyCode.Q)) {
+		if (Input.GetKeyDown (Settings.switchWeaponKeyCode)) {
 			isActive = false;
 			gameObject.SetActive (false);
 		}

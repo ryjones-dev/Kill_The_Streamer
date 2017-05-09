@@ -12,9 +12,9 @@ public class GhostEnemyManager : EnemyManagerTemplate
         base.Init(p_parent);
 
         // Initializes component array
-        m_ghostComponents = new AiGhost[Constants.MAX_ENEMIES];
+        m_ghostComponents = new AiGhost[Settings.maxEnemies];
 
-        for (int i = 0; i < Constants.MAX_ENEMIES; i++)
+        for (int i = 0; i < Settings.maxEnemies; i++)
         {
             m_ghostComponents[i] = m_enemyGameObjects[i].GetComponent<AiGhost>();
         }

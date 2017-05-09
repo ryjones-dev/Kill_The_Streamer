@@ -9,8 +9,8 @@ public class MainMenu : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
-	}
+        
+    }
 
 	public void StartGame()
 	{
@@ -29,6 +29,6 @@ public class MainMenu : MonoBehaviour {
 
     public void ClickOptions()
     {
-        SceneManager.LoadScene("Options");
+        SceneManager.LoadScene("Options", LoadSceneMode.Additive);
     }
 }
